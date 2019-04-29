@@ -1,0 +1,19 @@
+TODO:
+
+Evaluation: 
+- SentEval
+- Word-in-Context
+- Extension of TensorBoard metrics, redirecting to the web
+    - Gradient norm per layer
+
+Model: 
+- Training on Gao's sequential metaphor identification task, combined with NLI
+- Pre-trained ELMo vectors
+
+Experiment:
+- Preprocess data (filter GloVe, ...?)
+- Make subsets of data -> overfit
+- Train at least one model to ok performance
+
+Other:
+- Shared LISA account (Bjachan69)
