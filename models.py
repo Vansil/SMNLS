@@ -2,6 +2,8 @@ from torch import nn
 from torch.nn.functional import relu
 import torch
 
+from allennlp.modules.elmo import Elmo, batch_to_ids
+
 
 class BaseModel(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
@@ -122,3 +124,43 @@ class BiLstmMaxModel(BaseModel):
         output = torch.max(output, dim=1)[0]
 
         return output
+
+
+class Elmo(nn.Module):
+    '''
+    ELMo 5.5B model: trained on a dataset of 5.5B tokens consisting of Wikipedia (1.9B) and all of 
+    the monolingual news crawl data from WMT 2008-2012 (3.6B).
+    Model weights are fixed, mixing weights are either trained or fixed.
+    '''
+    def __init__(self, mix_parameters=None):
+        '''
+        Args:
+            mix_parameters: weights responsible for averaging between the character embedding 
+                and the two LSTM states in that order; if None these weights are trained
+        '''
+        super(Elmo, self).__init__()
+        options_file = "ELMo/elmo_2x4096_512_2048cnn_2xhighway_5.5B_options.json"
+        weight_file = "ELMo/elmo_2x4096_512_2048cnn_2xhighway_5.5B_weights.json
+
+        # initialise ELMo embedding
+        self.elmo = Elmo(options_file, weight_file, num_output_representations=1, dropout=0,
+            requires_grad=False, scalar_mix_parameters=mix_parameters)
+        
+    def forward(self, batch):
+        '''
+        Embed a batch of sentences
+
+        Args:
+            batch: list of list of words to embed, e.g. [['First', 'sentence', '.'], ['Another', '.']]
+
+        Returns:
+            embeddings: tensor of embedded words with dimensions (batch_size, sequence_length, embed_dim=1024)
+        '''
+
+        # Convert words to character ids
+        character_ids = batch_to_ids(sentences)
+        # Embed words
+        elmo_out = elmo(character_ids)
+        embeddings = elmo_out['elmo_representations'][0]
+        # return batch embeddings
+        return embeddings
