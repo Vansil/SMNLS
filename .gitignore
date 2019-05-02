@@ -1,5 +1,9 @@
 test.py
 
+# Data files
+data/*
+!data/get_data.sh
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
