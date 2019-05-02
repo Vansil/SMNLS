@@ -11,6 +11,7 @@ echo "Getting SNLI"
 wget -O snli.zip https://nlp.stanford.edu/projects/snli/snli_1.0.zip
 unzip snli.zip
 rm snli.zip
+mv snli_1.0 snli
 
 # ELMo
 echo "Getting ELMo"

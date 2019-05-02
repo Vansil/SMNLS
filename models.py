@@ -5,6 +5,50 @@ import torch
 from allennlp.modules.elmo import Elmo, batch_to_ids
 
 
+class BaseModelElmo(nn.Module):
+    '''
+    Model to test elmo embedding
+    '''
+    def __init__(self, input_size, hidden_size, output_size):
+        super(BaseModelElmo, self).__init__()
+        self.elmo = ElmoEmbedding()
+
+        self._l1 = nn.Linear(input_size * 4, hidden_size)
+        self._l2 = nn.Linear(hidden_size, output_size)
+
+    def forward(self, X1, X2):
+        '''
+        Args:
+            X1: list of list of words from premise sentences, e.g. [['First', 'sentence', '.'], ['Another', '.']]
+            X2: same as X1 for hypothesis sentences
+        '''
+
+        # embed together such that padding is same for both sentences
+        elmos = self.elmo(X1 + X2)
+        # separate
+        batch_size = len(X1)
+        elmos1 = elmos[:batch_size, :]
+        elmos2 = elmos[batch_size:, :]
+
+        # embedding: mean of word embeddings
+        E1 = elmos1.mean(dim=1)
+        E2 = elmos2.mean(dim=1)
+
+        # Combine sentences for classification
+        abs_diff = torch.abs(E1 - E2)
+        elem = E1 * E2
+        concat = torch.cat([E1, E2, abs_diff, elem], dim=1)
+
+        # Classify
+        return self._classify(concat)
+
+    def _classify(self, X):
+        X = self._l1(X)
+        X = relu(X)
+        return self._l2(X)
+
+
+
 class BaseModel(nn.Module):
     def __init__(self, input_size, hidden_size, output_size):
         super(BaseModel, self).__init__()
@@ -126,7 +170,7 @@ class BiLstmMaxModel(BaseModel):
         return output
 
 
-class Elmo(nn.Module):
+class ElmoEmbedding(nn.Module):
     '''
     ELMo 5.5B model: trained on a dataset of 5.5B tokens consisting of Wikipedia (1.9B) and all of 
     the monolingual news crawl data from WMT 2008-2012 (3.6B).
@@ -138,9 +182,9 @@ class Elmo(nn.Module):
             mix_parameters: weights responsible for averaging between the character embedding 
                 and the two LSTM states in that order; if None these weights are trained
         '''
-        super(Elmo, self).__init__()
-        options_file = "ELMo/elmo_2x4096_512_2048cnn_2xhighway_5.5B_options.json"
-        weight_file = "ELMo/elmo_2x4096_512_2048cnn_2xhighway_5.5B_weights.json
+        super(ElmoEmbedding, self).__init__()
+        options_file = "data/elmo/elmo_2x4096_512_2048cnn_2xhighway_5.5B_options.json"
+        weight_file = "data/elmo/elmo_2x4096_512_2048cnn_2xhighway_5.5B_weights.hdf5"
 
         # initialise ELMo embedding
         self.elmo = Elmo(options_file, weight_file, num_output_representations=1, dropout=0,
@@ -158,9 +202,9 @@ class Elmo(nn.Module):
         '''
 
         # Convert words to character ids
-        character_ids = batch_to_ids(sentences)
+        character_ids = batch_to_ids(batch)
         # Embed words
-        elmo_out = elmo(character_ids)
+        elmo_out = self.elmo(character_ids)
         embeddings = elmo_out['elmo_representations'][0]
         # return batch embeddings
         return embeddings
