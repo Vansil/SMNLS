@@ -7,6 +7,9 @@ data/*
 # Outputs
 runs/*
 
+# Cluster job files
+jobs/*
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
