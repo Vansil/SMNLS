@@ -50,7 +50,7 @@ if __name__ == "__main__":
     checkpoint_directory = os.path.join(log_dir,'checkpoints')
     os.makedirs(checkpoint_directory, exist_ok=True)
 
-    writer = SummaryWriter()
+    writer = SummaryWriter('runs/elmo_test')
 
     optimizer = torch.optim.RMSprop(model.parameters(), lr=learning_rate, weight_decay=1e-5)
 
