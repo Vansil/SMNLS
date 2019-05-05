@@ -26,7 +26,7 @@ class BaseModelElmo(nn.Module):
         '''
 
         # embed together such that padding is same for both sentences
-        elmos = self.elmo(X1 + X2)
+        elmos = self.embed_words(X1 + X2)
         # separate
         batch_size = len(X1)
         elmos1 = elmos[:batch_size, :]
@@ -43,11 +43,34 @@ class BaseModelElmo(nn.Module):
 
         # Classify
         return self._classify(concat)
-
+        
     def _classify(self, X):
         X = self._l1(X)
         X = relu(X)
         return self._l2(X)
+
+    def embed_sentences(self, batch):
+        '''
+        Embeds each sentence in the batch by averaging ELMo embeddings.
+        NOTE: not used in training, only for sentence embedding evaluation
+        Args:
+            batch: list of list of words from premise sentences, e.g. [['First', 'sentence', '.'], ['Another', '.']]
+        Returns:
+            embedded: sentence embeddings
+        '''
+        word_embed = self.embed_words(batch)
+        return word_embed.mean(dim=1)
+
+    def embed_words(self, batch):
+        '''
+        Embeds each word in a batch of sentences using ELMo embeddings (contextualized)
+        Args:
+            batch: list of list of words from premise sentences, e.g. [['First', 'sentence', '.'], ['Another', '.']]
+        Returns:
+            embedded: padded ELMo embedding of batch
+        '''
+        return self.elmo(batch)
+
 
 
 
