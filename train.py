@@ -5,7 +5,7 @@ import data
 import os
 import models
 from torch.utils.data import DataLoader
-# from tqdm import tqdm
+from tqdm import tqdm
 import numpy as np
 
 def close_enough(accuracies):
@@ -81,13 +81,13 @@ if __name__ == "__main__":
     base_model = get_model(args.model).to(device)
 
     if args.parallel:
-        model = torch.nn.DataParallel(model).to(device)
+        model = torch.nn.DataParallel(base_model).to(device)
     else:
         model = base_model
 
     writer = SummaryWriter()
 
-    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, momentum=0.99)
+    optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, weight_decay=0.01)
 
     criterion = torch.nn.CrossEntropyLoss()
 
@@ -106,7 +106,7 @@ if __name__ == "__main__":
 
         epoch += 1
 
-        for batch in train_loader:
+        for batch in tqdm(train_loader, total=len(train_loader)):
             optimizer.zero_grad()
             input = tuple(d.to(device) for d in batch[1:])
             target = batch[0].to(device)
@@ -120,6 +120,10 @@ if __name__ == "__main__":
 
             writer.add_scalar("train/loss", loss.item(), step)
 
+            accuracy = torch.sum(torch.argmax(output) == target).item() / target.size(0)
+
+            writer.add_scalar("train/accuracy", accuracy, step)
+
             step += 1
 
         torch.save(base_model.state_dict(), os.path.join(checkpoint_directory, "epoch-{}.pt".format(epoch)))
@@ -128,7 +132,7 @@ if __name__ == "__main__":
         validation_sizes = []
 
         with torch.no_grad():
-            for batch in validation_loader:
+            for batch in tqdm(validation_loader, total=len(validation_loader)):
                 input = tuple(d.to(device) for d in batch[1:])
                 target = batch[0].to(device)
 
@@ -143,7 +147,7 @@ if __name__ == "__main__":
 
         writer.add_scalar("validation/accuracy", accuracy, step)
 
-        if accuracy <= validation_history[-1] or close_enough(validation_history[-3:] + [accuracy]):
+        if accuracy <= validation_history[-1]:
             learning_rate *= shrink_factor
             print("Lowering learnig rate to {}".format(learning_rate))
             update_learning_rate(optimizer, learning_rate)
