@@ -125,7 +125,7 @@ if __name__ == "__main__":
 
                 with torch.no_grad():
                     for batch in validation_loader:
-                        input = tuple(d.to(device) for d in batch[1:])
+                        input = tuple(d for d in batch[1:])
                         target = batch[0].to(device)
 
                         output = model(*input)
