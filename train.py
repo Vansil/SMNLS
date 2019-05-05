@@ -120,7 +120,7 @@ if __name__ == "__main__":
 
             writer.add_scalar("train/loss", loss.item(), step)
 
-            accuracy = torch.sum(torch.argmax(output) == target).item() / target.size(0)
+            accuracy = torch.sum(torch.argmax(output, dim=1) == target).item() / target.size(0)
 
             writer.add_scalar("train/accuracy", accuracy, step)
 
