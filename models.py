@@ -9,12 +9,14 @@ class BaseModelElmo(nn.Module):
     '''
     Model to test elmo embedding
     '''
-    def __init__(self, input_size, hidden_size, output_size):
+    def __init__(self, input_size, hidden_size, output_size, device='cuda'):
         super(BaseModelElmo, self).__init__()
-        self.elmo = ElmoEmbedding()
+        self.elmo = ElmoEmbedding(device=device)
 
         self._l1 = nn.Linear(input_size * 4, hidden_size)
         self._l2 = nn.Linear(hidden_size, output_size)
+
+        self.to(device)
 
     def forward(self, X1, X2):
         '''
@@ -211,3 +213,17 @@ class ElmoEmbedding(nn.Module):
         embeddings = elmo_out['elmo_representations'][0]
         # return batch embeddings
         return embeddings
+
+
+def count_parameters(model):
+    '''
+    Computes the total number of parameters, and the number of trainable parameters
+    Args:
+        model: pytorch model
+    Returns:
+        num_params: total number of parameters
+        num_trainable: number of trainable parameters
+    '''
+    num_params = sum(p.numel() for p in model.parameters())
+    num_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    return num_params, num_trainable
