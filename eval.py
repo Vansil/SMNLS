@@ -35,7 +35,7 @@ def prepare_senteval(params, samples):
 def batcher_senteval(params, batch):
     model = params['evaluated_model']
     batch = [sent if sent != [] else ['.'] for sent in batch]
-    embeddings = model.embed_sentences(batch).cpu().numpy()
+    embeddings = model.embed_sentences(batch).cpu().detach().numpy()
     return embeddings
 
 
