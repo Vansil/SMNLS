@@ -97,7 +97,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--method", "-m", type=str, default='all', choices=["all"]+list(eval_methods.keys()),
-        help="Evaluation method")
+        help="Evaluation method"
     )
     # parser.add_argument(
     #     "--output_path", "-o", type=str, required=False,
