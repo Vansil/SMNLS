@@ -100,7 +100,7 @@ if __name__ == "__main__":
         help="Evaluation method"
     )
     parser.add_argument(
-        "--output_path", "-o", type=str, required=False,
+        "--output_path", "-o", type=str, required=True,
         help="Path to pickle file containing output."
     )
     args = parser.parse_args()
