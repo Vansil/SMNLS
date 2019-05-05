@@ -59,17 +59,15 @@ def eval_senteval(model):
     se = senteval.engine.SE(params, batcher_senteval, prepare_senteval)
 
     # Determine tasks
-    transfer_tasks = ['MR', 'CR', 'MPQA', 'SUBJ', 'SST2', 'TREC',
-                      'MRPC', 'SICKEntailment', 'STS14']
-    # transfer_tasks = ['CR', 'MR', 'MPQA', 'SUBJ', 'SST2', 'SST5', 'TREC', 'MRPC', 'SNLI',
-    #                   'SICKEntailment', 'SICKRelatedness', 'STSBenchmark', 'ImageCaptionRetrieval',
-    #                   'STS12', 'STS13', 'STS14', 'STS15', 'STS16',
-    #                   'Length', 'WordContent', 'Depth', 'TopConstituents','BigramShift', 'Tense',
-    #                   'SubjNumber', 'ObjNumber', 'OddManOut', 'CoordinationInversion']
+    transfer_tasks = ['CR', 'MR', 'MPQA', 'SUBJ', 'SST2', 'SST5', 'TREC', 'MRPC', 'SNLI',
+                      'SICKEntailment', 'SICKRelatedness', 'STSBenchmark', 'ImageCaptionRetrieval',
+                      'STS12', 'STS13', 'STS14', 'STS15', 'STS16',
+                      'Length', 'WordContent', 'Depth', 'TopConstituents','BigramShift', 'Tense',
+                      'SubjNumber', 'ObjNumber', 'OddManOut', 'CoordinationInversion']
     
     # Evaluate
     results = se.eval(transfer_tasks)
-    print(results)
+    return results
 
 
 
@@ -78,11 +76,13 @@ def eval_senteval(model):
 ##################################################################################################
 
 def eval_wic(model):
-    print("WIC")
-    pass
+    return "WiC is not yet implemented"
 
 
 
+##################################################################################################
+# Main function
+##################################################################################################
 
 if __name__ == "__main__":
     eval_methods = {
@@ -99,10 +99,10 @@ if __name__ == "__main__":
         "--method", "-m", type=str, default='all', choices=["all"]+list(eval_methods.keys()),
         help="Evaluation method"
     )
-    # parser.add_argument(
-    #     "--output_path", "-o", type=str, required=False,
-    #     help="Path to whatever output we want."
-    # )
+    parser.add_argument(
+        "--output_path", "-o", type=str, required=False,
+        help="Path to pickle file containing output."
+    )
     args = parser.parse_args()
 
     # Load model
@@ -118,8 +118,12 @@ if __name__ == "__main__":
     else:
         methods = [args.method]
     
+    results = {}
+
     for method in methods:
         print("Starting new evaluation: " + method)
-        eval_methods[method](model)
+        result = eval_methods[method](model)
+        results[method] = result
 
-    # TODO: Output results
+    # Output results
+    torch.save(results, args.output_path)
