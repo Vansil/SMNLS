@@ -176,7 +176,7 @@ class ElmoEmbedding(nn.Module):
     the monolingual news crawl data from WMT 2008-2012 (3.6B).
     Model weights are fixed, mixing weights are either trained or fixed.
     '''
-    def __init__(self, mix_parameters=None):
+    def __init__(self, mix_parameters=None, device='cuda'):
         '''
         Args:
             mix_parameters: weights responsible for averaging between the character embedding 
@@ -190,6 +190,9 @@ class ElmoEmbedding(nn.Module):
         self.elmo = Elmo(options_file, weight_file, num_output_representations=1, dropout=0,
             requires_grad=False, scalar_mix_parameters=mix_parameters)
         
+        # store device for embedding
+        self.device = device
+        
     def forward(self, batch):
         '''
         Embed a batch of sentences
@@ -202,7 +205,7 @@ class ElmoEmbedding(nn.Module):
         '''
 
         # Convert words to character ids
-        character_ids = batch_to_ids(batch)
+        character_ids = batch_to_ids(batch).to(self.device)
         # Embed words
         elmo_out = self.elmo(character_ids)
         embeddings = elmo_out['elmo_representations'][0]
