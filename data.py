@@ -136,7 +136,7 @@ label_dict = {
     "entailment": 2
 }
 
-splitting_regex = re.compile(r"[^() ]")
+splitting_regex = re.compile(r"[^() ]+")
 
 def _extract_data(data_point, embeddings):
     s1 = splitting_regex.findall(data_point["sentence1_binary_parse"])
@@ -148,8 +148,8 @@ def _extract_data(data_point, embeddings):
 
     return {
         "label": label,
-        "s1": torch.from_numpy(np.stack([embeddings[token] for token in s1])),
-        "s2": torch.from_numpy(np.stack([embeddings[token] for token in s2]))
+        "s1": torch.from_numpy(np.stack([embeddings[token] if token in embeddings else embeddings["<unknown>"] for token in s1])),
+        "s2": torch.from_numpy(np.stack([embeddings[token] if token in embeddings else embeddings["<unknown>"] for token in s2]))
     }
 
 def load_embeddings(file_path):
@@ -158,7 +158,9 @@ def load_embeddings(file_path):
         with open(pickle_path, "rb") as f:
             return pickle.load(f)
     else:
-        embeddings = {}
+        embeddings = {
+            "<unknown>": np.random.random(300).astype(np.float32)
+        }
         with open(file_path, "r", encoding="utf-8") as f:
             for line in f.readlines():
                 try:

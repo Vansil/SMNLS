@@ -46,10 +46,6 @@ if __name__ == "__main__":
         help="The directory containing the data to train on."
     )
     parser.add_argument(
-        "--checkpoint-dir", "-c", type=str, required=True,
-        help="The directory to save the model checkpoints."
-    )
-    parser.add_argument(
         "--parallel", "-p", action="store_true", default=False, required=False,
         help="Turn on parallel training."
     )
@@ -60,9 +56,9 @@ if __name__ == "__main__":
     embeddings = data.load_embeddings(args.word_embeddings)
 
     print("Loading datasets.")
-    train_data = data.SnliDataset(os.path.join(args.data_dir, "snli_1.0_train.jsonl"), embeddings)
-    validation_data = data.SnliDataset(os.path.join(args.data_dir, "snli_1.0_dev.jsonl"), embeddings)
-    test_data = data.SnliDataset(os.path.join(args.data_dir, "snli_1.0_test.jsonl"), embeddings)
+    train_data = data.SnliDataset_(os.path.join(args.data_dir, "snli_1.0_train.jsonl"), embeddings)
+    validation_data = data.SnliDataset_(os.path.join(args.data_dir, "snli_1.0_dev.jsonl"), embeddings)
+    test_data = data.SnliDataset_(os.path.join(args.data_dir, "snli_1.0_test.jsonl"), embeddings)
 
     train_loader = DataLoader(
         train_data, shuffle=True, batch_size=64, num_workers=8,
@@ -101,7 +97,7 @@ if __name__ == "__main__":
 
     validation_history = [0, 0, 0, 0]
 
-    checkpoint_directory = os.path.join(args.checkpoint_dir, args.model)
+    checkpoint_directory = os.path.join(writer.log_dir, args.model)
 
     os.makedirs(checkpoint_directory, exist_ok=True)
 
