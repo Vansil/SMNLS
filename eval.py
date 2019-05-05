@@ -15,7 +15,7 @@ import sys
 # path to senteval
 PATH_TO_SENTEVAL = os.path.join('data','SentEval')
 # path to the NLP datasets 
-PATH_TO_DATA = os.path.join(PATH_TO_SENTEVAL, 'data', 'downstream')
+PATH_TO_DATA = os.path.join(PATH_TO_SENTEVAL, 'data')
 # path to glove embeddings
 PATH_TO_VEC = os.path.join('data', 'glove', 'glove.840B.300d.txt')
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     )
     parser.add_argument(
         "--method", "-m", type=str, default='all', choices=["all"]+list(eval_methods.keys()),
-        help="Evaluation method: choose from " + ", ".join(["all"]+list(eval_methods.keys()))
+        help="Evaluation method")
     )
     # parser.add_argument(
     #     "--output_path", "-o", type=str, required=False,
