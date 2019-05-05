@@ -9,6 +9,7 @@ import argparse
 from tensorboardX import SummaryWriter
 import data
 import os
+import time
 import models
 # from tqdm import tqdm
 import numpy as np
@@ -32,9 +33,10 @@ if __name__ == "__main__":
     validation_data = data.SnliDataset(os.path.join('data', 'snli', "snli_1.0_dev.jsonl"))
     test_data = data.SnliDataset(os.path.join('data', 'snli', "snli_1.0_test.jsonl"))
 
-    train_loader = data.SnliDataLoader(train_data, batch_size=64)
-    validation_loader = data.SnliDataLoader(validation_data, batch_size=64)
-    test_loader = data.SnliDataLoader(test_data, batch_size=64)
+    batch_size = 1
+    train_loader = data.SnliDataLoader(train_data, batch_size=batch_size)
+    validation_loader = data.SnliDataLoader(validation_data, batch_size=batch_size)
+    test_loader = data.SnliDataLoader(test_data, batch_size=batch_size)
 
     learning_rate = 0.1
     shrink_factor = 0.2
@@ -42,15 +44,17 @@ if __name__ == "__main__":
     device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
     print("Device: {}".format(device))
 
-    base_model = models.BaseModelElmo(1024, 512, 3)
-    model = base_model.to(device)
+    model = models.BaseModelElmo(1024, 512, 3, device)
     print("Model:", model)
+    num_params, num_trainable = models.count_parameters(model)
+    print("Number of parameters:\t\t{}\nNumber of trainable parameters:\t{}".format(num_params,num_trainable))
 
     log_dir = os.path.join('output','s001_elmotest')
     checkpoint_directory = os.path.join(log_dir,'checkpoints')
     os.makedirs(checkpoint_directory, exist_ok=True)
 
-    writer = SummaryWriter('runs/elmo_test')
+    writer = SummaryWriter('runs/elmo_test_long')
+    writer.add_scalar("train/learningrate", learning_rate, 0)
 
     optimizer = torch.optim.RMSprop(model.parameters(), lr=learning_rate, weight_decay=1e-5)
 
@@ -58,7 +62,7 @@ if __name__ == "__main__":
 
     epoch = 0
 
-    step = 1
+    step = 0
 
     validation_history = [0, 0, 0, 0]
 
@@ -69,6 +73,8 @@ if __name__ == "__main__":
         epoch += 1
 
         for batch in train_loader:
+            t1 = time.time()
+
             optimizer.zero_grad()
             input = tuple(d for d in batch[1:])
             target = batch[0].to(device)
@@ -80,7 +86,10 @@ if __name__ == "__main__":
 
             optimizer.step()
 
-            writer.add_scalar("train/loss", loss.item(), step)
+            t2 = time.time()
+            examples_per_second = batch_size/float(t2-t1)
+
+            accuracy = torch.sum(torch.argmax(output, dim=1) == target).item() / target.size(0)            
 
             step += 1
 
@@ -93,7 +102,14 @@ if __name__ == "__main__":
             for p in model.elmo.elmo.scalar_mix_0.parameters():
                 elmo_params.append(p.item())
 
-            print("Epoch {:02d}\tStep {:02d}\tLoss: {:06.2f}\tGrad norm: {:06.2f}\tElmo params: {}".format(epoch,step, loss.item(), norm, elmo_params))
+            writer.add_scalar("train/accuracy", accuracy, step)
+            writer.add_scalar("train/loss", loss.item(), step)
+            writer.add_scalar("train/gradnorm", norm, step)
+            for i in range(len(elmo_params)):
+                writer.add_scalar("train/elmoparam{}".format(i), elmo_params[i], step)
+
+            print("Epoch {:02d}   Step {:02d}   Accuracy: {:.2f}   Loss: {:02.2f}   Grad norm: {:08.2f}   Examples/Sec: {:03.1f}   Elmo params: {}".format(\
+                epoch, step, accuracy, loss.item(), norm, examples_per_second, ", ".join(["{:.4f}".format(p) for p in elmo_params])))
 
 
         torch.save(base_model.state_dict(), os.path.join(checkpoint_directory, "epoch-{}.pt".format(epoch)))
@@ -121,6 +137,7 @@ if __name__ == "__main__":
         if accuracy <= validation_history[-1] or close_enough(validation_history[-3:] + [accuracy]):
             learning_rate *= shrink_factor
             print("Lowering learnig rate to {}".format(learning_rate))
+            writer.add_scalar("train/learningrate", learning_rate, step)
             update_learning_rate(optimizer, learning_rate)
 
         validation_history.append(accuracy)
