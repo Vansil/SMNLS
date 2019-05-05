@@ -43,7 +43,7 @@ if __name__ == "__main__":
     print("Device: {}".format(device))
 
     base_model = models.BaseModelElmo(1024, 512, 3)
-    model = base_model
+    model = base_model.to(device)
     print("Model:", model)
 
     log_dir = os.path.join('output','s001_elmotest')
