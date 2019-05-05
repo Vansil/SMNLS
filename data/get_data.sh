@@ -19,6 +19,12 @@ mkdir -p elmo
 wget -O elmo/elmo_2x4096_512_2048cnn_2xhighway_5.5B_weights.hdf5 https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway_5.5B/elmo_2x4096_512_2048cnn_2xhighway_5.5B_weights.hdf5
 wget -O elmo/elmo_2x4096_512_2048cnn_2xhighway_5.5B_options.json https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway_5.5B/elmo_2x4096_512_2048cnn_2xhighway_5.5B_options.json
 
+# Word-in-Context
+echo "Getting Word-in-Context
+wget -O wic.zip https://pilehvar.github.io/wic/package/WiC_dataset.zip
+unzip wic.zip -d wic/
+rm wic.zip
+
 # SentEval
 echo "Getting SentEval"
 git clone https://github.com/facebookresearch/SentEval.git

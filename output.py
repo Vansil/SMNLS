@@ -40,7 +40,7 @@ class OutputWriter(object):
         '''
         Save model state dict to pickle file
         '''
-        torch.save(model.state_dict(), os.path.join(self.dir_check, '{:09d}.pt'.format(iter)))
+        torch.save(model, os.path.join(self.dir_check, '{:09d}.pt'.format(iter)))
         
 
     def log(self, text):
