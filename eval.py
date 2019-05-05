@@ -25,47 +25,6 @@ import senteval
 SENTEVAL_FAST = True # Set to false to perform slower SentEval with better results
 
 
-if __name__ == "__main__":
-    eval_methods = {
-        "senteval": eval_senteval,
-        "wic": eval_wic
-    }
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument(
-        "--checkpoint", "-c", type=str, required=True,
-        help="Path to the checkpoint file"
-    )
-    parser.add_argument(
-        "--method", "-m", type=str, default='all', choices=["all"]+list(eval_methods.keys()),
-        help="Evaluation method: choose from " + ", ".join(["all"]+list(eval_methods.keys()))
-    )
-    # parser.add_argument(
-    #     "--output_path", "-o", type=str, required=False,
-    #     help="Path to whatever output we want."
-    # )
-    args = parser.parse_args()
-
-    # Load model
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    print("Loading model")
-    model = torch.load(args.checkpoint, map_location=device)
-    print("Device: "+device)
-    print("Model:" + str(model))
-    
-    # Perform evaluation
-    if args.method == 'all':
-        methods = list(eval_methods.keys())
-    else:
-        methods = [args.method]
-    
-    for method in methods:
-        print("Starting new evaluation: " + method)
-        eval_methods[method](model)
-
-    # TODO: Output results
-
-
 ##################################################################################################
 # SentEval
 ##################################################################################################
@@ -121,3 +80,46 @@ def eval_senteval(model):
 def eval_wic(model):
     print("WIC")
     pass
+
+
+
+
+if __name__ == "__main__":
+    eval_methods = {
+        "senteval": eval_senteval,
+        "wic": eval_wic
+    }
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--checkpoint", "-c", type=str, required=True,
+        help="Path to the checkpoint file"
+    )
+    parser.add_argument(
+        "--method", "-m", type=str, default='all', choices=["all"]+list(eval_methods.keys()),
+        help="Evaluation method: choose from " + ", ".join(["all"]+list(eval_methods.keys()))
+    )
+    # parser.add_argument(
+    #     "--output_path", "-o", type=str, required=False,
+    #     help="Path to whatever output we want."
+    # )
+    args = parser.parse_args()
+
+    # Load model
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print("Loading model")
+    model = torch.load(args.checkpoint, map_location=device)
+    print("Device: "+device)
+    print("Model:" + str(model))
+    
+    # Perform evaluation
+    if args.method == 'all':
+        methods = list(eval_methods.keys())
+    else:
+        methods = [args.method]
+    
+    for method in methods:
+        print("Starting new evaluation: " + method)
+        eval_methods[method](model)
+
+    # TODO: Output results
