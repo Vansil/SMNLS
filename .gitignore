@@ -6,6 +6,7 @@ data/*
 
 # Outputs
 runs/*
+output/*
 
 # Cluster job files
 jobs/*
