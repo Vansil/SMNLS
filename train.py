@@ -8,14 +8,6 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 import numpy as np
 
-def close_enough(accuracies):
-    for a1 in accuracies:
-        for a2 in accuracies:
-            if not np.isclose(a1, a2, atol=0, rtol=1.0e-2):
-                return False
-
-    return True
-
 def get_model(model_name):
     if model_name == "base-line":
         return models.BaseModel(300, 512, 3)
@@ -48,6 +40,14 @@ if __name__ == "__main__":
     parser.add_argument(
         "--parallel", "-p", action="store_true", default=False, required=False,
         help="Turn on parallel training."
+    )
+    parser.add_argument(
+        "--output-dir", "-o", type=str, default=None, required=False,
+        help="The directory into which tensorboard logs and model checkpoints will be placed."
+    )
+    parser.add_argument(
+        "--embedding-type", "-e", type=str, choices=["ELMo", "GloVe"], default="GloVe",
+        help="The type of word embeddings to use."
     )
 
     args = parser.parse_args()
@@ -85,7 +85,7 @@ if __name__ == "__main__":
     else:
         model = base_model
 
-    writer = SummaryWriter()
+    writer = SummaryWriter(log_dir=args.output_dir)
 
     optimizer = torch.optim.SGD(model.parameters(), lr=learning_rate, weight_decay=0.01)
 
@@ -103,6 +103,8 @@ if __name__ == "__main__":
 
     while learning_rate > 1.0e-5:
         optimizer.zero_grad()
+
+        writer.add_scalar("parameters/learning-rate", learning_rate, step)
 
         epoch += 1
 
