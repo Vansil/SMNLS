@@ -19,6 +19,13 @@ mkdir -p elmo
 wget -O elmo/elmo_2x4096_512_2048cnn_2xhighway_5.5B_weights.hdf5 https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway_5.5B/elmo_2x4096_512_2048cnn_2xhighway_5.5B_weights.hdf5
 wget -O elmo/elmo_2x4096_512_2048cnn_2xhighway_5.5B_options.json https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway_5.5B/elmo_2x4096_512_2048cnn_2xhighway_5.5B_options.json
 
-
-
+# SentEval
+echo "Getting SentEval"
+git clone https://github.com/facebookresearch/SentEval.git
+cd SentEval/
+source activate dl
+python setup.py install
+source deactivate
+cd data/downstream/
+./get_transfer_data.bash
 
