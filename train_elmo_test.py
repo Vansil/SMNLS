@@ -38,7 +38,7 @@ if __name__ == "__main__":
     validation_data = data.SnliDataset(os.path.join('data', 'snli', "snli_1.0_dev.jsonl"))
     test_data = data.SnliDataset(os.path.join('data', 'snli', "snli_1.0_test.jsonl"))
 
-    batch_size = 1
+    batch_size = 64 
     train_loader = data.SnliDataLoader(train_data, batch_size=batch_size)
     validation_loader = data.SnliDataLoader(validation_data, batch_size=batch_size)
     test_loader = data.SnliDataLoader(test_data, batch_size=batch_size)
