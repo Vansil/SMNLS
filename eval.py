@@ -96,6 +96,7 @@ class WicEvaluator():
         results = {}
 
         # Load datasets
+        print("Loading datasets and labels")
         data = {
             'train': self.load_data(os.path.join(PATH_TO_WIC, 'train', 'train.data.txt')),
             'dev':   self.load_data(os.path.join(PATH_TO_WIC, 'dev', 'dev.data.txt'))  
@@ -106,13 +107,15 @@ class WicEvaluator():
         }
 
         # Extract embedded words
+        print("Embed words")
         embeddings = {}
         for set_name in ['train', 'dev']:
+            print("\t{} set".format(set_name))
             embeddings[set_name] = []
-            for data_point in data:
+            for data_point in data[set_name]:
                 # Embed the two sentences
-                sentence_pair = data['sentences']
-                word_positions = data['positions']
+                sentence_pair = data_point['sentences']
+                word_positions = data_point['positions']
                 embedding_sentence = self.model.embed_words(sentence_pair)
                 # Extract the two word embedding
                 embeddings[set_name].append(
@@ -122,6 +125,7 @@ class WicEvaluator():
 
         # Evaluate thresholded cosine similarity metric
         # Compute cosine similarity
+        print("Evaluating cosine similarity - threshold method")
         cosine_scores = {}
         for set_name in ['train', 'dev']:
             N = len(embeddings[set_name])
