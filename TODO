@@ -1,6 +1,29 @@
 TODO:
 zie ook Google Docs: https://docs.google.com/document/d/1MyKtpJo-vQjtpHbITRMSR5xyMoxn5zrZyDGeWYsIbmc/edit
 
+Other:
+- Shared LISA account (lgpu0219, Bjachan69)
+
+
+--------------------------------------------
+WEEK 3
+Bjarne:
+- add VUA to get_data.sh
+- test Sequential model on VUA
+- maak dataloader parallel
+
+
+Silvan
+- general Embedding Module
+- Evaluation
+
+Tycho:
+- State of the art opzoeken
+
+-------------------------------------------
+
+WEEK2
+
 Evaluation: (TYCHO)
 - SentEval
 - Word-in-Context
@@ -16,5 +39,7 @@ Experiment:
 - Make subsets of data -> overfit
 - Train at least one model to ok performance (BJARNE)
 
-Other:
-- Shared LISA account (lgpu0219, Bjachan69)
+
+
+
+
