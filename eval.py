@@ -24,7 +24,7 @@ PATH_TO_WIC = os.path.join('data','wic')
 
 # import SentEval
 sys.path.insert(0, PATH_TO_SENTEVAL)
-# import senteval
+import senteval
 SENTEVAL_FAST = True # Set to false to perform slower SentEval with better results
 
 
