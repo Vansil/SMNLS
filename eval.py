@@ -5,6 +5,9 @@ Evaluation methods:
 - Word-in-Context
 '''
 
+print("PRINT AT START")
+
+
 import argparse
 import torch
 import logging
@@ -27,6 +30,7 @@ sys.path.insert(0, PATH_TO_SENTEVAL)
 import senteval
 SENTEVAL_FAST = True # Set to false to perform slower SentEval with better results
 
+print("PRINT AFTER IMPORTS")
 
 ##################################################################################################
 # SentEval
