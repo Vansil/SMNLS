@@ -141,7 +141,7 @@ class WicEvaluator():
         train_labels = np.array(labels['train'])
         for threshold in thresholds:
             predictions = cosine_scores['train'] > threshold
-            accuracy = (predictions & train_labels).mean()
+            accuracy = (predictions == train_labels).mean()
             print("Threshold {} -> Train accuracy: {}".format(threshold, accuracy))
             if accuracy > best_acc:
                 best_threshold = threshold
@@ -150,7 +150,7 @@ class WicEvaluator():
         print("Best threshold: {}, Dev accuracy: {}".format(best_threshold, best_acc))
         dev_labels = np.array(labels['dev'])
         predictions = cosine_scores['dev'] > best_threshold
-        accuracy = (predictions & dev_labels).mean()
+        accuracy = (predictions == dev_labels).mean()
         # add performance to results and write predictions to output file
         results['threshold'] = {
             'threshold': best_threshold,
