@@ -42,7 +42,7 @@ def batcher_senteval(params, batch):
     return embeddings
 
 
-def eval_senteval(model, output_path):
+def eval_senteval(model, output_dir):
     # Set up logger
     logging.basicConfig(format='%(asctime)s : %(message)s', level=logging.DEBUG)
 
@@ -79,17 +79,17 @@ def eval_senteval(model, output_path):
 # Word-in-Context
 ##################################################################################################
 
-def eval_wic(model, output_path):
-    evaluater = WicEvaluator(model, output_path)
+def eval_wic(model, output_dir):
+    evaluater = WicEvaluator(model, output_dir)
     return evaluater.evaluate()
 
 class WicEvaluator():
     '''
     Container for WiC evaluation functions
     '''
-    def __init__(self, model, output_path):
+    def __init__(self, model, output_dir):
         self.model = model
-        self.output_path = output_path
+        self.output_dir = output_dir
 
     def evaluate(self):
 
@@ -154,7 +154,7 @@ class WicEvaluator():
             'threshold': best_threshold,
             'accuracy': accuracy
         }
-        with open(os.path.join(self.output_path, 'wic_dev_predictions.txt'), 'w') as f:
+        with open(os.path.join(self.output_dir, 'wic_dev_predictions.txt'), 'w') as f:
             for label in predictions:
                 f.write('T\n' if label else 'F\n')
 
@@ -221,13 +221,13 @@ if __name__ == "__main__":
         help="Evaluation method"
     )
     parser.add_argument(
-        "--output_path", "-o", type=str, required=True,
-        help="Path to pickle file containing output."
+        "--output_dir", "-o", type=str, required=True,
+        help="Directory for output files."
     )
     args = parser.parse_args()
 
     # Create output directory
-    os.makedirs(args.output_path, exist_ok=True)
+    os.makedirs(args.output_dir, exist_ok=True)
 
     # Load model
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
@@ -246,8 +246,8 @@ if __name__ == "__main__":
 
     for method in methods:
         print("Starting new evaluation: " + method)
-        result = eval_methods[method](model, args.output_path)
+        result = eval_methods[method](model, args.output_dir)
         results[method] = result
 
     # Output results
-    torch.save(results, args.output_path)
+    torch.save(results, os.path.join(args.output_dir, 'results.pt'))
