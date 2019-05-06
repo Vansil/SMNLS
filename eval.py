@@ -142,10 +142,12 @@ class WicEvaluator():
         for threshold in thresholds:
             predictions = cosine_scores['train'] > threshold
             accuracy = (predictions & train_labels).mean()
+            print("Threshold {} -> Train accuracy: {}".format(threshold, accuracy))
             if accuracy > best_acc:
                 best_threshold = threshold
                 best_acc = accuracy
         # Evaluate dev data using threshold
+        print("Best threshold: {}, Dev accuracy: {}".format(best_threshold, best_acc))
         dev_labels = np.array(labels['dev'])
         predictions = cosine_scores['dev'] > best_threshold
         accuracy = (predictions & dev_labels).mean()
