@@ -222,6 +222,9 @@ if __name__ == "__main__":
     )
     args = parser.parse_args()
 
+    # Create output directory
+    os.makedirs(args.output_path, exist_ok=True)
+
     # Load model
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print("Loading model")
