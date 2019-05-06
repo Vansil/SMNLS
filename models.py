@@ -56,7 +56,7 @@ class BaseModelElmo(nn.Module):
         Args:
             batch: list of list of words from premise sentences, e.g. [['First', 'sentence', '.'], ['Another', '.']]
         Returns:
-            embedded: sentence embeddings
+            embedded: sentence embeddings. Shape (batch, features)
         '''
         word_embed = self.embed_words(batch)
         return word_embed.mean(dim=1)
@@ -67,7 +67,7 @@ class BaseModelElmo(nn.Module):
         Args:
             batch: list of list of words from premise sentences, e.g. [['First', 'sentence', '.'], ['Another', '.']]
         Returns:
-            embedded: padded ELMo embedding of batch
+            embedded: ELMo embedding of batch, padded to make sentences of equal length. Shape (batch, sequence, features)
         '''
         return self.elmo(batch)
 

@@ -10,6 +10,7 @@ import torch
 import logging
 import os
 import sys
+import numpy as np
 
 # Set PATHs
 # path to senteval
@@ -18,10 +19,12 @@ PATH_TO_SENTEVAL = os.path.join('data','SentEval')
 PATH_TO_DATA = os.path.join(PATH_TO_SENTEVAL, 'data')
 # path to glove embeddings
 PATH_TO_VEC = os.path.join('data', 'glove', 'glove.840B.300d.txt')
+# path to WiC data
+PATH_TO_WIC = os.path.join('data','wic')
 
 # import SentEval
 sys.path.insert(0, PATH_TO_SENTEVAL)
-import senteval
+# import senteval
 SENTEVAL_FAST = True # Set to false to perform slower SentEval with better results
 
 
@@ -39,7 +42,7 @@ def batcher_senteval(params, batch):
     return embeddings
 
 
-def eval_senteval(model):
+def eval_senteval(model, output_path):
     # Set up logger
     logging.basicConfig(format='%(asctime)s : %(message)s', level=logging.DEBUG)
 
@@ -76,8 +79,121 @@ def eval_senteval(model):
 # Word-in-Context
 ##################################################################################################
 
-def eval_wic(model):
-    return "WiC is not yet implemented"
+def eval_wic(model, output_path):
+    evaluater = WicEvaluator(model, output_path)
+    return evaluater.evaluate()
+
+class WicEvaluator():
+    '''
+    Container for WiC evaluation functions
+    '''
+    def __init__(self, model, output_path):
+        self.model = model
+        self.output_path = output_path
+
+    def evaluate(self):
+
+        results = {}
+
+        # Load datasets
+        data = {
+            'train': self.load_data(os.path.join(PATH_TO_WIC, 'train', 'train.data.txt')),
+            'dev':   self.load_data(os.path.join(PATH_TO_WIC, 'dev', 'dev.data.txt'))  
+        }
+        labels = {
+            'train': self.load_labels(os.path.join(PATH_TO_WIC, 'train', 'train.gold.txt')),
+            'dev':   self.load_labels(os.path.join(PATH_TO_WIC, 'dev', 'dev.gold.txt'))
+        }
+
+        # Extract embedded words
+        embeddings = {}
+        for set_name in ['train', 'dev']:
+            embeddings[set_name] = []
+            for data_point in data:
+                # Embed the two sentences
+                sentence_pair = data['sentences']
+                word_positions = data['positions']
+                embedding_sentence = self.model.embed_words(sentence_pair)
+                # Extract the two word embedding
+                embeddings[set_name].append(
+                    (embedding_sentence[0, word_positions[0]].detach(), 
+                     embedding_sentence[1, word_positions[1]].detach())
+                )
+
+        # Evaluate thresholded cosine similarity metric
+        # Compute cosine similarity
+        cosine_scores = {}
+        for set_name in ['train', 'dev']:
+            N = len(embeddings[set_name])
+            cosine_scores[set_name] = np.zeros(N)
+            for i in range(N):
+                emb = embeddings[set_name][i]
+                score = emb[0] @ emb[1] / emb[0].norm() / emb[1].norm()
+                cosine_scores[set_name][i] = score
+        # Find best threshold by trying at every 0.02 interval on the training data
+        thresholds = np.linspace(0, 1, 51)
+        best_threshold = 0
+        best_acc = 0
+        train_labels = np.array(labels['train'])
+        for threshold in thresholds:
+            predictions = cosine_scores['train'] > threshold
+            accuracy = (predictions & train_labels).mean()
+            if accuracy > best_acc:
+                best_threshold = threshold
+                best_acc = accuracy
+        # Evaluate dev data using threshold
+        dev_labels = np.array(labels['dev'])
+        predictions = cosine_scores['dev'] > best_threshold
+        accuracy = (predictions & dev_labels).mean()
+        # add performance to results and write predictions to output file
+        results['threshold'] = {
+            'threshold': best_threshold,
+            'accuracy': accuracy
+        }
+        with open(os.path.join(self.output_path, 'wic_dev_predictions.txt'), 'w') as f:
+            for label in predictions:
+                f.write('T\n' if label else 'F\n')
+
+
+        return results
+    
+
+    def load_data(self, data_path):
+        '''
+        Loads the WiC data from the .txt file as list of dicts
+        Example data point:
+            {'word': 'board',
+            'pos': 'N',
+            'positions': [2, 2],
+            'sentences': [['Room', 'and', 'board', '.'],
+                ['He', 'nailed', 'boards', 'across', 'the', 'windows', '.']]}
+        '''
+        data = []
+        with open(data_path, 'r') as f:
+            for line in f:
+                elements = line[:-1].split("\t")
+                data.append({
+                    'word': elements[0],
+                    'pos': elements[1],
+                    'positions': [int(p) for p in elements[2].split('-')],
+                    'sentences': [
+                        elements[3].split(),
+                        elements[4].split()
+                    ]
+                })
+        return data
+
+    def load_labels(self, labels_path):
+        '''
+        Loads the WiC labels from the .txt file as list
+        Indices correspond to data indices
+        Labels: T -> True, F -> False
+        '''
+        labels = []
+        with open(labels_path, 'r') as f:
+            for line in f:
+                labels.append(line[0] == 'T')
+        return labels
 
 
 
@@ -123,7 +239,7 @@ if __name__ == "__main__":
 
     for method in methods:
         print("Starting new evaluation: " + method)
-        result = eval_methods[method](model)
+        result = eval_methods[method](model, args.output_path)
         results[method] = result
 
     # Output results
