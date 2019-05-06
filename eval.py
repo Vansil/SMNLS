@@ -59,7 +59,8 @@ def eval_senteval(model):
     se = senteval.engine.SE(params, batcher_senteval, prepare_senteval)
 
     # Determine tasks
-    transfer_tasks = ['CR', 'MR', 'MPQA', 'SUBJ', 'SST2', 'SST5', 'TREC', 'MRPC', 'SNLI',
+    # Tested succesfully: 'CR', 'MR', 'MPQA', 'SUBJ', 'SST2', 'SST5', 'TREC', 'MRPC', 
+    transfer_tasks = ['SNLI',
                       'SICKEntailment', 'SICKRelatedness', 'STSBenchmark', 'ImageCaptionRetrieval',
                       'STS12', 'STS13', 'STS14', 'STS15', 'STS16',
                       'Length', 'WordContent', 'Depth', 'TopConstituents','BigramShift', 'Tense',
