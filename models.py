@@ -11,6 +11,7 @@ class TestModel(nn.Module):
     '''
     def __init__(self):
         super(TestModel, self).__init__()
+        self.emb = nn.Embedding(1,10)
 
     def forward(self, x):
         batch_size = len(x)
@@ -25,8 +26,7 @@ class TestModel(nn.Module):
         Returns:
             embedded: sentence embeddings. Shape (batch, features)
         '''
-        batch_size = len(batch)
-        return torch.rand(batch_size, 10)
+        return self.embed_words(batch).mean(dim=1)
 
     def embed_words(self, batch):
         '''
@@ -38,7 +38,8 @@ class TestModel(nn.Module):
         '''
         batch_size = len(batch)
         seq_len = len(batch[0])
-        return torch.rand(batch_size, seq_len, 8)
+        indices = torch.LongTensor(batch_size * [seq_len * [0]])
+        return self.emb(indices)
     
 
 
