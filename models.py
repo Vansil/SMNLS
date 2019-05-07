@@ -9,9 +9,11 @@ class TestModel(nn.Module):
     '''
     model to test SentEval, returns random word and sentence embedding
     '''
-    def __init__(self):
+    def __init__(self, device='cuda'):
         super(TestModel, self).__init__()
         self.emb = nn.Embedding(1,10)
+        self.device = device
+        self.to(device)
 
     def forward(self, x):
         batch_size = len(x)
@@ -38,7 +40,7 @@ class TestModel(nn.Module):
         '''
         batch_size = len(batch)
         seq_len = len(batch[0])
-        indices = torch.LongTensor(batch_size * [seq_len * [0]])
+        indices = torch.LongTensor(batch_size * [seq_len * [0]]).to(self.device)
         return self.emb(indices)
     
 
