@@ -12,6 +12,7 @@ wget -O snli.zip https://nlp.stanford.edu/projects/snli/snli_1.0.zip
 unzip snli.zip
 rm snli.zip
 mv snli_1.0 snli
+# solve issues as described here: https://github.com/facebookresearch/SentEval/issues/56
 
 # ELMo
 echo "Getting ELMo"
