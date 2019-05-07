@@ -161,8 +161,8 @@ class WicEvaluator():
             'accuracy': accuracy
         }
         with open(os.path.join(self.output_dir, 'wic_dev_predictions.txt'), 'w') as f:
-            for label in predictions:
-                f.write('T\n' if label else 'F\n')
+            for label, score in zip(predictions, cosine_scores['dev']):
+                f.write("{},{}\n".format('T' if label else 'F', ))
 
 
         return results
