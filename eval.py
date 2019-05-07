@@ -162,7 +162,7 @@ class WicEvaluator():
         }
         with open(os.path.join(self.output_dir, 'wic_dev_predictions.txt'), 'w') as f:
             for label, score in zip(predictions, cosine_scores['dev']):
-                f.write("{},{}\n".format('T' if label else 'F', ))
+                f.write("{},{}\n".format('T' if label else 'F', score))
 
 
         return results
