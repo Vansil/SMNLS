@@ -67,7 +67,7 @@ def eval_senteval(model, output_dir):
 
     # Determine tasks
     # Tested succesfully: 'CR', 'MR', 'MPQA', 'SUBJ', 'SST2', 'SST5', 'TREC', 'MRPC', 
-    transfer_tasks = ['SNLI',
+    transfer_tasks = ['CR', 'SNLI',
                       'SICKEntailment', 'SICKRelatedness', 'STSBenchmark', 'ImageCaptionRetrieval',
                       'STS12', 'STS13', 'STS14', 'STS15', 'STS16',
                       'Length', 'WordContent', 'Depth', 'TopConstituents','BigramShift', 'Tense',
