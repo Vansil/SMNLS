@@ -5,6 +5,44 @@ import torch
 from embeddings import WordEmbedding
 
 
+class TestModel(nn.Module):
+    '''
+    model to test SentEval, returns random word and sentence embedding
+    '''
+    def __init__(self):
+        super(TestModel, self).__init__()
+
+    def forward(self, x):
+        batch_size = len(x)
+        return torch.rand(batch_size)
+
+    def embed_sentences(self, batch):
+        '''
+        Embeds each sentence in the batch by averaging ELMo embeddings.
+        NOTE: not used in training, only for sentence embedding evaluation
+        Args:
+            batch: list of list of words from premise sentences, e.g. [['First', 'sentence', '.'], ['Another', '.']]
+        Returns:
+            embedded: sentence embeddings. Shape (batch, features)
+        '''
+        batch_size = len(batch)
+        return torch.rand(batch_size, 10)
+
+    def embed_words(self, batch):
+        '''
+        Embeds each word in a batch of sentences using ELMo embeddings (contextualized)
+        Args:
+            batch: list of list of words from premise sentences, e.g. [['First', 'sentence', '.'], ['Another', '.']]
+        Returns:
+            embedded: ELMo embedding of batch, padded to make sentences of equal length. Shape (batch, sequence, features)
+        '''
+        batch_size = len(batch)
+        seq_len = len(batch[0])
+        return torch.rand(batch_size, seq_len, 8)
+    
+
+
+
 class BaseModelElmo(nn.Module):
     '''
     Model to test elmo embedding
