@@ -44,6 +44,27 @@ class TestModel(nn.Module):
         return self.emb(indices)
     
 
+class BaselineElmo1(nn.Module):
+    '''
+    Baseline model as in WiC paper by Pilehvar & Camacho-Collados
+    Returns hidden state of the first ELMo LSTM
+    '''
+    def __init__(self, device='cuda'):
+        super(BaselineElmo1, self).__init__()
+        self.elmo = WordEmbedding(device=device)
+        self.elmo.add_elmo(mix_parameters=[1, 0, 1, 0])
+
+        self.to(device)
+
+    def forward(self, batch):
+        return self.embed_words(batch)
+
+    def embed_words(self, batch):
+        return self.elmo(batch)
+
+    def embed_sentences(self, batch):
+        raise Exception("ELMo1 does not produce a sentence embedding")
+
 
 
 class BaseModelElmo(nn.Module):
