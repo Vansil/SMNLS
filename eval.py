@@ -66,12 +66,7 @@ def eval_senteval(model, output_dir):
     se = senteval.engine.SE(params, batcher_senteval, prepare_senteval)
 
     # Determine tasks
-    # Tested succesfully: 'CR', 'MR', 'MPQA', 'SUBJ', 'SST2', 'SST5', 'TREC', 'MRPC', 
-    transfer_tasks = ['CR', 'SNLI',
-                      'SICKEntailment', 'SICKRelatedness', 'STSBenchmark', 'ImageCaptionRetrieval',
-                      'STS12', 'STS13', 'STS14', 'STS15', 'STS16',
-                      'Length', 'WordContent', 'Depth', 'TopConstituents','BigramShift', 'Tense',
-                      'SubjNumber', 'ObjNumber', 'OddManOut', 'CoordinationInversion']
+    transfer_tasks = args.senteval_methods.split(",")
     
     # Evaluate
     results = se.eval(transfer_tasks)
@@ -226,6 +221,9 @@ if __name__ == "__main__":
         "--method", "-m", type=str, default='all', choices=["all"]+list(eval_methods.keys()),
         help="Evaluation method"
     )
+    parser.add_argument('--senteval_methods', type=str, 
+        default='CR,MR,MPQA,SUBJ,SST2,SST5,TREC,MRPC,SICKEntailment,SICKRelatedness,STSBenchmark,ImageCaptionRetrieval,STS12,STS13,STS14,STS15,STS16,Length,WordContent,Depth,TopConstituents,BigramShift,Tense,SubjNumber,ObjNumber,OddManOut,CoordinationInversion',
+        help='SentEval methods to evaluate')
     parser.add_argument(
         "--output_dir", "-o", type=str, required=True,
         help="Directory for output files."
