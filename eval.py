@@ -25,9 +25,7 @@ PATH_TO_VEC = os.path.join('data', 'glove', 'glove.840B.300d.txt')
 # path to WiC data
 PATH_TO_WIC = os.path.join('data','wic')
 
-# import SentEval
-sys.path.insert(0, PATH_TO_SENTEVAL)
-import senteval
+# SentEval parameter
 SENTEVAL_FAST = True # Set to false to perform slower SentEval with better results
 
 print("PRINT AFTER IMPORTS")
@@ -47,6 +45,10 @@ def batcher_senteval(params, batch):
 
 
 def eval_senteval(model, output_dir):
+    # import SentEval
+    sys.path.insert(0, PATH_TO_SENTEVAL)
+    import senteval
+    
     # Set up logger
     logging.basicConfig(format='%(asctime)s : %(message)s', level=logging.DEBUG)
 

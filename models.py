@@ -5,56 +5,16 @@ import torch
 from embeddings import WordEmbedding
 
 
-class TestModel(nn.Module):
-    '''
-    model to test SentEval, returns random word and sentence embedding
-    '''
-    def __init__(self, device='cuda'):
-        super(TestModel, self).__init__()
-        self.emb = nn.Embedding(1,10)
-        self.device = device
-        self.to(device)
-
-    def forward(self, x):
-        batch_size = len(x)
-        return torch.rand(batch_size)
-
-    def embed_sentences(self, batch):
-        '''
-        Embeds each sentence in the batch by averaging ELMo embeddings.
-        NOTE: not used in training, only for sentence embedding evaluation
-        Args:
-            batch: list of list of words from premise sentences, e.g. [['First', 'sentence', '.'], ['Another', '.']]
-        Returns:
-            embedded: sentence embeddings. Shape (batch, features)
-        '''
-        return self.embed_words(batch).mean(dim=1)
-
-    def embed_words(self, batch):
-        '''
-        Embeds each word in a batch of sentences using ELMo embeddings (contextualized)
-        Args:
-            batch: list of list of words from premise sentences, e.g. [['First', 'sentence', '.'], ['Another', '.']]
-        Returns:
-            embedded: ELMo embedding of batch, padded to make sentences of equal length. Shape (batch, sequence, features)
-        '''
-        batch_size = len(batch)
-        seq_len = len(batch[0])
-        indices = torch.LongTensor(batch_size * [seq_len * [0]]).to(self.device)
-        return self.emb(indices)
-    
-
 class BaselineElmo1(nn.Module):
     '''
     Baseline model as in WiC paper by Pilehvar & Camacho-Collados
     Returns hidden state of the first ELMo LSTM
     '''
-    def __init__(self, device='cuda'):
+    def __init__(self):
         super(BaselineElmo1, self).__init__()
-        self.elmo = WordEmbedding(device=device)
-        self.elmo.add_elmo(mix_parameters=[1, 0, 1, 0])
-
-        self.to(device)
+        # make embedding
+        self.embedding = WordEmbedding()
+        self.embedding.set_elmo(mix_parameters=[0, 1, 0])
 
     def forward(self, batch):
         return self.embed_words(batch)
@@ -64,8 +24,6 @@ class BaselineElmo1(nn.Module):
 
     def embed_sentences(self, batch):
         raise Exception("ELMo1 does not produce a sentence embedding")
-
-
 
 class BaseModelElmo(nn.Module):
     '''
@@ -133,6 +91,50 @@ class BaseModelElmo(nn.Module):
             embedded: ELMo embedding of batch, padded to make sentences of equal length. Shape (batch, sequence, features)
         '''
         return self.elmo(batch)
+
+
+
+class TestModel(nn.Module):
+    '''
+    model to test SentEval, returns random word and sentence embedding
+    '''
+    def __init__(self, device='cuda'):
+        super(TestModel, self).__init__()
+        self.emb = nn.Embedding(1,10)
+        self.device = device
+        self.to(device)
+
+    def forward(self, x):
+        batch_size = len(x)
+        return torch.rand(batch_size)
+
+    def embed_sentences(self, batch):
+        '''
+        Embeds each sentence in the batch by averaging ELMo embeddings.
+        NOTE: not used in training, only for sentence embedding evaluation
+        Args:
+            batch: list of list of words from premise sentences, e.g. [['First', 'sentence', '.'], ['Another', '.']]
+        Returns:
+            embedded: sentence embeddings. Shape (batch, features)
+        '''
+        return self.embed_words(batch).mean(dim=1)
+
+    def embed_words(self, batch):
+        '''
+        Embeds each word in a batch of sentences using ELMo embeddings (contextualized)
+        Args:
+            batch: list of list of words from premise sentences, e.g. [['First', 'sentence', '.'], ['Another', '.']]
+        Returns:
+            embedded: ELMo embedding of batch, padded to make sentences of equal length. Shape (batch, sequence, features)
+        '''
+        batch_size = len(batch)
+        seq_len = len(batch[0])
+        indices = torch.LongTensor(batch_size * [seq_len * [0]]).to(self.device)
+        return self.emb(indices)
+
+
+
+
 
 
 
@@ -270,3 +272,10 @@ def count_parameters(model):
     num_params = sum(p.numel() for p in model.parameters())
     num_trainable = sum(p.numel() for p in model.parameters() if p.requires_grad)
     return num_params, num_trainable
+
+def model_state_dict(model):
+    '''
+    Filters the state dict of a model to exclude the embedding.
+    The embedding in the model should have the name 'embedding'
+    '''
+    return {key: value for key, value in model.state_dict().items() if key.split('.')[0] != 'embedding'}

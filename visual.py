@@ -1,6 +1,11 @@
 import pandas as pd
 import torch
 
+'''
+Ideas:
++ WiC ROC curve
++ t-sne of sentence batch under model
+'''
 
 def sent_eval_table(results_file, output_file):
     '''

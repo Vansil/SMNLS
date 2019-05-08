@@ -1,9 +1,12 @@
 from torch import nn
 from torch.nn.functional import relu
 import torch
+import re
+import numpy as np
 
 from allennlp.modules.elmo import Elmo, batch_to_ids
 
+GLOVE_FILE = 'data/glove/glove.840B.300d.txt'
 
 
 
@@ -11,37 +14,52 @@ class WordEmbedding(nn.Module):
     '''
     General module for word embeddings
     Supports contextualized ELMo embedding, GloVe vectors and index embedding
-    TODO: index embedding: zero padding, maybe zero when index overflow; GloVe; add parameters to Module so optim can find them
+    TODO: packed sequence
     '''
 
-    def __init__(self, device):
+    def __init__(self, device='cpu'):
         super(WordEmbedding, self).__init__()
-        # List of concatenated embedding modules
-        self.embedding_modules = []
+        # Embedding modules
+        self.elmo = None
+        self.glove = None
         # Device to which pytorch embeddings should be moved
         self.device = device
         self.to(device)
 
-    def add_elmo(self, mix_parameters=None):
+    def set_device(self, device):
+        '''
+        Sets device of each embedding (ELMo and/or Glove)
+        '''
+        self.device = device
+        if self.has_elmo():
+            self.elmo.set_device(device)
+        elif self.has_glove():
+            self.glove.set_device(device)
+
+    def has_elmo(self):
+        return self.elmo is not None
+
+    def has_glove(self):
+        return self.glove is not None
+
+    def set_elmo(self, mix_parameters=None):
         '''
         Add a contextual ELMo word embedding.
         Args:
             see ElmoEmbedding class
         '''
-        module = ElmoEmbedding(mix_parameters=mix_parameters, device=self.device)
-        self.embedding_modules.append(module)
-        self.add_module("elmo", module)
+        self.elmo = ElmoEmbedding(mix_parameters=mix_parameters, device=self.device)
+        # self.add_module("elmo", self.elmo)
 
 
-    def add_index_embedding(self, embed_dim, max_index):
+    def set_glove(self, glove_file):
         '''
-        Add a trainable word index embedding.
+        Add a GloVe embedding module. 
+        The embedding and vocabulary is taken from glove_file.
         Args:
-            see IndexEmbedding class
+            glove_file: pickle with with dict {embedding, w2i, i2w} that can be used directly as glove embedding
         '''
-        module = IndexEmbedding(embed_dim, max_index, device=self.device)
-        self.embedding_modules.append(module)
-        self.add_module("index_embedding", module)
+        self.glove = GloveEmbedding(glove_file=glove_file, device=self.device)
 
     def forward(self, batch):
         '''
@@ -54,54 +72,119 @@ class WordEmbedding(nn.Module):
             embeddings: tensor of concatenated words embeddings with dimensions (batch_size, sequence_length, embed_dim)
             TODO: lengths: sequence lengths for packing
         '''
-        return torch.cat(
-            [embed(batch) for embed in self.embedding_modules],
-            dim=2
-        )
+        if self.has_elmo() and self.has_glove():
+            return torch.cat([self.elmo(batch), self.glove(batch)], dim=2)
+        elif self.has_elmo():
+            return self.elmo(batch)
+        elif self.has_glove():
+            return self.glove(batch)
+        else:
+            raise Exception("WordEmbedding contains no ELMo and no GloVe")
 
 
-class IndexEmbedding(nn.Module):
-    '''
-    Index embedding. Embeds words in a sentence based solely on their position in it.
-    '''
-    def __init__(self, embed_dim, max_index, device='cuda'):
-        '''
+class GloveEmbedding(nn.Module):
+
+    def __init__(self, glove_file, device='cuda'):
+        ''' 
+        The embedding and vocabulary is taken from glove_file.
         Args:
-            embed_dim: dimension of each index embedding
-            max_index: maximum supported index number
+            glove_file: pickle with with dict {embedding, w2i, i2w} that can be used directly as glove embedding
         '''
-        super(IndexEmbedding, self).__init__()
-        self.device = device
-        self.embed = nn.Embedding(max_index, embed_dim)
-        self.max_index = max_index
+        super(GloveEmbedding, self).__init__()
+        self.glove_file = glove_file
+
+        # Get data from file
+        glove_dict = torch.load(glove_file)
+        self.w2i = glove_dict['w2i']
+        self.i2w = glove_dict['i2w']
+        embedding_weights = glove_dict['embedding']
+
+        self.embedding = nn.Embedding.from_pretrained(embedding_weights).to(device)
         self.to(device)
         
+    def set_device(self, device):
+        '''
+        Sets device of embedding
+        '''
+        self.device = device
+        self.to(device)
+
     def forward(self, batch):
         '''
-        Embed a batch of sentences, that is: give the embeddings of index 0 to seqlen for each sample in the batch.
+        Embed a batch of sentences
 
         Args:
-            batch: list of list. Second list could contain words, e.g. [['First', 'sentence', '.'], ['Another', '.']]
-                    but the actual content doesn't matter
+            batch: list of list of words to embed, e.g. [['First', 'sentence', '.'], ['Another', '.']]
 
         Returns:
-            embeddings: tensor of embedded indices with dimensions (batch_size, sequence_length, embed_dim=1024)
+            embeddings: tensor of embedded words with dimensions (batch_size, sequence_length, embed_dim=300)
+                padded with <UNK> embeddings
         '''
-        # Construct array of indices
-        sequence_length = len(batch[0])
-        batch_size = len(batch)
-        # repeat max index if number of indices is too large for embedding
-        n_index_overflow = max(0, sequence_length - self.max_index)
-        if n_index_overflow > 0:
-            print("WARNING: Index embedding requested for index out of scope (index {}, max index {})".format(sequence_length-1, self.max_index-1))
-            indices = batch_size * [[ind for ind in range(self.max_index)] + n_index_overflow * [self.max_index-1]]
-        else:
-            indices = batch_size * [[ind for ind in range(sequence_length)]]
-        indices_torch = torch.LongTensor(indices).to(self.device)
 
-        # Embed indices
-        embeddings = self.embed(indices_torch)
-        return embeddings
+        # Convert to tensor of indices (pad with 0 index)
+        seq_len = max(len(sent) for sent in batch)
+        indices = torch.LongTensor([[self.w2i.get(word, 0) for word in sent] + [0] * (seq_len - len(sent)) for sent in batch])
+
+        # Embed
+        return self.embedding(indices)
+
+
+    @classmethod
+    def make_selected_glove(cls, data, output_file, glove_file=GLOVE_FILE):
+        '''
+        Extracts 300D GloVe vectors of all lowercase words in data. 
+        Args:
+            data: list of lists of words
+            output_file: output dict is written here
+            glove_file: file with all GloVe vectors
+        Output file:
+            dict:
+                w2i: dictionary mapping words to embedding indices, default is 0
+                i2w: list mapping indices to words
+                embedding: torch.FloatTensor, first row represents <UNK> and is average of all GloVe embeddings
+        '''
+
+        # Collect words (lowercase, filter only letters and numbers)
+        words = list(set([re.sub(r"[^A-Za-z0-9]", '', word).lower() for sent in data for word in sent]))
+        w2i = {'<UNK>': 0}
+        i2w = ['<UNK>']
+
+        # Go through GloVe file add collect embeddings
+        embeddings = []
+        embeddingN = 1 # current index of added word
+        embeddingTotalSum = np.zeros(300) # used to compute average embedding for <UNK>
+        embeddingTotalN = 0 # count total number of embeddings in file
+        with open(glove_file, 'r') as f:
+            for line in f:
+                # Obtain word and embedding
+                word = "".join(line.split()[:-300])
+                embedding = [float(x) for x in line.split()[-300:]]
+                # Add embedding for <UNK> average embedding
+                embeddingTotalSum += embedding
+                embeddingTotalN += 1
+                if embeddingTotalN % 219601 == 0:
+                    print("{:02.1}%".format(embeddingTotalN / 2196017*100))
+                if word in words:
+                    # Add GloVe vector to embedding
+                    embeddings.append(
+                        [float(x) for x in line.split()[-300:]]
+                    )
+                    w2i[word] = embeddingN
+                    i2w.append(word)
+                    embeddingN += 1
+
+        # Add average embedding for <UNK>
+        averageEmbedding = embeddingTotalSum / embeddingTotalN
+        embeddings = [averageEmbedding] + embeddings
+
+        # Write to file
+        out = {
+            'w2i': w2i,
+            'i2w': i2w,
+            'embedding': torch.Tensor(embeddings)
+        }
+        torch.save(out, output_file)
+
 
 
 class ElmoEmbedding(nn.Module):
@@ -145,3 +228,22 @@ class ElmoEmbedding(nn.Module):
         embeddings = elmo_out['elmo_representations'][0]
         # return batch embeddings
         return embeddings
+
+    def get_mix_parameters(self):
+        '''
+        Returns the ELMo mix parameters in order (1) character-based word embedding, 
+            (2) hidden state of first LSTM, (3) hidden state of second LSTM
+        Overall scaling by gamma is accounted for in the individual parameters.
+        To reconstruct the ELMo embedding, simply use these parameters as mix_parameters arrgument
+            at initialisation
+        '''
+        gamma = self.elmo.scalar_mix_0.gamma.item()
+        mix_parameters = [p.item() * gamma for p in self.elmo.scalar_mix_0.scalar_parameters]
+        return mix_parameters
+
+    def set_device(self, device):
+        '''
+        Sets device of embedding
+        '''
+        self.device = device
+        self.to(device)

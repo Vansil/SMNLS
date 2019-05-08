@@ -2,6 +2,7 @@ import os
 import torch
 from matplotlib import pyplot as plt
 from tensorboardX import SummaryWriter
+import models
 
 
 class OutputWriter(object):
@@ -40,7 +41,17 @@ class OutputWriter(object):
         '''
         Save model state dict to pickle file
         '''
-        torch.save(model, os.path.join(self.dir_check, '{:09d}.pt'.format(iter)))
+        model_dict = {
+            'state_dict': models.model_state_dict(model),
+            'has_elmo': model.has_elmo(),
+            'has_glove': model.has_glove()
+        }
+        if model.has_elmo():
+            model_dict['elmo_params'] = model.elmo.get_mix_parameters()
+        if model.has_glove():
+            model_dict['glove_file'] = model.glove.glove_file
+        
+        torch.save(model_dict, os.path.join(self.dir_check, '{:09d}.pt'.format(iter)))
         
 
     def log(self, text):
