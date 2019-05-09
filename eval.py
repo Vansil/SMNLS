@@ -242,7 +242,6 @@ if __name__ == "__main__":
     print("Loading model")
     model = output.OutputWriter.load_model(args.checkpoint, device=device)
     model.eval()
-    model.detach()
     print("Device: "+device)
     print("Model:" + str(model))
     
@@ -254,10 +253,11 @@ if __name__ == "__main__":
     
     results = {}
 
-    for method in methods:
-        print("Starting new evaluation: " + method)
-        result = eval_methods[method](model, args.output_dir)
-        results[method] = result
+    with torch.no_grad():
+        for method in methods:
+            print("Starting new evaluation: " + method)
+            result = eval_methods[method](model, args.output_dir)
+            results[method] = result
 
     # Output results
     torch.save(results, os.path.join(args.output_dir, 'results.pt'))
