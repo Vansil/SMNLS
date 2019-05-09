@@ -26,6 +26,12 @@ wget -O wic.zip https://pilehvar.github.io/wic/package/WiC_dataset.zip
 unzip wic.zip -d wic/
 rm wic.zip
 
+# VUA sequentail metaphor detection corpus.
+echo "Getting VUA metaphor detection corpus"
+wget -O vua-sequence/test.csv https://raw.githubusercontent.com/gao-g/metaphor-in-context/master/data/VUAsequence/VUA_seq_formatted_test.csv
+wget -O vua-sequence/train.csv https://raw.githubusercontent.com/gao-g/metaphor-in-context/master/data/VUAsequence/VUA_seq_formatted_train.csv
+wget -O vua-sequence/validation.csv https://raw.githubusercontent.com/gao-g/metaphor-in-context/master/data/VUAsequence/VUA_seq_formatted_val.csv
+
 # SentEval
 echo "Getting SentEval"
 git clone https://github.com/facebookresearch/SentEval.git
