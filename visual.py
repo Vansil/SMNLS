@@ -61,7 +61,7 @@ def wic_table(results_files_dict, output_file, include_thresholds=False, include
         names.append(name)
         test_accs.append("{:.1f}%".format(results['test_accuracy']*100))
         train_accs.append("{:.1f}%".format(results['train_accuracy']*100))
-        thresholds.append("{:.2f}%".format(results['threshold']))
+        thresholds.append("{:.2f}".format(results['threshold']))
     
     # Make table
     frame = {'Model': names}
