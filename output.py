@@ -40,7 +40,9 @@ class OutputWriter(object):
 
     def save_model(self, model, iter):
         '''
-        Save model state dict to pickle file
+        Save model to pickle file
+        Save from the embedding layer only the ELMo mix parameters and GloVe embedding file
+        Load model using load_model
         '''
         model_dict = {
             'has_elmo': model.embedding.has_elmo(),
@@ -55,7 +57,7 @@ class OutputWriter(object):
 
         model_copy = copy.deepcopy(model)
         model_copy.embedding.clear()
-        model_dict['model'] = model_copy,
+        model_dict['model'] = model_copy
         
         torch.save(model_dict, os.path.join(self.dir_check, '{:09d}.pt'.format(iter)))
 
@@ -63,8 +65,10 @@ class OutputWriter(object):
         '''
         Load a model that was saved by save_model()
         '''
-        model_dict = torch.load(file)
+        model_dict = torch.load(file, map_location=device)
         model = model_dict['model']
+
+        print (model)
 
         # Add embeddings
         if model_dict['has_elmo']:
