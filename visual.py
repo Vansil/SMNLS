@@ -72,5 +72,6 @@ def wic_table(results_files_dict, output_file, include_thresholds=False, include
     frame['Test acc'] = test_accs
 
     # Output to file
-    pd.DataFrame(frame).to_html(output_file)
+    table = pd.DataFrame(frame)
+    table.to_html(output_file)
     return table
