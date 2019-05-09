@@ -159,9 +159,10 @@ class WicEvaluator():
         accuracy = (predictions == dev_labels).mean()
         print("Dev accuracy: {}".format(accuracy))
         # add performance to results and write predictions to output file
-        results['threshold'] = {
+        results = {
             'threshold': best_threshold,
-            'accuracy': accuracy
+            'test_accuracy': accuracy,
+            'train_accuracy': best_acc
         }
         with open(os.path.join(self.output_dir, 'wic_dev_predictions.txt'), 'w') as f:
             for label, score in zip(predictions, cosine_scores['dev']):
