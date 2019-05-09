@@ -13,6 +13,8 @@ def sent_eval_table(results_file, output_file):
     Args:
         results_file
         output_file: html file name
+    Returns:
+        pandas table
     '''
     # Load results
     results = torch.load(results_file)['senteval']
@@ -35,3 +37,40 @@ def sent_eval_table(results_file, output_file):
 
     # Output to file
     table.to_html(output_file)
+    return table
+
+
+def wic_table(results_files_dict, output_file, include_thresholds=False, include_train_acc=False):
+    '''
+    Makes html table comparing WiC accuracies.
+    Args:
+        results_files_dict: dictionary with keys model name, values result file path of the model
+        output_file: html table is written here
+        include_thresholds: set to True to include best performing threshold
+        include_train_acc: set to True to include best training accuracy
+    Returns:
+        pandas table
+    '''
+    # Load data from result files
+    names = []
+    test_accs = []
+    train_accs = []
+    thresholds = []
+    for name, path in results_files_dict.items():
+        results = torch.load(path)['wic']
+        names.append(name)
+        test_accs.append("{:.1f}%".format(results['test_accuracy']*100))
+        train_accs.append("{:.1f}%".format(results['train_accuracy']*100))
+        thresholds.append("{:.1f}%".format(results['threshold']*100))
+    
+    # Make table
+    frame = {'Model': names}
+    if include_thresholds:
+        frame['Threshold'] = thresholds
+    if include_train_acc:
+        frame['Train acc'] = train_accs
+    frame['Test acc'] = test_accs
+
+    # Output to file
+    table.to_html(output_file)
+    return table
