@@ -6,6 +6,8 @@ import torch
 import os
 # from tqdm import tqdm
 import pickle
+import eval
+import embeddings
 
 class SnliDataset(Dataset):
     '''
@@ -205,3 +207,42 @@ def collate_fn(batch):
         s2[i, 0:s.size(0), :] = s
 
     return labels, s1, torch.LongTensor(l1), s2, torch.LongTensor(l2)
+
+
+def make_selected_glove_training():
+    '''
+    Makes a glove file containing all words that could be needed in training
+    Fit for: SNLI, WiC
+    '''
+
+    # Collect words
+    print("Collecting Words")
+    words = []
+    print("\tSNLI")
+    for fname in ["snli_1.0_train.jsonl", "snli_1.0_dev.jsonl", "snli_1.0_test.jsonl"]:
+        dataset = SnliDataset(os.path.join('data', 'snli', fname))
+        data = dataset._data
+        ws = []
+        for p in data:
+            ws += [w.lower() for w in p['premise'] + p['hypothesis']]
+        words += list(set(ws))
+        data = None
+        print("\t\t...")
+    dataset = None
+    print("\tWiC")
+    wic = eval.WicEvaluator(None, None)
+    for setname in ['train', 'dev', 'test']:
+        data = wic.load_data(os.path.join(eval.PATH_TO_WIC, setname, setname+'.data.txt'))
+        ws = []
+        for p in data:
+            ws += [w.lower() for sent in data for w in sent]
+        words += list(set(ws))
+        data = None
+        print("\t\t...")
+
+    # Make GloVe selection
+    words = [list(set(words))]
+    print("Selecting words from GloVe")
+    embeddings.GloveEmbedding.make_selected_glove(
+        words, os.path.join('data', 'glove', 'glove_selection_snli-wic.pt'))
+    

@@ -14,7 +14,6 @@ class WordEmbedding(nn.Module):
     '''
     General module for word embeddings
     Supports contextualized ELMo embedding, GloVe vectors and index embedding
-    TODO: packed sequence
     '''
 
     def __init__(self, device='cpu'):

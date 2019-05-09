@@ -1,10 +1,11 @@
 from torch import nn
 from torch.nn.functional import relu
 import torch
+import os
 
 from embeddings import WordEmbedding
 
-GLOVE_TRAIN_FILE = 'lol.pt' # file with GloVe vectors from all training data
+GLOVE_TRAIN_FILE = os.path.join('data', 'glove', 'glove_selection_snli-wic.pt') # file with GloVe vectors from all training data
 
 
 class BaselineElmo1(nn.Module):

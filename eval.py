@@ -4,10 +4,6 @@ Evaluation methods:
 - SentEval
 - Word-in-Context
 '''
-
-print("PRINT AT START")
-
-
 import argparse
 import torch
 import logging
@@ -27,8 +23,6 @@ PATH_TO_WIC = os.path.join('data','wic')
 
 # SentEval parameter
 SENTEVAL_FAST = True # Set to false to perform slower SentEval with better results
-
-print("PRINT AFTER IMPORTS")
 
 ##################################################################################################
 # SentEval
