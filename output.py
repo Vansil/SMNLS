@@ -61,7 +61,8 @@ class OutputWriter(object):
         
         torch.save(model_dict, os.path.join(self.dir_check, '{:09d}.pt'.format(iter)))
 
-    def load_model(self, file, device='cuda'):
+    @classmethod
+    def load_model(cls, file, device='cuda'):
         '''
         Load a model that was saved by save_model()
         '''

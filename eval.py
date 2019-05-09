@@ -10,6 +10,7 @@ import logging
 import os
 import sys
 import numpy as np
+import output
 
 # Set PATHs
 # path to senteval
@@ -29,9 +30,11 @@ SENTEVAL_FAST = True # Set to false to perform slower SentEval with better resul
 ##################################################################################################
 
 def prepare_senteval(params, samples):
+    # TODO: make Glove selection file based on samples, if model has GloVe embedding
     return
 
 def batcher_senteval(params, batch):
+    # TODO: load GloVe selection file based on samples
     model = params['evaluated_model']
     batch = [sent if sent != [] else ['.'] for sent in batch]
     embeddings = model.embed_sentences(batch).cpu().detach().numpy()
@@ -237,7 +240,7 @@ if __name__ == "__main__":
     # Load model
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print("Loading model")
-    model = torch.load(args.checkpoint, map_location=device)
+    model = output.OutputWriter.load_model(args.checkpoint, device=device)
     print("Device: "+device)
     print("Model:" + str(model))
     
