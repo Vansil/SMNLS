@@ -122,8 +122,8 @@ class WicEvaluator():
                 embedding_sentence = self.model.embed_words(sentence_pair)
                 # Extract the two word embedding
                 embeddings[set_name].append(
-                    (embedding_sentence[0, word_positions[0]].detach(), 
-                     embedding_sentence[1, word_positions[1]].detach())
+                    (embedding_sentence[0, word_positions[0]], 
+                     embedding_sentence[1, word_positions[1]])
                 )
 
         # Evaluate thresholded cosine similarity metric
@@ -241,6 +241,8 @@ if __name__ == "__main__":
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print("Loading model")
     model = output.OutputWriter.load_model(args.checkpoint, device=device)
+    model.eval()
+    model.detach()
     print("Device: "+device)
     print("Model:" + str(model))
     

@@ -24,7 +24,7 @@ class BaselineElmo1(nn.Module):
         return self.embed_words(batch)
 
     def embed_words(self, batch):
-        return self.elmo(batch)
+        return self.embedding(batch)
 
     def embed_sentences(self, batch):
         raise Exception("ELMo1 does not produce a sentence embedding")
