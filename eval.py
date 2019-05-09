@@ -99,14 +99,17 @@ class WicEvaluator():
         results = {}
 
         # Load datasets
+        if not os.path.exists(os.path.join(PATH_TO_WIC, 'train_sub')):
+            print("Creating subset of WiC train set")
+            WicEvaluator.construct_training_set()
         print("Loading datasets and labels")
         data = {
-            'train': self.load_data(os.path.join(PATH_TO_WIC, 'train', 'train.data.txt')),
-            'dev':   self.load_data(os.path.join(PATH_TO_WIC, 'dev', 'dev.data.txt'))  
+            'train': WicEvaluator.load_data(os.path.join(PATH_TO_WIC, 'train_sub', 'train_sub.data.txt')),
+            'dev':   WicEvaluator.load_data(os.path.join(PATH_TO_WIC, 'dev', 'dev.data.txt'))  
         }
         labels = {
-            'train': self.load_labels(os.path.join(PATH_TO_WIC, 'train', 'train.gold.txt')),
-            'dev':   self.load_labels(os.path.join(PATH_TO_WIC, 'dev', 'dev.gold.txt'))
+            'train': WicEvaluator.load_labels(os.path.join(PATH_TO_WIC, 'train_sub', 'train_sub.gold.txt')),
+            'dev':   WicEvaluator.load_labels(os.path.join(PATH_TO_WIC, 'dev', 'dev.gold.txt'))
         }
 
         # Extract embedded words
@@ -150,10 +153,11 @@ class WicEvaluator():
                 best_threshold = threshold
                 best_acc = accuracy
         # Evaluate dev data using threshold
-        print("Best threshold: {}, Dev accuracy: {}".format(best_threshold, best_acc))
+        print("Best threshold: {}, Train accuracy: {}".format(best_threshold, best_acc))
         dev_labels = np.array(labels['dev'])
         predictions = cosine_scores['dev'] > best_threshold
         accuracy = (predictions == dev_labels).mean()
+        print("Dev accuracy: {}".format(accuracy))
         # add performance to results and write predictions to output file
         results['threshold'] = {
             'threshold': best_threshold,
@@ -166,8 +170,8 @@ class WicEvaluator():
 
         return results
     
-
-    def load_data(self, data_path):
+    @classmethod
+    def load_data(cls, data_path):
         '''
         Loads the WiC data from the .txt file as list of dicts
         Example data point:
@@ -192,7 +196,8 @@ class WicEvaluator():
                 })
         return data
 
-    def load_labels(self, labels_path):
+    @classmethod
+    def load_labels(cls, labels_path):
         '''
         Loads the WiC labels from the .txt file as list
         Indices correspond to data indices
@@ -203,6 +208,33 @@ class WicEvaluator():
             for line in f:
                 labels.append(line[0] == 'T')
         return labels
+
+    
+    @classmethod
+    def construct_training_set(cls):
+        '''
+        Construct custom WiC training set
+        '''
+        n_true = 319
+        n_false = 319
+
+        os.makedirs(os.path.join(PATH_TO_WIC, 'train_sub'))
+
+        with open(os.path.join(PATH_TO_WIC, 'train', 'train.data.txt'), 'r') as f_data_train,\
+                open(os.path.join(PATH_TO_WIC, 'train', 'train.gold.txt'), 'r') as f_label_train,\
+                open(os.path.join(PATH_TO_WIC, 'train_sub', 'train_sub.data.txt'), 'w') as f_data_sub,\
+                open(os.path.join(PATH_TO_WIC, 'train_sub', 'train_sub.gold.txt'), 'w') as f_label_sub:
+            while n_true > 0 or n_false > 0:
+                data_line = f_data_train.readline()
+                label_line = f_label_train.readline()
+                if n_true > 0 and label_line[0] == 'T':
+                    n_true -= 1
+                    f_data_sub.write(data_line)
+                    f_label_sub.write(label_line)
+                elif n_false > 0 and label_line[0] == 'F':
+                    n_false -= 1
+                    f_data_sub.write(data_line)
+                    f_label_sub.write(label_line)
 
 
 
