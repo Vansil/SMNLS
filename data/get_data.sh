@@ -26,6 +26,12 @@ if [ ! -d elmo ]; then
     wget -O elmo/elmo_2x4096_512_2048cnn_2xhighway_5.5B_options.json https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway_5.5B/elmo_2x4096_512_2048cnn_2xhighway_5.5B_options.json
 fi
 
+# Word sense disambiguation
+if [ ! -d word-sense-disambiguation ]; then
+    echo "Fetching word sense disambiguation dataset."
+    git clone https://github.com/google-research-datasets/word_sense_disambigation_corpora.git word-sense-disambiguation
+fi
+
 # Word-in-Context
 if [ ! -d wic ]; then
     echo "Getting Word-in-Context"
