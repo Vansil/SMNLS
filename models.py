@@ -5,20 +5,19 @@ import os
 
 from embeddings import WordEmbedding
 
-GLOVE_TRAIN_FILE = 'lol.pt'#os.path.join('data', 'glove', 'glove_selection_snli-wic.pt') # file with GloVe vectors from all training data
+GLOVE_TRAIN_FILE = os.path.join('data', 'glove', 'glove_selection_snli-wic.pt') # file with GloVe vectors from all training data
 
 
-class BaselineElmo1(nn.Module):
+class BaselineElmo(nn.Module):
     '''
-    EVALUATED ON WIC: if you change this module, you should evaluate it again
     Baseline model as in WiC paper by Pilehvar & Camacho-Collados
     Returns hidden state of the first ELMo LSTM
     '''
-    def __init__(self):
-        super(BaselineElmo1, self).__init__()
+    def __init__(self, mix_parameters=[1/3, 1/3, 1/3]):
+        super(BaselineElmo, self).__init__()
         # make embedding
         self.embedding = WordEmbedding()
-        self.embedding.set_elmo(mix_parameters=[0, 1, 0])
+        self.embedding.set_elmo(mix_parameters=mix_parameters)
 
     def forward(self, batch):
         return self.embed_words(batch)
