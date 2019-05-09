@@ -1,5 +1,11 @@
 import pandas as pd
 import torch
+import os
+import numpy as np
+from sklearn.manifold import TSNE
+from matplotlib import pyplot as plt
+
+import eval
 
 '''
 Ideas:
@@ -75,3 +81,81 @@ def wic_table(results_files_dict, output_file, include_thresholds=False, include
     table = pd.DataFrame(frame)
     table.to_html(output_file)
     return table
+
+
+def wicTsne(model, word, output_file):
+    '''
+    Apply t-SNE (t-Distributed Stochastic Neighbour Embedding) to the word-of-interest in the WiC train dataset
+    Show all contextualized representations of one word
+    TODO: this should probably become something interactive -> Class
+    '''
+    # Load dataset
+    print("Loading WiC train data")
+    data = eval.WicEvaluator.load_data(os.path.join(eval.PATH_TO_WIC, 'train', 'train.data.txt'))
+    labels = eval.WicEvaluator.load_labels(os.path.join(eval.PATH_TO_WIC, 'train', 'train.gold.txt'))
+
+    # Extract embedded words
+    print("Embed words")
+    embeddings = [] 
+    links = [] # dicts ([word_ids], [sentences], label=T/F)
+    for data_point, label in zip(data, labels):
+        # Embed the two sentences
+        sentence_pair = data_point['sentences']
+        word_positions = data_point['positions']
+        embedding_sentence = model.embed_words(sentence_pair)
+        # Extract the two word embedding
+        embeddings += [embedding_sentence[0, word_positions[0]], embedding_sentence[1, word_positions[1]]]
+        # Add link if this is the requested word
+        if word == data_point['word']:
+            links.append({
+                'word_ids': [len(embeddings) - 2, len(embeddings) - 1],
+                'sentences': sentence_pair,
+                'label': label
+            })
+        if len(embeddings) % 200 == 0:
+            print("\t{:.1f}%".format(len(embeddings) / len(data)/2 *100))
+    embeddings = np.vstack(embeddings)
+
+    # Apply t-SNE
+    print("Applying t-SNE")
+    tsne = TSNE(n_components=2, init='pca', random_state=0)
+    embeddings_tsne = tsne.fit_transform(embeddings)
+
+    # Obtaining word coordinates
+    for i in range(len(links)):
+        indices = links[i]['word_ids']
+        links[i]['tsne'] = [embeddings_tsne[indices[0]], embeddings_tsne[indices[1]]]
+
+    # Plot
+    print("Making plot")
+    plt.figure(figsize=(10,10))
+    ax = plt.subplot(111)
+    all_coors = []
+    for link in links:
+        # Obtain coordinates
+        index = link['word_ids']
+        coors = [embeddings_tsne[index[0]], embeddings_tsne[index[1]]]
+        all_coors += coors
+
+        for i in [0,1]:
+            plt.text(coors[i][0], coors[i][1], " ".join(link['sentences'][i]),
+                    fontdict={'size': 9})
+
+        plt.plot([coors[0][0],coors[1][0]], [coors[0][1],coors[1][1]],
+            color='g' if link['label'] else 'r')
+
+
+    plt.xticks([]), plt.yticks([])
+
+    all_coors = np.vstack(all_coors)
+    min_x = min(all_coors[:,0])
+    max_x = max(all_coors[:,0])
+    del_x = max_x - min_x
+    min_y = min(all_coors[:,1])
+    max_y = max(all_coors[:,1])
+    del_y = max_y - min_y
+    plt.xlim((min_x-del_x/10, max_x+del_x/10))
+    plt.ylim((min_y-del_y/10, max_y+del_y/10))
+    plt.title('t-SNE of sentences containing "{}"'.format(word))
+
+    plt.savefig(output_file)
