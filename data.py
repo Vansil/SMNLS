@@ -6,6 +6,7 @@ import torch
 import os
 # from tqdm import tqdm
 import pickle
+from csv import DictReader
 
 class SnliDataset(Dataset):
     '''
@@ -205,3 +206,41 @@ def collate_fn(batch):
         s2[i, 0:s.size(0), :] = s
 
     return labels, s1, torch.LongTensor(l1), s2, torch.LongTensor(l2)
+
+
+class VuaSequenceDataset(Dataset):
+    def __init__(self, split="train"):
+        self._data = self._read_file(split)
+
+    def __len__(self):
+        return len(self._data)
+
+    def __getitem__(self, idx):
+        item = self._data[idx]
+
+        words = item["sentence"].split()
+        labels = [int(l) for l in item["label_seq"][1:-1].split(", ")]
+
+        return words, labels
+
+    def _read_file(self, split):
+        with open(os.path.join("data", "vua-sequence", f"{split}.csv"), "r", encoding="utf-8") as f:
+            reader = DictReader(f, fieldnames=["txt_id", "sen_ix", "sentence", "label_seq", "pos_seq", "labeled_sentence", "genre"])
+
+            data = list(reader)[1:]
+
+            return data
+
+
+def vua_sequence_collate_fn(batch):
+    sentences = [b[0] for b in batch]
+    labels = [b[1] for b in batch]
+
+    max_len = max(len(s) for s in sentences)
+
+    l = torch.zeros(len(labels), max_len, dtype=torch.int64)
+
+    for i, label in enumerate(labels):
+        l[i, 0:len(label)] = torch.LongTensor(label)
+
+    return l, sentences
