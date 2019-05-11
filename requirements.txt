@@ -1,2 +1,4 @@
 tensorboardX
 allennlp
+configargparse
+pyyaml
