@@ -108,6 +108,7 @@ class GloveEmbedding(nn.Module):
 
         self.embedding = nn.Embedding.from_pretrained(embedding_weights).to(device)
         self.to(device)
+        self.device = device
         
     def set_device(self, device):
         '''
@@ -133,7 +134,7 @@ class GloveEmbedding(nn.Module):
         indices = torch.LongTensor([[self.w2i.get(word, 0) for word in sent] + [0] * (seq_len - len(sent)) for sent in batch])
 
         # Embed
-        return self.embedding(indices)
+        return self.embedding(indices.to(self.device))
 
 
     @classmethod
@@ -216,6 +217,7 @@ class ElmoEmbedding(nn.Module):
         
         # store device for embedding
         self.device = device
+        self.to(device)
         
     def forward(self, batch):
         '''
