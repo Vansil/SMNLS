@@ -1,40 +1,45 @@
 from torch import nn
 from torch.nn.functional import relu
 import torch
+import os
 
 from embeddings import WordEmbedding
 
+GLOVE_TRAIN_FILE = os.path.join('data', 'glove', 'glove_selection_snli-wic.pt') # file with GloVe vectors from all training data
 
-class BaselineElmo1(nn.Module):
+
+class BaselineElmo(nn.Module):
     '''
     Baseline model as in WiC paper by Pilehvar & Camacho-Collados
     Returns hidden state of the first ELMo LSTM
     '''
-    def __init__(self):
-        super(BaselineElmo1, self).__init__()
+    def __init__(self, mix_parameters=[1/3, 1/3, 1/3]):
+        super(BaselineElmo, self).__init__()
         # make embedding
         self.embedding = WordEmbedding()
-        self.embedding.set_elmo(mix_parameters=[0, 1, 0])
+        self.embedding.set_elmo(mix_parameters=mix_parameters)
 
     def forward(self, batch):
         return self.embed_words(batch)
 
     def embed_words(self, batch):
-        return self.elmo(batch)
+        return self.embedding(batch)
 
     def embed_sentences(self, batch):
         raise Exception("ELMo1 does not produce a sentence embedding")
 
-class BaseModelElmo(nn.Module):
+class TestModelEmbedding(nn.Module):
     '''
-    Model to test elmo embedding
+    Model to test elmo and glove embedding
+    Task: NLI
     '''
-    def __init__(self, input_size, hidden_size, output_size, device='cuda'):
-        super(BaseModelElmo, self).__init__()
-        self.elmo = WordEmbedding(device=device)
-        self.elmo.add_elmo()
+    def __init__(self, hidden_size, output_size, device='cuda'):
+        super(TestModelEmbedding, self).__init__()
+        self.embedding = WordEmbedding()
+        self.embedding.set_elmo()
+        self.embedding.set_glove(GLOVE_TRAIN_FILE)
 
-        self._l1 = nn.Linear(input_size * 4, hidden_size)
+        self._l1 = nn.Linear(1324 * 4, hidden_size)
         self._l2 = nn.Linear(hidden_size, output_size)
 
         self.to(device)
@@ -46,16 +51,9 @@ class BaseModelElmo(nn.Module):
             X2: same as X1 for hypothesis sentences
         '''
 
-        # embed together such that padding is same for both sentences
-        elmos = self.embed_words(X1 + X2)
-        # separate
-        batch_size = len(X1)
-        elmos1 = elmos[:batch_size, :]
-        elmos2 = elmos[batch_size:, :]
-
         # embedding: mean of word embeddings
-        E1 = elmos1.mean(dim=1)
-        E2 = elmos2.mean(dim=1)
+        E1 = self.embed_sentences(X1)
+        E2 = self.embed_sentences(X2)
 
         # Combine sentences for classification
         abs_diff = torch.abs(E1 - E2)
@@ -80,6 +78,7 @@ class BaseModelElmo(nn.Module):
             embedded: sentence embeddings. Shape (batch, features)
         '''
         word_embed = self.embed_words(batch)
+        
         return word_embed.mean(dim=1)
 
     def embed_words(self, batch):
@@ -90,7 +89,7 @@ class BaseModelElmo(nn.Module):
         Returns:
             embedded: ELMo embedding of batch, padded to make sentences of equal length. Shape (batch, sequence, features)
         '''
-        return self.elmo(batch)
+        return self.embedding(batch)
 
 
 

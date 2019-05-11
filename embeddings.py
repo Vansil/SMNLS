@@ -14,7 +14,6 @@ class WordEmbedding(nn.Module):
     '''
     General module for word embeddings
     Supports contextualized ELMo embedding, GloVe vectors and index embedding
-    TODO: packed sequence
     '''
 
     def __init__(self, device='cpu'):
@@ -35,6 +34,14 @@ class WordEmbedding(nn.Module):
             self.elmo.set_device(device)
         elif self.has_glove():
             self.glove.set_device(device)
+
+    def clear(self):
+        '''
+        Sets ELMo and GloVe to None
+        Used for saving models
+        '''
+        self.elmo = None
+        self.glove = None
 
     def has_elmo(self):
         return self.elmo is not None
@@ -141,17 +148,17 @@ class GloveEmbedding(nn.Module):
             dict:
                 w2i: dictionary mapping words to embedding indices, default is 0
                 i2w: list mapping indices to words
-                embedding: torch.FloatTensor, first row represents <UNK> and is average of all GloVe embeddings
+                embedding: torch.FloatTensor, first rows represents <PAD> and is zero, second <UNK> and is average of all GloVe embeddings
         '''
 
         # Collect words (lowercase, filter only letters and numbers)
         words = list(set([re.sub(r"[^A-Za-z0-9]", '', word).lower() for sent in data for word in sent]))
-        w2i = {'<UNK>': 0}
-        i2w = ['<UNK>']
+        w2i = {'<PAD>': 0, '<UNK>': 1}
+        i2w = ['<PAD>', '<UNK>']
 
         # Go through GloVe file add collect embeddings
         embeddings = []
-        embeddingN = 1 # current index of added word
+        embeddingN = 2 # current index of added word
         embeddingTotalSum = np.zeros(300) # used to compute average embedding for <UNK>
         embeddingTotalN = 0 # count total number of embeddings in file
         with open(glove_file, 'r') as f:
@@ -175,7 +182,7 @@ class GloveEmbedding(nn.Module):
 
         # Add average embedding for <UNK>
         averageEmbedding = embeddingTotalSum / embeddingTotalN
-        embeddings = [averageEmbedding] + embeddings
+        embeddings = [np.zeros(300), averageEmbedding] + embeddings
 
         # Write to file
         out = {

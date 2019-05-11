@@ -3,6 +3,7 @@ import torch
 from matplotlib import pyplot as plt
 from tensorboardX import SummaryWriter
 import models
+import copy
 
 
 class OutputWriter(object):
@@ -39,19 +40,48 @@ class OutputWriter(object):
 
     def save_model(self, model, iter):
         '''
-        Save model state dict to pickle file
+        Save model to pickle file
+        Save from the embedding layer only the ELMo mix parameters and GloVe embedding file
+        Load model using load_model
         '''
         model_dict = {
-            'state_dict': models.model_state_dict(model),
-            'has_elmo': model.has_elmo(),
-            'has_glove': model.has_glove()
+            'has_elmo': model.embedding.has_elmo(),
+            'has_glove': model.embedding.has_glove()
         }
-        if model.has_elmo():
-            model_dict['elmo_params'] = model.elmo.get_mix_parameters()
-        if model.has_glove():
-            model_dict['glove_file'] = model.glove.glove_file
+
+        # Obtain embedding parameters
+        if model.embedding.has_elmo():
+            model_dict['elmo_params'] = model.embedding.elmo.get_mix_parameters()
+        if model.embedding.has_glove():
+            model_dict['glove_file'] = model.embedding.glove.glove_file
+
+        model_copy = copy.deepcopy(model)
+        model_copy.embedding.clear()
+        model_dict['model'] = model_copy
         
         torch.save(model_dict, os.path.join(self.dir_check, '{:09d}.pt'.format(iter)))
+
+    @classmethod
+    def load_model(cls, file, device='cuda'):
+        '''
+        Load a model that was saved by save_model()
+        '''
+        model_dict = torch.load(file, map_location=device)
+        model = model_dict['model']
+
+        print (model)
+
+        # Add embeddings
+        if model_dict['has_elmo']:
+            model.embedding.set_elmo(mix_parameters=model_dict['elmo_params'])
+        if model_dict['has_glove']:
+            model.embedding.set_glove(model_dict['glove_file'])
+
+        model.embedding.set_device(device)
+        model.to(device)
+
+        return model
+
         
 
     def log(self, text):
