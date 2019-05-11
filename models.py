@@ -3,7 +3,7 @@ from torch.nn.functional import relu
 import torch
 import os
 
-from embeddings import WordEmbedding
+from embeddings import WordEmbedding, ElmoEmbedding, GloveEmbedding
 
 GLOVE_TRAIN_FILE = os.path.join('data', 'glove', 'glove_selection_snli-wic.pt') # file with GloVe vectors from all training data
 
@@ -132,10 +132,133 @@ class TestModel(nn.Module):
         return self.emb(indices)
 
 
+class EmbeddingModule(nn.Module):
+    def __init__(self, output_size):
+        super(EmbeddingModule, self).__init__()
+        self._output_size = output_size
+
+    @property
+    def output_size(self):
+        return self._output_size
+
+    def embed(self, input, lengths):
+        raise NotImplementedError()
 
 
+class VuaSequenceModel(EmbeddingModule):
+    def __init__(self, embedding_module, num_classes=2, lstm_hidden_size=512):
+        super(VuaSequenceModel, self).__init__(embedding_module.output_size + 2 * lstm_hidden_size)
+
+        self._embedding_module = embedding_module
+        self._lstm_layer = nn.LSTM(self._embedding_module.output_size, lstm_hidden_size, num_layers=1, bidirectional=True, dropout=0, batch_first=True)
+        self._classifier = nn.Linear(2 * lstm_hidden_size, num_classes)
+
+    def forward(self, input, lengths):
+        lower_embedding = self._embedding_module.embed(input, lengths)
+
+        packed = nn.utils.rnn.pack_padded_sequence(lower_embedding, lengths, batch_first=True, enforce_sorted=False)
+
+        output = self._lstm_layer(packed)[0]
+
+        unpacked = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)[0]
+
+        return self._classifier(unpacked)
+        
+
+    def embed(self, input, lengths):
+        lower_embedding = self._embedding_module.embed(input, lengths)
+
+        packed = nn.utils.rnn.pack_padded_sequence(lower_embedding, lengths, batch_first=True, enforce_sorted=False)
+
+        output = self._lstm_layer(packed)[0]
+
+        unpacked = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)[0]
+
+        return torch.cat([lower_embedding, unpacked], dim=2)
+
+    def state_dict(self):
+        return self._lstm_layer.state_dict()
+
+    def load_state_dict(self, state_dict):
+        self._lstm_layer.load_state_dict(state_dict)
 
 
+class SnliModel(EmbeddingModule):
+    def __init__(self, embedding_module, num_classes=3, lstm_hidden_size=512):
+        super(SnliModel, self).__init__(embedding_module.output_size + 2 * lstm_hidden_size)
+
+        self._embedding_module = embedding_module
+        self._lstm_layer = nn.LSTM(self._embedding_module.output_size, lstm_hidden_size, num_layers=1, bidirectional=True, dropout=0, batch_first=True)
+        self._classifier = nn.Sequential(
+            nn.Linear(2 * 4 * lstm_hidden_size, 1024),
+            nn.ReLU(),
+            nn.Linear(1024, 512),
+            nn.ReLU(),
+            nn.Linear(512, num_classes)
+        )
+
+    def embed(self, input, lengths):
+        lower_embedding = self._embedding_module.embed(input, lengths)
+
+        packed = nn.utils.rnn.pack_padded_sequence(lower_embedding, lengths, batch_first=True, enforce_sorted=False)
+
+        output = self._lstm_layer(packed)[0]
+
+        unpacked = nn.utils.rnn.pad_packed_sequence(output, batch_first=True)[0]
+
+        return torch.cat([lower_embedding, unpacked], dim=2)
+
+    def forward(self, s1, s1_lengths, s2, s2_lengths):
+        E1 = self._embedding_module.embed(s1, s1_lengths)
+        E2 = self._embedding_module.embed(s2, s2_lengths)
+
+        packed1 = nn.utils.rnn.pack_padded_sequence(E1, s1_lengths, batch_first=True, enforce_sorted=False)
+        packed2 = nn.utils.rnn.pack_padded_sequence(E2, s2_lengths, batch_first=True, enforce_sorted=False)
+        
+        output1 = self._lstm_layer(packed1)[0]
+        output2 = self._lstm_layer(packed2)[0]
+
+        unpacked1 = nn.utils.rnn.pad_packed_sequence(output1, batch_first=True)[0]
+        unpacked2 = nn.utils.rnn.pad_packed_sequence(output2, batch_first=True)[0]
+
+        X1, _ = torch.max(unpacked1, dim=1)
+        X2, _ = torch.max(unpacked2, dim=1)
+
+        abs_diff = torch.abs(X1 - X2)
+        elem = X1 * X2
+
+        c = torch.cat([X1, X2, abs_diff, elem], dim=1)
+
+        return self._classifier(c)
+
+
+class WordEmbeddingModel(EmbeddingModule):
+    def __init__(self, device, use_glove=True, use_elmo=True):
+        glove_size = 300 if use_glove else 0
+        elmo_size = 1024 if use_elmo else 0
+        super(WordEmbeddingModel, self).__init__(glove_size + elmo_size)
+
+        if not use_glove and not use_elmo:
+            raise ValueError("Should use at least one form of embedding.")
+
+        if use_elmo:
+            self._elmo = ElmoEmbedding(device=device)
+        if use_glove:
+            self._glove = GloveEmbedding(GLOVE_TRAIN_FILE, device=device)
+
+        self._use_elmo = use_elmo
+        self._use_glove = use_glove
+
+    def forward(self, sentences, lengths):
+        if self._use_elmo and self._use_glove:
+            return torch.cat([self._elmo(sentences), self._glove(sentences)], dim=2)
+        elif self._use_elmo:
+            return self._elmo(sentences)
+        else:
+            return self._glove(sentences)
+
+    def embed(self, sentences, lengths):
+        return self.forward(sentences, lengths)
 
 
 class BaseModel(nn.Module):
