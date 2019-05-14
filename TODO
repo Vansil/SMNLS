@@ -5,6 +5,52 @@ Other:
 - Shared LISA account (lgpu0219, Bjachan69)
 
 
+WEEK 5
+
+TODO:
+Finish and train a model (whatever we'll finish this week will be the main topic of our analysis)
+- POS task (dataset available?)
+- Disambiguation task
+- Sequential labelling task
+- Architectures
+- Training schemes
+
+- Quantitative analysis
+- WiC: set to eval() mode
+
+
+Silvan
+- disamb. train/dev/test split
+
+Bjarne
+- disamb task
+
+Tycho
+
+
+
+
+
+
+
+
+
+--------------------------------------------
+WEEK 4
+Silvan:
+- Evaluate loaded model
+- Mail Katia over POS dataset
+- Baseline test: ELMo
+
+
+Bjarne:
+- Dataloader: disambig
+- Sequential task
+
+
+
+
+
 --------------------------------------------
 WEEK 3
 Bjarne:
