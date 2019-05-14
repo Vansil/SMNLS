@@ -60,3 +60,8 @@ if [ ! -d SentEval ]; then
     cd data/downstream/
     ./get_transfer_data.bash
 fi
+
+# Penn Treebank Wall Street Journal
+if [ ! -d penn ]; then
+	echo "Penn Treebank Wall Street Journal portion is not freely available. Please download manually and make sure the portion is available under path data/penn/wsj/"
+fi
