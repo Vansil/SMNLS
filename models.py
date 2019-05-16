@@ -5,7 +5,7 @@ import os
 
 from embeddings import WordEmbedding, ElmoEmbedding, GloveEmbedding
 
-GLOVE_TRAIN_FILE = os.path.join('data', 'glove', 'glove_selection_snli-wic.pt') # file with GloVe vectors from all training data
+GLOVE_TRAIN_FILE = os.path.join('data', 'glove', 'glove_selection_snli-wic-wsj.pt') # file with GloVe vectors from all training data
 
 
 class BaselineElmo(nn.Module):
