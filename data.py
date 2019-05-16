@@ -10,7 +10,7 @@ from csv import DictReader
 import xml.etree.ElementTree as ET
 
 import eval
-import embeddings
+from embeddings import GloveEmbedding
 
 PENN_TREEBANK_PATH = "data/penn/wsj/"
 
@@ -264,6 +264,6 @@ def make_selected_glove_training():
     # Make GloVe selection
     words = [list(set(words))]
     print("Selecting words from GloVe")
-    embeddings.GloveEmbedding.make_selected_glove(
+    GloveEmbedding.make_selected_glove(
         words, os.path.join('data', 'glove', 'glove_selection_snli-wic-wsj.pt'))
     
