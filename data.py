@@ -245,7 +245,7 @@ def make_selected_glove_training():
         dataset = SnliDataset(os.path.join('data', 'snli', fname))
         ws = []
         for p in dataset:
-            ws += [w.lower() for w in p['s1'] + p['s2']]
+            ws += [w.lower() for w in p[1] + p[2]]
         words += list(set(ws))
         data = None
         print("\t\t...")
