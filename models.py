@@ -386,7 +386,7 @@ class JMTModel(nn.Module):
     def __init__(self, device, pos_classes=45, metaphor_classes=2, snli_classes=3, lstm_hidden_size=100, dropout=0):
         super(JMTModel, self).__init__()
 
-        self.embedding_module = WordEmbeddingModel(device)
+        self.embedding = WordEmbeddingModel(device)
 
         self.pos_lstm = nn.LSTM(1324, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)
         self.pos_classifier = nn.Linear(100, pos_classes)
@@ -398,7 +398,7 @@ class JMTModel(nn.Module):
         self.snli_classifier = nn.Linear(100 * 4, snli_classes)
 
     def pos_forward(self, sentences, lengths):
-        E = self.embedding_module(sentences)
+        E = self.embedding(sentences)
 
         E_packed = nn.utils.rnn.pack_padded_sequence(E, lengths, batch_first=True, enforce_sorted=False)
 
@@ -411,7 +411,7 @@ class JMTModel(nn.Module):
         return P
 
     def metaphor_forward(self, sentences, lengths):
-        E = self.embedding_module(sentences)
+        E = self.embedding(sentences)
 
         E_packed = nn.utils.rnn.pack_padded_sequence(E, lengths, batch_first=True, enforce_sorted=False)
 
@@ -447,7 +447,7 @@ class JMTModel(nn.Module):
         return P
 
     def _snli_embed(self, sentences, lengths):
-        E = self.embedding_module(sentences)
+        E = self.embedding(sentences)
 
         E_packed = nn.utils.rnn.pack_padded_sequence(E, lengths, batch_first=True, enforce_sorted=False)
 
