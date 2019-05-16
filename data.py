@@ -237,7 +237,7 @@ def make_selected_glove_training():
         dataset = PennDataset(set_name, first_label=False)
         ws = []
         for sent in dataset:
-            ws += [w.lower() for w in sent[0]]
+            ws += sent[0]
         words += list(set(ws))
         print("\t\t...")
     print("\tSNLI")
@@ -245,7 +245,7 @@ def make_selected_glove_training():
         dataset = SnliDataset(os.path.join('data', 'snli', fname))
         ws = []
         for p in dataset:
-            ws += [w.lower() for w in p[1] + p[2]]
+            ws += p[1] + p[2]
         words += list(set(ws))
         data = None
         print("\t\t...")
@@ -256,7 +256,7 @@ def make_selected_glove_training():
         data = wic.load_data(os.path.join(eval.PATH_TO_WIC, setname, setname+'.data.txt'))
         ws = []
         for p in data:
-            ws += [w.lower() for sent in data for w in sent]
+            ws += [w for sent in data for w in sent]
         words += list(set(ws))
         data = None
         print("\t\t...")
