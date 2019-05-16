@@ -5,7 +5,7 @@ import models
 import configargparse
 from tensorboardX import SummaryWriter
 import os
-from tqdm import tqdm
+from tqdm import tqdm, trange
 
 if __name__ == "__main__":
     tasks = [
@@ -60,9 +60,9 @@ if __name__ == "__main__":
     print("Loading datasets.")
     if "snli" in args.tasks:
         snli_dataset = {
-            "train": data.SnliDataset(os.path.join("data", "snli", "snli_1.0_train.jsonl")),
+            "train":      data.SnliDataset(os.path.join("data", "snli", "snli_1.0_train.jsonl")),
             "validation": data.SnliDataset(os.path.join("data", "snli", "snli_1.0_dev.jsonl")),
-            "test": data.SnliDataset(os.path.join("data", "snli", "snli_1.0_test.jsonl"))
+            "test":       data.SnliDataset(os.path.join("data", "snli", "snli_1.0_test.jsonl")),
         }
 
         snli_loaders = {
@@ -77,9 +77,9 @@ if __name__ == "__main__":
     
     if "vua" in args.tasks:
         vua_dataset = {
-            "train": data.VuaSequenceDataset(split="train"),
+            "train":      data.VuaSequenceDataset(split="train"),
             "validation": data.VuaSequenceDataset(split="validation"),
-            "test": data.VuaSequenceDataset(split="test")
+            "test":       data.VuaSequenceDataset(split="test"),
         }
 
         vua_loaders = {
@@ -95,17 +95,17 @@ if __name__ == "__main__":
     snli_model = models.SnliModel(word_embedding_module).to(device)
     vua_model = models.VuaSequenceModel(snli_model).to(device) 
 
-    vua_optimizer = torch.optim.Adam(vua_model.parameters(), lr=args.learning_rate, weight_decay=0.01)
+    vua_optimizer =  torch.optim.Adam(vua_model.parameters(),  lr=args.learning_rate, weight_decay=0.01)
     snli_optimizer = torch.optim.Adam(snli_model.parameters(), lr=args.learning_rate, weight_decay=0.01)
 
     task_objects = {
-        "vua": (vua_model, vua_optimizer, vua_loaders, torch.nn.CrossEntropyLoss()),
+        "vua":  (vua_model,  vua_optimizer,  vua_loaders,  torch.nn.CrossEntropyLoss()),
         "snli": (snli_model, snli_optimizer, snli_loaders, torch.nn.CrossEntropyLoss())
     }
 
     writer = SummaryWriter(args.output)
 
-    for epoch in tqdm(range(args.epochs), "Epoch"):
+    for epoch in trange(args.epochs, desc="Epoch"):
         for task in tqdm(args.tasks, "Tasks"):
             model, optimizer, loaders, criterion = task_objects[task]
 

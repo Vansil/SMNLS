@@ -40,7 +40,7 @@ if [ ! -d wic ]; then
     rm wic.zip
 fi
 
-# VUA sequentail metaphor detection corpus.
+# VUA sequential metaphor detection corpus.
 if [ ! -d vua-sequence ]; then
     echo "Getting VUA metaphor detection corpus"
     mkdir -p vua-sequence
