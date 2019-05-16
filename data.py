@@ -230,14 +230,16 @@ def make_selected_glove_training():
     '''
 
     # Collect words
-    # print("Collecting Words")
-    # words = []
-    # print("\tPenn Treebank POS")
-    # for set_name in ['train', 'dev', 'test']:
-    #     dataset = PennDataset(set_name)
-    #     for sent in dataset._data:
-
-
+    print("Collecting Words")
+    words = []
+    print("\tPenn Treebank POS")
+    for set_name in ['train', 'dev', 'test']:
+        dataset = PennDataset(set_name)
+        ws = []
+        for sent in dataset._data:
+            ws += [w.lower() for w in sent[0]]
+        words += list(set(ws))
+        print("\t\t...")
     print("\tSNLI")
     for fname in ["snli_1.0_train.jsonl", "snli_1.0_dev.jsonl", "snli_1.0_test.jsonl"]:
         dataset = SnliDataset(os.path.join('data', 'snli', fname))
@@ -264,5 +266,5 @@ def make_selected_glove_training():
     words = [list(set(words))]
     print("Selecting words from GloVe")
     embeddings.GloveEmbedding.make_selected_glove(
-        words, os.path.join('data', 'glove', 'glove_selection_snli-wic.pt'))
+        words, os.path.join('data', 'glove', 'glove_selection_snli-wic-wsj.pt'))
     
