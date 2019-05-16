@@ -5,6 +5,8 @@ import re
 import numpy as np
 
 from allennlp.modules.elmo import Elmo, batch_to_ids
+from data import PennDataset
+from torch.utils.data import DataLoader
 
 GLOVE_FILE = 'data/glove/glove.840B.300d.txt'
 
@@ -256,3 +258,14 @@ class ElmoEmbedding(nn.Module):
         '''
         self.device = device
         self.to(device)
+
+    def warm_up(self):
+        '''
+        Runs some batches to "warm up" (https://github.com/allenai/allennlp/blob/master/tutorials/how_to/elmo.md#notes-on-statefulness-and-non-determinism)
+        Recommended to do before evaluation or inference, so that results are more reproducable and constant
+        '''
+        dataset = PennDataset()
+        for i in range(10):
+            batch = dataset[i*100:(i+1)*100]
+            self(batch)
+
