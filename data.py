@@ -82,9 +82,21 @@ class VuaSequenceDataset(Dataset):
         item = self._data[idx]
 
         words = item["sentence"].split()
-        labels = [int(l) for l in item["label_seq"][1:-1].split(", ")]
+        labels = torch.LongTensor([int(l) for l in item["label_seq"][1:-1].split(", ")])
 
-        return words, torch.LongTensor(labels)
+        num_metaphors = torch.sum(labels == 1).item()
+
+        idxs = (labels == 0).nonzero()
+
+        total_number =  (idxs.size(0) - num_metaphors + torch.randint(-1, 2, (2,))).item()
+
+        total_number = max(0, min(total_number, idxs.size(0)))
+
+        perm = torch.randperm(idxs.size(0))
+
+        labels[idxs[perm[:total_number]]] = -100
+
+        return words, labels
 
     def _read_file(self, split):
         with open(os.path.join("data", "vua-sequence", f"{split}.csv"), "r", encoding="ISO-8859-1") as f:
