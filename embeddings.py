@@ -11,6 +11,7 @@ from torch.utils.data import DataLoader
 import eval
 
 GLOVE_FILE = 'data/glove/glove.840B.300d.txt'
+GLOVE_TRAIN_FILE = os.path.join('data', 'glove', 'glove_selection_snli-wic-wsj.pt') # file with GloVe vectors from all training data
 
 
 
@@ -63,7 +64,7 @@ class WordEmbedding(nn.Module):
         # self.add_module("elmo", self.elmo)
 
 
-    def set_glove(self, glove_file):
+    def set_glove(self, glove_file=GLOVE_TRAIN_FILE):
         '''
         Add a GloVe embedding module. 
         The embedding and vocabulary is taken from glove_file.

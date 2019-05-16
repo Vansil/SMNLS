@@ -387,6 +387,8 @@ class JMTModel(nn.Module):
         super(JMTModel, self).__init__()
 
         self.embedding = WordEmbedding(device)
+        self.embedding.set_elmo()
+        self.embedding.set_glove()
 
         self.pos_lstm = nn.LSTM(1324, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)
         self.pos_classifier = nn.Linear(100, pos_classes)
