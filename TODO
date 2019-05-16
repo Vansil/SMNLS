@@ -7,17 +7,25 @@ Other:
 
 WEEK 6
 Bjarne:
-- Experiment opzetten
+- [ ] Experiment opzetten
 
 Tycho:
-- Significance test
+- [ ] Significance test
+
 
 Silvan:
-- WiC evaluate for different layers
-- Error analysis help
-- PCA, t-SNE help
+- [ ] WiC evaluate for different layers
+- [ ] Error analysis help
+- [ ] PCA, t-SNE help
 
 
+- [ ] Quantitative analysis
+    - [ ] WiC: set to eval() mode
+    - [ ] evaluate WiC layers
+- [ ] qualitative error analysis
+    - [ ] error analysis function
+    - [ ] dimensionality reduction
+- [ ] paper
 
 
 WEEK 5
