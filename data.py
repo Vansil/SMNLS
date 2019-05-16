@@ -10,7 +10,6 @@ from csv import DictReader
 import xml.etree.ElementTree as ET
 
 import eval
-from embeddings import GloveEmbedding
 
 PENN_TREEBANK_PATH = "data/penn/wsj/"
 
@@ -235,47 +234,3 @@ class PennDataset(Dataset):
 
 
 
-def make_selected_glove_training():
-    '''
-    Makes a glove file containing all words that could be needed in training
-    Fit for: SNLI, WiC
-    '''
-
-    # Collect words
-    print("Collecting Words")
-    words = []
-    print("\tPenn Treebank POS")
-    for set_name in ['train', 'dev', 'test']:
-        dataset = PennDataset(set_name, first_label=False)
-        ws = []
-        for sent in dataset:
-            ws += sent[0]
-        words += list(set(ws))
-        print("\t\t...")
-    print("\tSNLI")
-    for fname in ["snli_1.0_train.jsonl", "snli_1.0_dev.jsonl", "snli_1.0_test.jsonl"]:
-        dataset = SnliDataset(os.path.join('data', 'snli', fname))
-        ws = []
-        for p in dataset:
-            ws += p[1] + p[2]
-        words += list(set(ws))
-        data = None
-        print("\t\t...")
-    dataset = None
-    print("\tWiC")
-    wic = eval.WicEvaluator(None, None)
-    for setname in ['train', 'dev', 'test']:
-        data = wic.load_data(os.path.join(eval.PATH_TO_WIC, setname, setname+'.data.txt'))
-        ws = []
-        for p in data:
-            ws += [w for sent in data for w in sent]
-        words += list(set(ws))
-        data = None
-        print("\t\t...")
-
-    # Make GloVe selection
-    words = [list(set(words))]
-    print("Selecting words from GloVe")
-    GloveEmbedding.make_selected_glove(
-        words, os.path.join('data', 'glove', 'glove_selection_snli-wic-wsj.pt'))
-    
