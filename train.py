@@ -56,9 +56,9 @@ if __name__ == "__main__":
     embeddings = data.load_embeddings(args.word_embeddings)
 
     print("Loading datasets.")
-    train_data = data.SnliDataset_(os.path.join(args.data_dir, "snli_1.0_train.jsonl"), embeddings)
-    validation_data = data.SnliDataset_(os.path.join(args.data_dir, "snli_1.0_dev.jsonl"), embeddings)
-    test_data = data.SnliDataset_(os.path.join(args.data_dir, "snli_1.0_test.jsonl"), embeddings)
+    train_data =      data.SnliDataset_(os.path.join(args.data_dir, "snli_1.0_train.jsonl"), embeddings)
+    validation_data = data.SnliDataset_(os.path.join(args.data_dir, "snli_1.0_dev.jsonl"),   embeddings)
+    test_data =       data.SnliDataset_(os.path.join(args.data_dir, "snli_1.0_test.jsonl"),  embeddings)
 
     train_loader = DataLoader(
         train_data, shuffle=True, batch_size=64, num_workers=8,
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     learning_rate = 0.1
     shrink_factor = 0.2
 
-    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     base_model = get_model(args.model).to(device)
 
