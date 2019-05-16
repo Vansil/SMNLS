@@ -34,14 +34,14 @@ if __name__ == "__main__":
     
     # Data Loaders
     out.log("Loading datasets.")
-    train_data = data.SnliDataset(os.path.join('data', 'snli', "snli_1.0_train.jsonl"))
+    train_data =      data.SnliDataset(os.path.join('data', 'snli', "snli_1.0_train.jsonl"))
     validation_data = data.SnliDataset(os.path.join('data', 'snli', "snli_1.0_dev.jsonl"))
-    test_data = data.SnliDataset(os.path.join('data', 'snli', "snli_1.0_test.jsonl"))
+    test_data =       data.SnliDataset(os.path.join('data', 'snli', "snli_1.0_test.jsonl"))
 
     batch_size = 64 
-    train_loader = data.SnliDataLoader(train_data, batch_size=batch_size)
+    train_loader =      data.SnliDataLoader(     train_data, batch_size=batch_size)
     validation_loader = data.SnliDataLoader(validation_data, batch_size=batch_size)
-    test_loader = data.SnliDataLoader(test_data, batch_size=batch_size)
+    test_loader =       data.SnliDataLoader(      test_data, batch_size=batch_size)
 
     # Hyper parameters
     learning_rate = 0.1
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     out.add_scalar("train/learningrate", learning_rate, 0)
 
     # Initialise model
-    device = torch.device("cuda") if torch.cuda.is_available() else torch.device("cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model = models.BaseModelElmo(1024, 512, 3, device)
     
     num_params, num_trainable = models.count_parameters(model)

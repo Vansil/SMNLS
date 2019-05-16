@@ -1,9 +1,16 @@
 import os
 import torch
-from matplotlib import pyplot as plt
 from tensorboardX import SummaryWriter
 import models
 import copy
+
+import yaml
+
+def save_arguments(dir, arguments):
+    with open(os.path.join(dir, "config.yaml"), "w", encoding="utf-8") as f:
+        config = yaml.dump(arguments, default_flow_style=False)
+
+        f.write(config)
 
 
 class OutputWriter(object):
