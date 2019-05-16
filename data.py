@@ -160,12 +160,13 @@ class PennDataset(Dataset):
     '''
     Dataset for English Penn Treebank Wall Street Journal POS
     '''
-    def __init__(self, set_name="train", sections=[]):
+    def __init__(self, set_name="train", sections=[], first_label=True):
         '''
         Initialise POS dataset.
         Args:
             set_name: use standard sections of the dataset, options: train, dev, test, manual
             sections: if set_name is manual, list sections to be used here
+            first_label: set to False to get a list of correct labels instead of the first correct label
         '''
         # standard splits (c.f. A Joint Many-Task Model: Growing a Neural Network for Multiple NLP Tasks)
         sections_standard = {
@@ -173,6 +174,9 @@ class PennDataset(Dataset):
             'dev': [s for s in range(19, 22)],
             'test': [s for s in range(22,25)]
         }
+        self.id_to_label = ['#', '$', "''", '(', ')', ',', '.', ':', 'CC', 'CD', 'DT', 'EX', 'FW', 'IN', 'JJ', 'JJR', 'JJS', 'LS', 'MD', 'NN', 'NNP', 'NNPS', 'NNS', 'PDT', 'POS', 'PRP', 'PRP$', 'RB', 'RBR', 'RBS', 'RP', 'SYM', 'TO', 'UH', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'WDT', 'WP', 'WP$', 'WRB', '``']
+        self.label_to_id = {self.id_to_label[i]: i for i in range(len(self.id_to_label))}
+
         # obtain split from argument
         sections = sections_standard.get(set_name, sections)
 
@@ -190,12 +194,26 @@ class PennDataset(Dataset):
                         for s in re.sub("======================================\n","", content).split("\n\n")] 
                         if sent])
 
-        self._data = data
+        # Store data in right format
+        if first_label:
+            self._data = [(
+                [pair[0] for pair in sent],
+                [self.label_to_id[pair[1][0]] for pair in sent]
+                ) for sent in data]
+        else:
+            self._data = [(
+                [pair[0] for pair in sent],
+                [[self.label_to_id[label] for label in pair[1]] for pair in sent]
+                ) for sent in data]
 
     def __len__(self):
         return len(self._data)
 
     def __getitem__(self, idx):
+        '''
+        Returns a list of words, and a list of labels.
+        If first_label is False, the label is represented by a list of correct labels
+        '''
         return self._data[idx]
 
     def split_pair(self, pair):
@@ -212,15 +230,21 @@ def make_selected_glove_training():
     '''
 
     # Collect words
-    print("Collecting Words")
-    words = []
+    # print("Collecting Words")
+    # words = []
+    # print("\tPenn Treebank POS")
+    # for set_name in ['train', 'dev', 'test']:
+    #     dataset = PennDataset(set_name)
+    #     for sent in dataset._data:
+
+
     print("\tSNLI")
     for fname in ["snli_1.0_train.jsonl", "snli_1.0_dev.jsonl", "snli_1.0_test.jsonl"]:
         dataset = SnliDataset(os.path.join('data', 'snli', fname))
         data = dataset._data
         ws = []
         for p in data:
-            ws += [w.lower() for w in p['premise'] + p['hypothesis']]
+            ws += [w.lower() for w in p['s1'] + p['s2']]
         words += list(set(ws))
         data = None
         print("\t\t...")
