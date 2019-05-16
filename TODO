@@ -5,27 +5,46 @@ Other:
 - Shared LISA account (lgpu0219, Bjachan69)
 
 
+WEEK 6
+Bjarne:
+- [ ] Experiment opzetten
+
+Tycho:
+- [ ] Significance test
+
+
+Silvan:
+- [ ] WiC evaluate for different layers
+- [ ] Error analysis help
+- [ ] PCA, t-SNE help
+
+
+- [ ] Quantitative analysis
+    - [ ] WiC: set to eval() mode
+    - [ ] evaluate WiC layers
+- [ ] qualitative error analysis
+    - [ ] error analysis function
+    - [ ] dimensionality reduction
+- [ ] paper
+
+
 WEEK 5
 
 TODO:
 Finish and train a model (whatever we'll finish this week will be the main topic of our analysis)
-- POS task (dataset available?)
-- Disambiguation task
-- Sequential labelling task
-- Architectures
-- Training schemes
-- successive regularization
-- significance testing
-
-- Quantitative analysis
-- WiC: set to eval() mode
+- [x] POS task (dataset available?)
+- ~Disambiguation task~
+- [x] Sequential labelling task
+- [x] Architectures
+- [x] Training schemes
 
 
 Silvan
-- disamb. train/dev/test split
+- ~disamb. train/dev/test split~
 
 Bjarne
-- disamb task
+- [ ] disamb task
+- [x] successive regularization
 
 Tycho
 
