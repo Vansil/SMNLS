@@ -480,6 +480,40 @@ class JMTModel(nn.Module):
 
         return embeddings
 
+    def embed_words(self, sentences):
+        lengths = [len(s) for s in sentences]
+
+        E = self.embedding(sentences)
+
+        E_packed = nn.utils.rnn.pack_padded_sequence(E, lengths, batch_first=True, enforce_sorted=False)
+
+        Pos_packed, _ = self.pos_lstm(E_packed)
+
+        Pos_unpacked = nn.utils.rnn.pad_packed_sequence(Pos_packed, batch_first=True)[0]
+
+        Pos_p = F.softmax(self.pos_classifier(Pos_unpacked))
+
+        I = torch.cat([E, Pos_unpacked, Pos_p], dim=-1)
+
+        I_packed = nn.utils.rnn.pack_padded_sequence(I, lengths, batch_first=True, enforce_sorted=False)
+
+        M_packed, _ = self.metaphor_lstm(I_packed)
+
+        M_unpacked = nn.utils.rnn.pad_packed_sequence(M_packed, batch_first=True)
+
+        M_p = F.softmax(self.metaphor_classifier(M_unpacked))
+        
+        S = torch.cat([E, Pos_unpacked, M_unpacked, M_p], dim=-1)
+
+        S_packed = nn.utils.rnn.pack_padded_sequence(S, lengths, batch_first=True, enforce_sorted=False)
+
+        O_packed = self.snli_classifier(S_packed)[0]
+
+        O_unpacked = nn.utils.rnn.pad_packed_sequence(O_packed)[0]
+
+        # Returns in order the ELMo, Pos, Metaphor, Snli embeddings
+        return E, Pos_unpacked, M_unpacked, O_unpacked
+
 
 def count_parameters(model):
     '''
