@@ -382,6 +382,104 @@ class BiLstmMaxModel(BaseModel):
         return output
 
 
+class JMTModel(nn.Module):
+    def __init__(self, device, pos_classes=45, metaphor_classes=2, snli_classes=3, lstm_hidden_size=100, dropout=0):
+        super(JMTModel, self).__init__()
+
+        self.embedding_module = WordEmbeddingModel(device)
+
+        self.pos_lstm = nn.LSTM(1324, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)
+        self.pos_classifier = nn.Linear(100, pos_classes)
+
+        self.metaphor_lstm = nn.LSTM(1324 + lstm_hidden_size + pos_classes, 1, bidirectional=True, dropout=dropout, batch_first=True)
+        self.metaphor_classifier = nn.Linear(100, metaphor_classes)
+
+        self.snli_lstm = nn.LSTM(1324 + 2 * lstm_hidden_size + metaphor_classes, 1, bidirectional=True, dropout=dropout, batch_first=True)
+        self.snli_classifier = nn.Linear(100 * 4, snli_classes)
+
+    def pos_forward(self, sentences, lengths):
+        E = self.embedding_module(sentences)
+
+        E_packed = nn.utils.rnn.pack_padded_sequence(E, lengths, batch_first=True, enforce_sorted=False)
+
+        O_packed = self.pos_lstm(E_packed)[0]
+
+        O_unpacked = nn.utils.rnn.pad_packed_sequence(O_packed, batch_first=True)[0]
+
+        P = self.pos_classifier(O_unpacked)
+
+        return P
+
+    def metaphor_forward(self, sentences, lengths):
+        E = self.embedding_module(sentences)
+
+        E_packed = nn.utils.rnn.pack_padded_sequence(E, lengths, batch_first=True, enforce_sorted=False)
+
+        Pos_packed, (Pos_hidden, _) = self.pos_lstm(E_packed)
+
+        Pos_unpacked = nn.utils.rnn.pad_packed_sequence(Pos_packed, batch_first=True)[0]
+
+        Pos_p = self.pos_classifier(Pos_unpacked)
+
+        I = torch.cat([E, Pos_unpacked, Pos_p], dim=-1)
+
+        I_packed = nn.utils.rnn.pack_padded_sequence(I, lengths, batch_first=True, enforce_sorted=False)
+
+        M_packed = self.metaphor_lstm(I_packed)[0]
+
+        M_unpacked = nn.utils.rnn.pad_packed_sequence(M_unpacked, batch_first=True)
+
+        P = self.metaphor_classifier(M_unpacked)
+
+        return P
+
+    def snli_forward(self, sentences1, lengths1, sentences2, lengths2):
+        E1 = self._snli_embed(sentences1, lengths1)
+        E2 = self._snli_embed(sentences2, lengths2)
+
+        El = E1 * E2
+        A = torch.abs(E1 - E2)
+
+        I = torch.cat([E1, E2, El, A], dim=-1)
+
+        P = self.snli_classifier(I)
+
+        return P
+
+    def _snli_embed(self, sentences, lengths):
+        E = self.embedding_module(sentences)
+
+        E_packed = nn.utils.rnn.pack_padded_sequence(E, lengths, batch_first=True, enforce_sorted=False)
+
+        Pos_packed, (Pos_hidden, _) = self.pos_lstm(E_packed)
+
+        Pos_unpacked = nn.utils.rnn.pad_packed_sequence(Pos_packed, batch_first=True)[0]
+
+        Pos_p = self.pos_classifier(Pos_unpacked)
+
+        I = torch.cat([E, Pos_unpacked, Pos_p], dim=-1)
+
+        I_packed = nn.utils.rnn.pack_padded_sequence(I, lengths, batch_first=True, enforce_sorted=False)
+
+        M_packed, (M_hidden, _) = self.metaphor_lstm(I_packed)
+
+        M_unpacked = nn.utils.rnn.pad_packed_sequence(M_unpacked, batch_first=True)
+
+        M_p = self.metaphor_classifier(M_unpacked)
+        
+        S = torch.cat([E, Pos_unpacked, M_unpacked, M_p], dim=-1)
+
+        S_packed = nn.utils.rnn.pack_padded_sequence(S, lengths, batch_first=True, enforce_sorted=False)
+
+        O_packed = self.snli_classifier(S_packed)[0]
+
+        O_unpacked = nn.utils.rnn.pad_packed_sequence(O_packed)[0]
+
+        embeddings, _ =  torch.max(O_unpacked, dim=1)
+
+        return embeddings
+
+
 def count_parameters(model):
     '''
     Computes the total number of parameters, and the number of trainable parameters
