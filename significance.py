@@ -65,7 +65,7 @@ def gen_combs(models, gold, fn):
 
 def significance_pivot(models, gold, fn, file):
     """generate and save to html a pivot of p-values"""
-    rows = gen_combs(models, fn)
+    rows = gen_combs(models, gold, fn)
     df = pd.DataFrame(rows)
     pivot = df.pivot(index='a', columns='b', values='p')
     pivot.to_html(file)
