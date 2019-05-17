@@ -6,7 +6,9 @@ import configargparse
 from tensorboardX import SummaryWriter
 import os
 from tqdm import tqdm
-from output import save_arguments
+from output import OutputWriter
+
+
 
 if __name__ == "__main__":
     tasks = [
@@ -176,14 +178,9 @@ if __name__ == "__main__":
         "snli": (model.snli_forward, snli_optimizer, snli_lr_schedula, snli_loaders, torch.nn.CrossEntropyLoss())
     }
 
-    writer = SummaryWriter(args.output)
+    writer = OutputWriter(args.output)
 
-    os.makedirs(os.path.join(writer.log_dir, "checkpoints"), exist_ok=False)
-
-    save_arguments(
-        writer.log_dir,
-        arguments
-    )
+    writer.save_arguments(arguments)
 
     for epoch in tqdm(range(args.epochs), "Epoch"):
         for task in tqdm(args.tasks, "Tasks"):
@@ -257,3 +254,5 @@ if __name__ == "__main__":
                     writer.add_scalar(
                         f"{task}/validation/accuracy", accuracy, global_step=len(loaders["train"]) * (epoch + 1)
                     )
+
+                    writer.save_model(model, "{}_epoch{:02d}".format(task, epoch+1))

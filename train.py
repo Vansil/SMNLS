@@ -8,6 +8,8 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 import numpy as np
 
+from output import OutputWriter
+
 def get_model(model_name):
     if model_name == "base-line":
         return models.BaseModel(300, 512, 3)

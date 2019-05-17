@@ -6,11 +6,7 @@ import copy
 
 import yaml
 
-def save_arguments(dir, arguments):
-    with open(os.path.join(dir, "config.yaml"), "w", encoding="utf-8") as f:
-        config = yaml.dump(arguments, default_flow_style=False)
 
-        f.write(config)
 
 
 class OutputWriter(object):
@@ -44,8 +40,13 @@ class OutputWriter(object):
         with open(os.path.join(self.dir, file_name), 'a') as f:
             f.write(text+"\n")
 
+    def save_arguments(self, arguments):
+        with open(os.path.join(self.dir, "config.yaml"), "w", encoding="utf-8") as f:
+            config = yaml.dump(arguments, default_flow_style=False)
+            f.write(config)
 
-    def save_model(self, model, iter):
+
+    def save_model(self, model, name):
         '''
         Save model to pickle file
         Save from the embedding layer only the ELMo mix parameters and GloVe embedding file
@@ -66,7 +67,7 @@ class OutputWriter(object):
         model_copy.embedding.clear()
         model_dict['model'] = model_copy
         
-        torch.save(model_dict, os.path.join(self.dir_check, '{:09d}.pt'.format(iter)))
+        torch.save(model_dict, os.path.join(self.dir_check, '{}.pt'.format(name)))
 
     @classmethod
     def load_model(cls, file, device='cuda'):
