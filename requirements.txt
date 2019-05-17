@@ -2,3 +2,4 @@ tensorboardX
 allennlp
 configargparse
 pyyaml
+permutation_test
