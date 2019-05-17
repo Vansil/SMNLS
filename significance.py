@@ -40,11 +40,9 @@ def model_df(model, gold):
     df['correct'] = list(map(lambda a_b: a_b[0] == a_b[1], zip(gold['gold'], df['pred'])))
     return df
 
-def mcnemar_models(name_a, name_b, gold):
+def mcnemar_models(a, b):
     """get mcnemar's test p-value for two WiC model results: are they from the same distribution?"""
-    df_a = model_df(name_a, gold)
-    df_b = model_df(name_b, gold)
-    corrects = list(zip(df_a['correct'], df_b['correct']))
+    corrects = list(zip(a, b))
     filtered = list(filter(lambda a_b: a_b[0] != a_b[1], corrects))
     total = len(filtered)
     a_wins = len(list(filter(lambda a_b: a_b[0], filtered)))
@@ -52,7 +50,7 @@ def mcnemar_models(name_a, name_b, gold):
     p = mcnemar_p(a_wins, b_wins)
     return p
 
-def gen_combs(models, fn):
+def gen_combs(models, gold, fn):
     """"generate p-values for each combination. params:
     - models: a list of model names
     - fn: a function to calculate p-values
@@ -60,10 +58,12 @@ def gen_combs(models, fn):
     """
     for a in models:
         for b in models:
+            a = model_df(name_a, gold)['correct']
+            b = model_df(name_b, gold)['correct']
             p = fn(a, b) if a != b else np.nan
             yield {'a':a, 'b':b, 'p':p}
 
-def significance_pivot(models, file, fn):
+def significance_pivot(models, gold, fn, file):
     """generate and save to html a pivot of p-values"""
     rows = gen_combs(models, fn)
     df = pd.DataFrame(rows)
@@ -75,5 +75,5 @@ if __name__ == "__main__":
     # wic = wic_df()
     models = ['baseline_elmo0', 'baseline_elmo1', 'baseline_elmo2']
 
-    significance_pivot(models, 'results/mcnemar.html', lambda a, b: mcnemar_models(a, b, gold))
-    significance_pivot(models, 'results/fishers_permutation.html', permutationtest)
+    significance_pivot(models, gold, mcnemar_models,  'results/mcnemar.html')
+    significance_pivot(models, gold, permutationtest, 'results/fishers_permutation.html')
