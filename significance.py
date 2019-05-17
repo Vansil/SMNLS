@@ -1,6 +1,6 @@
+import numpy as np
 from scipy.stats import binom
 import pandas as pd
-from pdb import set_trace
 
 # https://gist.github.com/kylebgorman/c8b3fb31c1552ecbaafb
 def mcnemar_p(b, c):
@@ -37,7 +37,6 @@ def model_df(model, gold):
     return df
 
 def mcnemar_models(name_a, name_b, gold):
-    set_trace()
     df_a = model_df(name_a, gold)
     df_b = model_df(name_b, gold)
     corrects = list(zip(df_a['correct'], df_b['correct']))
@@ -51,7 +50,7 @@ def mcnemar_models(name_a, name_b, gold):
 def gen_combs(models, gold):
     for a in models:
         for b in models:
-            p = mcnemar_models(a, b, gold)
+            p = mcnemar_models(a, b, gold) if a != b else np.nan
             yield (a, b, p)
 
 gold = gold_df()
