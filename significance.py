@@ -58,9 +58,8 @@ def gen_combs(models, gold, fn):
     """
     for a in models:
         for b in models:
-            a = model_df(name_a, gold)['correct']
-            b = model_df(name_b, gold)['correct']
-            p = fn(a, b) if a != b else np.nan
+            corrects = [model_df(k, gold)['correct'].map(int) for k in (a, b)]
+            p = fn(*corrects) if a != b else np.nan
             yield {'a':a, 'b':b, 'p':p}
 
 def significance_pivot(models, gold, fn, file):
