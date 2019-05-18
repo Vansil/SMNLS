@@ -10,6 +10,7 @@ runs/*
 output/*
 
 # Cluster job files
+jobs/archive/
 *.out
 
 # Byte-compiled / optimized / DLL files

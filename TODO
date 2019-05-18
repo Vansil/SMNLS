@@ -10,7 +10,7 @@ Bjarne:
 - [ ] Experiment opzetten
 
 Tycho:
-- [~] Significance test
+- [x] Significance test
 - [ ] qualitative error analysis
     - [ ] error analysis function, to identify worst errors
     - [ ] dimensionality reduction
