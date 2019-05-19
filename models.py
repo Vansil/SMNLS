@@ -392,13 +392,13 @@ class JMTModel(nn.Module):
         self.embedding.set_glove()
 
         self.pos_lstm = nn.LSTM(1324, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)
-        self.pos_classifier = nn.Linear(100, pos_classes)
+        self.pos_classifier = nn.Linear(2 * lstm_hidden_size, pos_classes)
 
-        self.metaphor_lstm = nn.LSTM(1324 + lstm_hidden_size + pos_classes, 1, bidirectional=True, dropout=dropout, batch_first=True)
-        self.metaphor_classifier = nn.Linear(100, metaphor_classes)
+        self.metaphor_lstm = nn.LSTM(1324 + 2 * lstm_hidden_size + pos_classes, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)
+        self.metaphor_classifier = nn.Linear(2 * lstm_hidden_size, metaphor_classes)
 
-        self.snli_lstm = nn.LSTM(1324 + 2 * lstm_hidden_size + metaphor_classes, 1, bidirectional=True, dropout=dropout, batch_first=True)
-        self.snli_classifier = nn.Linear(100 * 4, snli_classes)
+        self.snli_lstm = nn.LSTM(1324 + 4 * lstm_hidden_size + metaphor_classes, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)
+        self.snli_classifier = nn.Linear(2 * lstm_hidden_size * 4, snli_classes)
 
     def pos_forward(self, sentences, lengths):
         E = self.embedding(sentences)
@@ -422,7 +422,7 @@ class JMTModel(nn.Module):
 
         Pos_unpacked = nn.utils.rnn.pad_packed_sequence(Pos_packed, batch_first=True)[0]
 
-        Pos_p = F.softmax(self.pos_classifier(Pos_unpacked))
+        Pos_p = F.softmax(self.pos_classifier(Pos_unpacked), dim=-1)
 
         I = torch.cat([E, Pos_unpacked, Pos_p], dim=-1)
 
@@ -430,7 +430,7 @@ class JMTModel(nn.Module):
 
         M_packed = self.metaphor_lstm(I_packed)[0]
 
-        M_unpacked = nn.utils.rnn.pad_packed_sequence(M_packed, batch_first=True)
+        M_unpacked = nn.utils.rnn.pad_packed_sequence(M_packed, batch_first=True)[0]
 
         P = self.metaphor_classifier(M_unpacked)
 
@@ -458,7 +458,7 @@ class JMTModel(nn.Module):
 
         Pos_unpacked = nn.utils.rnn.pad_packed_sequence(Pos_packed, batch_first=True)[0]
 
-        Pos_p = F.softmax(self.pos_classifier(Pos_unpacked))
+        Pos_p = F.softmax(self.pos_classifier(Pos_unpacked), dim=-1)
 
         I = torch.cat([E, Pos_unpacked, Pos_p], dim=-1)
 
@@ -466,17 +466,17 @@ class JMTModel(nn.Module):
 
         M_packed, _ = self.metaphor_lstm(I_packed)
 
-        M_unpacked = nn.utils.rnn.pad_packed_sequence(M_packed, batch_first=True)
+        M_unpacked = nn.utils.rnn.pad_packed_sequence(M_packed, batch_first=True)[0]
 
-        M_p = F.softmax(self.metaphor_classifier(M_unpacked))
+        M_p = F.softmax(self.metaphor_classifier(M_unpacked), dim=-1)
         
         S = torch.cat([E, Pos_unpacked, M_unpacked, M_p], dim=-1)
 
         S_packed = nn.utils.rnn.pack_padded_sequence(S, lengths, batch_first=True, enforce_sorted=False)
 
-        O_packed = self.snli_classifier(S_packed)[0]
+        O_packed, _ = self.snli_lstm(S_packed)
 
-        O_unpacked = nn.utils.rnn.pad_packed_sequence(O_packed)[0]
+        O_unpacked = nn.utils.rnn.pad_packed_sequence(O_packed, batch_first=True)[0]
 
         embeddings, _ =  torch.max(O_unpacked, dim=1)
 
@@ -501,7 +501,7 @@ class JMTModel(nn.Module):
 
         M_packed, _ = self.metaphor_lstm(I_packed)
 
-        M_unpacked = nn.utils.rnn.pad_packed_sequence(M_packed, batch_first=True)
+        M_unpacked = nn.utils.rnn.pad_packed_sequence(M_packed, batch_first=True)[0]
 
         M_p = F.softmax(self.metaphor_classifier(M_unpacked))
         
@@ -509,9 +509,9 @@ class JMTModel(nn.Module):
 
         S_packed = nn.utils.rnn.pack_padded_sequence(S, lengths, batch_first=True, enforce_sorted=False)
 
-        O_packed = self.snli_classifier(S_packed)[0]
+        O_packed, _ = self.snli_lstm(S_packed)
 
-        O_unpacked = nn.utils.rnn.pad_packed_sequence(O_packed)[0]
+        O_unpacked = nn.utils.rnn.pad_packed_sequence(O_packed, batch_first=True)[0]
 
         # Returns in order the ELMo, Pos, Metaphor, Snli embeddings
         return E, Pos_unpacked, M_unpacked, O_unpacked

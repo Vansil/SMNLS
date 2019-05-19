@@ -9,7 +9,7 @@ import pickle
 from csv import DictReader
 import xml.etree.ElementTree as ET
 
-import eval
+# import eval
 
 PENN_TREEBANK_PATH = "data/penn/wsj/"
 
@@ -87,7 +87,7 @@ class VuaSequenceDataset(Dataset):
 
         idxs = (labels == 0).nonzero()
 
-        total_number =  (idxs.size(0) - num_metaphors + torch.randint(-1, 2, (2,))).item()
+        total_number =  (idxs.size(0) - num_metaphors + torch.randint(-1, 2, (1,))).item()
 
         total_number = max(0, min(total_number, idxs.size(0)))
 
@@ -233,4 +233,17 @@ class PennDataset(Dataset):
         return (split[1], split[0].split("|"))
 
 
+def penn_collate_fn(batch):
+    sentences = [b[0] for b in batch]
+    labels = [b[1] for b in batch]
 
+    max_len = max(len(s) for s in sentences)
+
+    lengths = torch.LongTensor([len(s) for s in sentences])
+
+    l = -torch.ones(len(labels), max_len, dtype=torch.int64) * 100
+
+    for i, label in enumerate(labels):
+        l[i, 0:len(label)] = torch.LongTensor(label)
+
+    return sentences, lengths, l

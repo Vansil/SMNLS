@@ -5,9 +5,14 @@ import models
 import configargparse
 from tensorboardX import SummaryWriter
 import os
-from tqdm import tqdm
 from output import OutputWriter
+import numpy as np
 
+try:
+    from tqdm import tqdm
+except ImportError:
+    def tqdm(sequence, *args, **kwargs):
+        return sequence
 
 
 if __name__ == "__main__":
@@ -21,7 +26,7 @@ if __name__ == "__main__":
         help="The config specifying arguments to run with."
     )
     parser.add_argument(
-        "--output", "-o", type=str, required=False, default=None,
+        "--output", "-o", type=str, required=True,
         help="The directory to store all the output."
     )
     parser.add_argument(
@@ -84,13 +89,24 @@ if __name__ == "__main__":
 
     print("Creating model.")
     model = models.JMTModel(device)
+    model.to(device)
 
     print("Loading datasets.")
     if "pos" in args.tasks:
         pos_dataset = {
             "train": data.PennDataset("train"),
-            "validation": data.PennDataset("validation"),
+            "validation": data.PennDataset("dev"),
             "test": data.PennDataset("test")
+        }
+
+        pos_loaders = {
+            name: DataLoader(
+                dataset,
+                shuffle=(name == "train"),
+                batch_size=64 if name == "train" else 128,
+                num_workers=args.num_workers,
+                collate_fn=data.penn_collate_fn
+            ) for name, dataset in pos_dataset.items()
         }
     else:
         pos_loaders = {}
@@ -133,7 +149,7 @@ if __name__ == "__main__":
     else:
         vua_loaders = {}
 
-    lr_function = lambda epoch: args.epsilon / (1.0 * args.rho * (epoch))
+    lr_function = lambda epoch: args.epsilon / (1.0 + args.rho * (epoch))
 
     pos_optimizer = torch.optim.SGD(
         [
@@ -147,8 +163,8 @@ if __name__ == "__main__":
 
     vua_optimizer = torch.optim.SGD(
         [
-            {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - 1e-3)},
-            {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - 1e-2)},
+            {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - 1e-3) if "pos" in args.tasks else 1.0},
+            {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - 1e-2) if "pos" in args.tasks else 1.0},
             {"params": model.metaphor_lstm.parameters(), "weight_decay": 1e-6, "lr": 1.0},
             {"params": model.metaphor_classifier.parameters(), "weight_decay": 1e-5, "lr": 1.0}
         ],
@@ -160,10 +176,10 @@ if __name__ == "__main__":
 
     snli_optimizer = torch.optim.SGD(
         [
-            {"params": model.metaphor_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - 1e-2)},
-            {"params": model.metaphor_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - 1e-3)},
-            {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - 1e-2)},
-            {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - 1e-2)},
+            {"params": model.metaphor_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - 1e-2) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
+            {"params": model.metaphor_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - 1e-3) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
+            {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - 1e-2) if "vua" in args.tasks else 1.0},
+            {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - 1e-2) if "vua" in args.tasks else 1.0},
             {"params": model.snli_lstm.parameters(), "weight_decay": 1e-6, "lr": 1.0},
             {"params": model.snli_classifier.parameters(), "weight_decay": 1e-5, "lr": 1.0}
         ],
@@ -173,9 +189,9 @@ if __name__ == "__main__":
     )
 
     task_objects = {
-        "pos": (model.pos_forward, pos_optimizer, pos_lr_schedule, pos_loaders, torch.nn.CrossEntropyLoss())
-        "vua": (model.metaphor_forward, vua_optimizer, vua_lr_schedule, vua_loaders, torch.nn.CrossEntropyLoss()),
-        "snli": (model.snli_forward, snli_optimizer, snli_lr_schedula, snli_loaders, torch.nn.CrossEntropyLoss())
+        "pos": (model, model.pos_forward, pos_optimizer, pos_lr_schedule, pos_loaders, torch.nn.CrossEntropyLoss()),
+        "vua": (model, model.metaphor_forward, vua_optimizer, vua_lr_schedule, vua_loaders, torch.nn.CrossEntropyLoss()),
+        "snli": (model, model.snli_forward, snli_optimizer, snli_lr_schedula, snli_loaders, torch.nn.CrossEntropyLoss())
     }
 
     writer = OutputWriter(args.output)
@@ -184,17 +200,17 @@ if __name__ == "__main__":
 
     for epoch in tqdm(range(args.epochs), "Epoch"):
         for task in tqdm(args.tasks, "Tasks"):
-            model, optimizer, lr_scheduler, loaders, criterion = task_objects[task]
+            model, fn, optimizer, lr_scheduler, loaders, criterion = task_objects[task]
 
             lr_scheduler.step()
             model.train()
 
-            for i, batch in tqdm(enumerate(loaders["train"])):
+            for i, batch in tqdm(enumerate(loaders["train"]), total=len(loaders["train"])):
                 optimizer.zero_grad()
                 inputs = tuple(b.to(device) if type(b) != list else b for b in batch[:-1])
                 targets = batch[-1].to(device)
 
-                output = model(*inputs)
+                output = fn(*inputs)
 
                 if task == "snli":
                     loss = criterion(output, targets)
@@ -226,9 +242,11 @@ if __name__ == "__main__":
                     losses = []
                     batch_sizes = []
 
-                    for batch in tqdm(loaders["validation"]):
+                    for batch in tqdm(loaders["validation"], total=len(loaders["validation"])):
                         inputs = tuple(b.to(device) if type(b) != list else b for b in batch[:-1])
                         targets = batch[-1].to(device)
+
+                        output = fn(*inputs)
 
                         if task == "snli":
                             loss = criterion(output, targets)
