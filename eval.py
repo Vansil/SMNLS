@@ -177,13 +177,13 @@ class WicEvaluator():
         accuracy = (predictions == dev_labels).mean()
         print("Dev accuracy: {}".format(accuracy))
 
-        worst_fp = get_worst(data, cosine_scores, ~dev_labels & predictions)
-        print('false positives')
-        print(yaml.dump(worst_fp, default_flow_style=False))
+        worst = get_worst(data, cosine_scores, ~dev_labels & predictions)
+        with open(os.path.join(self.output_dir, 'false_positives.txt'), 'w') as f:
+            f.write(yaml.dump(worst, default_flow_style=False))
 
-        worst_fn = get_worst(data, cosine_scores, ~predictions & dev_labels)
-        print('false negatives')
-        print(yaml.dump(worst_fn, default_flow_style=False))
+        worst = get_worst(data, cosine_scores, ~predictions & dev_labels)
+        with open(os.path.join(self.output_dir, 'false_negatives.txt'), 'w') as f:
+            f.write(yaml.dump(worst, default_flow_style=False))
 
         # add performance to results and write predictions to output file
         results = {
