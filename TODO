@@ -7,25 +7,20 @@ Other:
 
 WEEK 6
 Bjarne:
-- [ ] Experiment opzetten
+- [x] Experiment opzetten
 
 Tycho:
 - [x] Significance test
 - [ ] qualitative error analysis
     - [ ] error analysis function, to identify worst errors
     - [ ] dimensionality reduction
-- [ ] 5-6 p. paper
+- [~] 5-6 p. paper
 
 
 Silvan:
 - [ ] WiC evaluate for different layers
 - [ ] Error analysis help
 - [ ] PCA, t-SNE help
-
-
-- [ ] Quantitative analysis
-    - [ ] WiC: set to eval() mode
-    - [ ] evaluate WiC layers
 
 
 WEEK 5

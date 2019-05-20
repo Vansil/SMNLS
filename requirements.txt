@@ -1,5 +1,5 @@
 tensorboardX
 allennlp
 configargparse
-pyyaml
 permutation_test
+ruamel.yaml

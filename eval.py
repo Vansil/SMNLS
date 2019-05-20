@@ -11,6 +11,7 @@ import os
 import sys
 import numpy as np
 import output
+from ruamel import yaml
 
 # Set PATHs
 # path to senteval
@@ -86,6 +87,23 @@ def eval_wic(model, output_dir):
     evaluater = WicEvaluator(model, output_dir)
     return evaluater.evaluate()
 
+def get_sentences(meta):
+    # return {idx: get_sentence(meta, idx) for idx in range(2)}
+    return [get_sentence(meta, idx) for idx in range(2)]
+
+def get_sentence(meta, idx):
+    pos = meta['positions'][idx]
+    meta['sentences'][idx][pos] = f"<br>{meta['sentences'][idx][pos]}</br>"
+    return ' '.join(meta['sentences'][idx])
+
+def get_worst(data, cosine_scores, idxs):
+    similarities = cosine_scores['dev'][idxs].tolist()
+    qualitative = np.array(data['dev'])[idxs]
+    ranking = sorted(zip(similarities, qualitative), reverse=True)
+    # worst = [{'score':score, 'sentences':get_sentences(meta)} for score, meta in ranking]
+    worst = dict([(score, get_sentences(meta)) for score, meta in ranking])
+    return worst
+
 class WicEvaluator():
     '''
     Container for WiC evaluation functions
@@ -158,6 +176,15 @@ class WicEvaluator():
         predictions = cosine_scores['dev'] > best_threshold
         accuracy = (predictions == dev_labels).mean()
         print("Dev accuracy: {}".format(accuracy))
+
+        worst_fp = get_worst(data, cosine_scores, ~dev_labels & predictions)
+        print('false positives')
+        print(yaml.dump(worst_fp, default_flow_style=False))
+
+        worst_fn = get_worst(data, cosine_scores, ~predictions & dev_labels)
+        print('false negatives')
+        print(yaml.dump(worst_fn, default_flow_style=False))
+
         # add performance to results and write predictions to output file
         results = {
             'threshold': best_threshold,
