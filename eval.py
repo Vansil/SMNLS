@@ -304,7 +304,8 @@ if __name__ == "__main__":
     model.eval()
     if model.embedding.has_elmo():
         # Run some batches through ELMo to 'warm it up' (https://github.com/allenai/allennlp/blob/master/tutorials/how_to/elmo.md#notes-on-statefulness-and-non-determinism)
-        model.embedding.elmo.warm_up()
+        # model.embedding.elmo.warm_up()
+        pass
     print("Device: "+device)
     print("Model:" + str(model))
     
