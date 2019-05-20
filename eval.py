@@ -96,10 +96,10 @@ def get_sentence(meta, idx):
     meta['sentences'][idx][pos] = f"<br>{meta['sentences'][idx][pos]}</br>"
     return ' '.join(meta['sentences'][idx])
 
-def get_worst(data, cosine_scores, idxs):
+def get_worst(data, cosine_scores, idxs, reverse):
     similarities = cosine_scores['dev'][idxs].tolist()
     qualitative = np.array(data['dev'])[idxs]
-    ranking = sorted(zip(similarities, qualitative), reverse=True)
+    ranking = sorted(zip(similarities, qualitative), reverse=reverse)
     # worst = [{'score':score, 'sentences':get_sentences(meta)} for score, meta in ranking]
     worst = dict([(score, get_sentences(meta)) for score, meta in ranking])
     return worst
@@ -177,11 +177,11 @@ class WicEvaluator():
         accuracy = (predictions == dev_labels).mean()
         print("Dev accuracy: {}".format(accuracy))
 
-        worst = get_worst(data, cosine_scores, ~dev_labels & predictions)
+        worst = get_worst(data, cosine_scores, ~dev_labels & predictions, False)
         with open(os.path.join(self.output_dir, 'false_positives.txt'), 'w') as f:
             f.write(yaml.dump(worst, default_flow_style=False))
 
-        worst = get_worst(data, cosine_scores, ~predictions & dev_labels)
+        worst = get_worst(data, cosine_scores, ~predictions & dev_labels, True)
         with open(os.path.join(self.output_dir, 'false_negatives.txt'), 'w') as f:
             f.write(yaml.dump(worst, default_flow_style=False))
 
