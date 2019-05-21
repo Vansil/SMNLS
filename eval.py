@@ -83,8 +83,8 @@ def eval_senteval(model, output_dir, train_tasks):
 # Word-in-Context
 ##################################################################################################
 
-def eval_wic(model, output_dir, train_tasks):
-    evaluater = WicEvaluator(model, output_dir, train_tasks)
+def eval_wic(model, output_dir):
+    evaluater = WicEvaluator(model, output_dir)
     return evaluater.evaluate()
 
 def get_sentences(meta):
@@ -109,10 +109,9 @@ class WicEvaluator():
     '''
     Container for WiC evaluation functions
     '''
-    def __init__(self, model, output_dir, train_tasks):
+    def __init__(self, model, output_dir):
         self.model = model
         self.output_dir = output_dir
-        self.train_tasks = train_tasks
 
         self.positions = {
             "input": 0,
@@ -122,11 +121,7 @@ class WicEvaluator():
         }
 
     def evaluate(self, write_output=True):
-        if self.train_tasks not in [["input"], ["input","snli","pos","vua"]]:
-            raise NotImplementedError
-
         results = {}
-        nTasks = len(self.positions)
 
         # Load datasets
         if not os.path.exists(os.path.join(PATH_TO_WIC, 'train_sub')):
@@ -143,12 +138,16 @@ class WicEvaluator():
             'dev':   WicEvaluator.load_labels(os.path.join(PATH_TO_WIC, 'dev', 'dev.gold.txt'))
         }
 
+        test_out = self.model.embed_words([['test']])
+        if isinstance(test_out, tuple):
+            layers = ['input','pos','vua','snli','average']
+        else:
+            layers = ['input']
+        nTasks = len(train_tasks)
+
         # Extract embedded words, embeddings is a dict for tasks to a dict for datasets to a list of tuples
         print("Embed words")
-        train_tasks_ext = self.train_tasks
-        if nTasks > 1:
-            train_tasks_ext.append('average')
-        embeddings = {task: {_set: [] for _set in set_names} for task in train_tasks_ext}
+        embeddings = {task: {_set: [] for _set in set_names} for task in layers}
         for set_name in set_names:
             print("\t{} set".format(set_name))
             for data_point in data[set_name]:
@@ -168,7 +167,7 @@ class WicEvaluator():
 
                 # Extract the two word embedding
                 for i in len(embedding_sentence):
-                    embeddings[train_tasks_ext[i]][set_name].append(
+                    embeddings[layers[i]][set_name].append(
                             (embedding_sentence[0, word_positions[0]], 
                             embedding_sentence[1, word_positions[1]])
                         )
@@ -176,7 +175,7 @@ class WicEvaluator():
         # Evaluate thresholded cosine similarity metric
         # Compute cosine similarity per embedding
         print("Evaluating cosine similarity - threshold method")
-        for task in train_tasks_ext:
+        for task in layers:
             cosine_scores = {}
             for set_name in ['train', 'dev']:
                 N = len(embeddings[task][set_name])
@@ -324,11 +323,6 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, required=True,
         help="Directory for output files."
-    )
-    # For WiC: now only ["input"] and the full list in order is supported 
-    parser.add_argument(
-        "--train-task", type=str, required=False, default=train_tasks, nargs="+", choices=train_tasks,
-        help="The tasks to retrieve the embeddings of."
     )
     args = parser.parse_args()
 
