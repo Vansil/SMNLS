@@ -79,7 +79,7 @@ def wic_barplot(results_files_dict, output_file):
     plt.ylim([50,60])
 
     plt.savefig(output_file)
-    return table
+    return frame
 
 
 def wic_table(results_files_dict, output_file, include_thresholds=False, include_train_acc=False):
