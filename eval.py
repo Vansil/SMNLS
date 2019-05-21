@@ -93,16 +93,17 @@ def get_sentences(meta):
 
 def get_sentence(meta, idx):
     pos = meta['positions'][idx]
-    meta['sentences'][idx][pos] = f"<br>{meta['sentences'][idx][pos]}</br>"
+    meta['sentences'][idx][pos] = f"\emph{{{meta['sentences'][idx][pos]}}}"
     return ' '.join(meta['sentences'][idx])
 
 def get_worst(data, cosine_scores, idxs, reverse):
     similarities = cosine_scores['dev'][idxs].tolist()
     qualitative = np.array(data['dev'])[idxs]
-    ranking = sorted(zip(similarities, qualitative), reverse=reverse)
+    ranking = sorted(zip(similarities, qualitative), key=lambda tpl: tpl[0], reverse=reverse)
     # worst = [{'score':score, 'sentences':get_sentences(meta)} for score, meta in ranking]
-    worst = dict([(score, get_sentences(meta)) for score, meta in ranking])
-    return worst
+    worst = [(round(score, 3), get_sentences(meta)) for score, meta in ranking]
+    txt = '\n'.join([f'{score} & {sentences[0]} & {sentences[1]} \\\\' for score, sentences in worst])
+    return txt
 
 class WicEvaluator():
     '''
@@ -177,13 +178,13 @@ class WicEvaluator():
         accuracy = (predictions == dev_labels).mean()
         print("Dev accuracy: {}".format(accuracy))
 
-        worst = get_worst(data, cosine_scores, ~dev_labels & predictions, False)
+        worst = get_worst(data, cosine_scores, ~dev_labels & predictions, True)
         with open(os.path.join(self.output_dir, 'false_positives.txt'), 'w') as f:
-            f.write(yaml.dump(worst, default_flow_style=False))
+            f.write(worst)
 
-        worst = get_worst(data, cosine_scores, ~predictions & dev_labels, True)
+        worst = get_worst(data, cosine_scores, ~predictions & dev_labels, False)
         with open(os.path.join(self.output_dir, 'false_negatives.txt'), 'w') as f:
-            f.write(yaml.dump(worst, default_flow_style=False))
+            f.write(worst)
 
         # add performance to results and write predictions to output file
         results = {
@@ -304,7 +305,8 @@ if __name__ == "__main__":
     model.eval()
     if model.embedding.has_elmo():
         # Run some batches through ELMo to 'warm it up' (https://github.com/allenai/allennlp/blob/master/tutorials/how_to/elmo.md#notes-on-statefulness-and-non-determinism)
-        model.embedding.elmo.warm_up()
+        # model.embedding.elmo.warm_up()
+        pass
     print("Device: "+device)
     print("Model:" + str(model))
     
