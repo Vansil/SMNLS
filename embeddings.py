@@ -269,7 +269,7 @@ class ElmoEmbedding(nn.Module):
         '''
         dataset = PennDataset()
         for i in range(10):
-            batch = dataset[i*100:(i+1)*100]
+            batch = [pair[0] for pair in dataset[i*100:(i+1)*100]]
             self(batch)
 
 def make_selected_glove_training():
