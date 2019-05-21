@@ -72,7 +72,9 @@ def significance_pivot(models, gold, fn, file):
 if __name__ == "__main__":
     gold = gold_df()
     # wic = wic_df()
-    models = ['baseline_elmo0', 'baseline_elmo1', 'baseline_elmo2']
+    models = ['baseline_elmo0', 'baseline_elmo1', 'baseline_elmo2', 'baseline_elmo012', 'pos', 'pos-snli', 'pos-vua-snli', 'snli', 'vua', 'vua-pos', 'vua-snli']
 
+    print('mcnemar')
     significance_pivot(models, gold, mcnemar_models,  'results/mcnemar.html')
+    print('permutation')
     significance_pivot(models, gold, permutationtest, 'results/fishers_permutation.html')
