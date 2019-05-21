@@ -493,7 +493,7 @@ class JMTModel(nn.Module):
 
         Pos_unpacked = nn.utils.rnn.pad_packed_sequence(Pos_packed, batch_first=True)[0]
 
-        Pos_p = F.softmax(self.pos_classifier(Pos_unpacked))
+        Pos_p = F.softmax(self.pos_classifier(Pos_unpacked), dim=-1)
 
         I = torch.cat([E, Pos_unpacked, Pos_p], dim=-1)
 
@@ -503,7 +503,7 @@ class JMTModel(nn.Module):
 
         M_unpacked = nn.utils.rnn.pad_packed_sequence(M_packed, batch_first=True)[0]
 
-        M_p = F.softmax(self.metaphor_classifier(M_unpacked))
+        M_p = F.softmax(self.metaphor_classifier(M_unpacked), dim=-1)
         
         S = torch.cat([E, Pos_unpacked, M_unpacked, M_p], dim=-1)
 
