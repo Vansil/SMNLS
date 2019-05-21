@@ -45,9 +45,52 @@ def sent_eval_table(results_file, output_file):
     table.to_html(output_file)
     return table
 
+def wic_barplot(results_files_dict, output_file):
+
+
 
 def wic_table(results_files_dict, output_file, include_thresholds=False, include_train_acc=False):
     '''
+    Makes html table comparing WiC accuracies.
+    Args:
+        results_files_dict: dictionary with keys model name, values result file path of the model
+        output_file: html table is written here
+        include_thresholds: set to True to include best performing threshold
+        include_train_acc: set to True to include best training accuracy
+    Returns:
+        pandas table
+    '''
+    # Load data from result files
+    data = {
+        'input': [],
+        'pos': [],
+        'vua': [],
+        'snli': []
+    }
+    names = []
+
+    for name, path in results_files_dict.items():
+        names.append(name)
+        print(path)
+        results = torch.load(path)['wic']
+        for emb in data.keys():
+            if emb in results.keys():
+                data[emb].append(results[emb]['test_accuracy']*100)
+            else:
+                data[emb].append(None)
+    
+    # Output to file
+    frame = pd.DataFrame(data, index=names)
+    frame.plot.bar(rot=0)
+    plt.ylim([50,60])
+
+    plt.savefig(output_file)
+    return table
+
+
+def _wic_table(results_files_dict, output_file, include_thresholds=False, include_train_acc=False):
+    '''
+    DEPRECATED because results now distinguish between different embeddings
     Makes html table comparing WiC accuracies.
     Args:
         results_files_dict: dictionary with keys model name, values result file path of the model
