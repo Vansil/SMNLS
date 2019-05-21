@@ -115,21 +115,25 @@ class WicEvaluator():
         self.train_tasks = train_tasks
 
         self.positions = {
-            "ELMo": 0,
+            "input": 0,
             "pos": 1,
             "vua": 2,
             "snli": 3
         }
 
-    def evaluate(self):
+    def evaluate(self, write_output=True):
+        if self.train_tasks not in [["input"], ["input","snli","pos","vua"]]:
+            raise NotImplementedError
 
         results = {}
+        nTasks = len(self.positions)
 
         # Load datasets
         if not os.path.exists(os.path.join(PATH_TO_WIC, 'train_sub')):
             print("Creating subset of WiC train set")
             WicEvaluator.construct_training_set()
         print("Loading datasets and labels")
+        set_names = ['dev']# ['train', 'dev']
         data = {
             'train': WicEvaluator.load_data(os.path.join(PATH_TO_WIC, 'train_sub', 'train_sub.data.txt')),
             'dev':   WicEvaluator.load_data(os.path.join(PATH_TO_WIC, 'dev', 'dev.data.txt'))  
@@ -139,84 +143,84 @@ class WicEvaluator():
             'dev':   WicEvaluator.load_labels(os.path.join(PATH_TO_WIC, 'dev', 'dev.gold.txt'))
         }
 
-        # Extract embedded words
+        # Extract embedded words, embeddings is a dict for tasks to a dict for datasets to a list of tuples
         print("Embed words")
-        embeddings = {}
-        for set_name in ['train', 'dev']:
+        train_tasks_ext = self.train_tasks
+        if nTasks > 1:
+            train_tasks_ext.append('average')
+        embeddings = {task: {_set: [] for _set in set_names} for task in train_tasks_ext}
+        for set_name in set_names:
             print("\t{} set".format(set_name))
-            embeddings[set_name] = []
             for data_point in data[set_name]:
                 # Embed the two sentences
                 sentence_pair = data_point['sentences']
                 word_positions = data_point['positions']
                 embedding_sentence = self.model.embed_words(sentence_pair)
 
-                # Fix up the problem of embeddings resulting in a tuple for the jmt model.
-                if isinstance(embedding_sentence, tuple):
-                    if len(self.train_tasks) == 1:
-                        embedding_sentence = embedding_sentence[self.positions[self.train_tasks[0]]]
-                    elif not "ELMo" in self.train_tasks:
-                        e = embedding_sentence[self.positions[self.train_tasks[0]]]
+                # Make list of embeddings (input and per hidden layer)
+                if not isinstance(embedding_sentence, tuple):
+                    embedding_sentence = (embedding_sentence)
+                embedding_sentence = list(embedding_sentence)
 
-                        for task in self.train_tasks[1:]:
-                            e += embedding_sentence[self.positions[task]]
-
-                        embedding_sentence = e / len(self.train_tasks)
+                # Add average embedding
+                if nTasks > 1:
+                    embedding_sentence.append(sum(embedding_sentence[1:]) / (len(embedding_sentence)-1) )
 
                 # Extract the two word embedding
-                embeddings[set_name].append(
-                    (embedding_sentence[0, word_positions[0]], 
-                     embedding_sentence[1, word_positions[1]])
-                )
+                for i in len(embedding_sentence):
+                    embeddings[train_tasks_ext[i]][set_name].append(
+                            (embedding_sentence[0, word_positions[0]], 
+                            embedding_sentence[1, word_positions[1]])
+                        )
 
         # Evaluate thresholded cosine similarity metric
-        # Compute cosine similarity
+        # Compute cosine similarity per embedding
         print("Evaluating cosine similarity - threshold method")
-        cosine_scores = {}
-        for set_name in ['train', 'dev']:
-            N = len(embeddings[set_name])
-            cosine_scores[set_name] = np.zeros(N)
-            for i in range(N):
-                emb = embeddings[set_name][i]
-                score = emb[0] @ emb[1] / emb[0].norm() / emb[1].norm()
-                cosine_scores[set_name][i] = score
-        # Find best threshold by trying at every 0.02 interval on the training data
-        thresholds = np.linspace(0, 1, 51)
-        best_threshold = 0
-        best_acc = 0
-        train_labels = np.array(labels['train'])
-        for threshold in thresholds:
-            predictions = cosine_scores['train'] > threshold
-            accuracy = (predictions == train_labels).mean()
-            print("Threshold {} -> Train accuracy: {}".format(threshold, accuracy))
-            if accuracy > best_acc:
-                best_threshold = threshold
-                best_acc = accuracy
-        # Evaluate dev data using threshold
-        print("Best threshold: {}, Train accuracy: {}".format(best_threshold, best_acc))
-        dev_labels = np.array(labels['dev'])
-        predictions = cosine_scores['dev'] > best_threshold
-        accuracy = (predictions == dev_labels).mean()
-        print("Dev accuracy: {}".format(accuracy))
+        for task in train_tasks_ext:
+            cosine_scores = {}
+            for set_name in ['train', 'dev']:
+                N = len(embeddings[task][set_name])
+                cosine_scores[set_name] = np.zeros(N)
+                for i in range(N):
+                    emb = embeddings[task][set_name][i]
+                    score = emb[0] @ emb[1] / emb[0].norm() / emb[1].norm()
+                    cosine_scores[set_name][i] = score
+            # Find best threshold by trying at every 0.02 interval on the training data
+            thresholds = np.linspace(0, 1, 51)
+            best_threshold = 0
+            best_acc = 0
+            train_labels = np.array(labels['train'])
+            for threshold in thresholds:
+                predictions = cosine_scores['train'] > threshold
+                accuracy = (predictions == train_labels).mean()
+                print("Threshold {} -> Train accuracy: {}".format(threshold, accuracy))
+                if accuracy > best_acc:
+                    best_threshold = threshold
+                    best_acc = accuracy
+            # Evaluate dev data using threshold
+            print("Best threshold: {}, Train accuracy: {}".format(best_threshold, best_acc))
+            dev_labels = np.array(labels['dev'])
+            predictions = cosine_scores['dev'] > best_threshold
+            accuracy = (predictions == dev_labels).mean()
+            print("Dev accuracy: {}".format(accuracy))
 
-        worst = get_worst(data, cosine_scores, ~dev_labels & predictions, True)
-        with open(os.path.join(self.output_dir, 'false_positives.txt'), 'w') as f:
-            f.write(worst)
+            worst_fp = get_worst(data, cosine_scores, ~dev_labels & predictions, True)
+            worst_fn = get_worst(data, cosine_scores, ~predictions & dev_labels, False)
 
-        worst = get_worst(data, cosine_scores, ~predictions & dev_labels, False)
-        with open(os.path.join(self.output_dir, 'false_negatives.txt'), 'w') as f:
-            f.write(worst)
-
-        # add performance to results and write predictions to output file
-        results = {
-            'threshold': best_threshold,
-            'test_accuracy': accuracy,
-            'train_accuracy': best_acc
-        }
-        with open(os.path.join(self.output_dir, 'wic_dev_predictions.txt'), 'w') as f:
-            for label, score in zip(predictions, cosine_scores['dev']):
-                f.write("{},{}\n".format('T' if label else 'F', score))
-
+            # add performance to results and write predictions to output file
+            results[task] = {
+                'threshold': best_threshold,
+                'test_accuracy': accuracy,
+                'train_accuracy': best_acc
+            }
+            if write_output:
+                with open(os.path.join(self.output_dir, 'false_positives_{}.txt'.format(task)), 'w') as f:
+                    f.write(worst_fp)
+                with open(os.path.join(self.output_dir, 'false_negatives_{}.txt'.format(task)), 'w') as f:
+                    f.write(worst_fn)
+                with open(os.path.join(self.output_dir, 'wic_dev_predictions_{}.txt'.format(task)), 'w') as f:
+                    for label, score in zip(predictions, cosine_scores['dev']):
+                        f.write("{},{}\n".format('T' if label else 'F', score))
 
         return results
     
@@ -299,7 +303,7 @@ if __name__ == "__main__":
     }
 
     train_tasks = [
-        "ELMo",
+        "input",
         "snli",
         "pos",
         "vua"
@@ -321,8 +325,9 @@ if __name__ == "__main__":
         "--output_dir", "-o", type=str, required=True,
         help="Directory for output files."
     )
+    # For WiC: now only ["input"] and the full list in order is supported 
     parser.add_argument(
-        "--train-task", type=str, required=False, default=["ELMo"], nargs="+", choices=train_tasks,
+        "--train-task", type=str, required=False, default=train_tasks, nargs="+", choices=train_tasks,
         help="The tasks to retrieve the embeddings of."
     )
     args = parser.parse_args()
@@ -339,7 +344,7 @@ if __name__ == "__main__":
     if model.embedding.has_elmo():
         # Run some batches through ELMo to 'warm it up' (https://github.com/allenai/allennlp/blob/master/tutorials/how_to/elmo.md#notes-on-statefulness-and-non-determinism)
         model.embedding.elmo.warm_up()
-    print("Model:" + str(model))
+        print("Model:" + str(model))
     
     # Perform evaluation
     if args.method == 'all':
