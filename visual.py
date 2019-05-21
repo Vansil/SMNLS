@@ -46,17 +46,11 @@ def sent_eval_table(results_file, output_file):
     return table
 
 def wic_barplot(results_files_dict, output_file):
-
-
-
-def wic_table(results_files_dict, output_file, include_thresholds=False, include_train_acc=False):
     '''
-    Makes html table comparing WiC accuracies.
+    Makes bar plot comparing WiC accuracies per model and embedding layer.
     Args:
         results_files_dict: dictionary with keys model name, values result file path of the model
-        output_file: html table is written here
-        include_thresholds: set to True to include best performing threshold
-        include_train_acc: set to True to include best training accuracy
+        output_file: bar plot is written here
     Returns:
         pandas table
     '''
@@ -85,6 +79,47 @@ def wic_table(results_files_dict, output_file, include_thresholds=False, include
     plt.ylim([50,60])
 
     plt.savefig(output_file)
+    return table
+
+
+def wic_table(results_files_dict, output_file, include_thresholds=False, include_train_acc=False):
+    '''
+    Makes html table comparing WiC accuracies.
+    Args:
+        results_files_dict: dictionary with keys model name, values result file path of the model
+        output_file: html table is written here
+        include_thresholds: set to True to include best performing threshold
+        include_train_acc: set to True to include best training accuracy
+    Returns:
+        pandas table
+    '''
+    # Load data from result files
+    names = []
+    embeddings = []
+    test_accs = []
+    train_accs = []
+    thresholds = []
+    for name, path in results_files_dict.items():
+        print(path)
+        results = torch.load(path)['wic']
+        for emb in results.keys():
+            names.append(name)
+            embeddings.append(emb)
+            test_accs.append("{:.1f}%".format(results[emb]['test_accuracy']*100))
+            train_accs.append("{:.1f}%".format(results[emb]['train_accuracy']*100))
+            thresholds.append("{:.2f}".format(results[emb]['threshold']))
+    
+    # Make table
+    frame = {'Model': names, 'Embedding': embeddings}
+    if include_thresholds:
+        frame['Threshold'] = thresholds
+    if include_train_acc:
+        frame['Train acc'] = train_accs
+    frame['Test acc'] = test_accs
+
+    # Output to file
+    table = pd.DataFrame(frame)
+    table.to_html(output_file)
     return table
 
 
