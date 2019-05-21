@@ -63,6 +63,7 @@ def wic_table(results_files_dict, output_file, include_thresholds=False, include
     train_accs = []
     thresholds = []
     for name, path in results_files_dict.items():
+        print(path)
         results = torch.load(path)['wic']
         names.append(name)
         test_accs.append("{:.1f}%".format(results['test_accuracy']*100))
