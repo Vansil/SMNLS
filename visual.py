@@ -59,7 +59,8 @@ def wic_barplot(results_files_dict, output_file):
         'input': [],
         'pos': [],
         'vua': [],
-        'snli': []
+        'snli': [],
+        'average': []
     }
     names = []
 
