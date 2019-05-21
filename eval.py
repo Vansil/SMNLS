@@ -128,7 +128,7 @@ class WicEvaluator():
             print("Creating subset of WiC train set")
             WicEvaluator.construct_training_set()
         print("Loading datasets and labels")
-        set_names = ['dev']# ['train', 'dev']
+        set_names = ['train', 'dev']
         data = {
             'train': WicEvaluator.load_data(os.path.join(PATH_TO_WIC, 'train_sub', 'train_sub.data.txt')),
             'dev':   WicEvaluator.load_data(os.path.join(PATH_TO_WIC, 'dev', 'dev.data.txt'))  
@@ -176,6 +176,7 @@ class WicEvaluator():
         # Compute cosine similarity per embedding
         print("Evaluating cosine similarity - threshold method")
         for task in layers:
+            print("\tEmbedding name: {}".format(task))
             cosine_scores = {}
             for set_name in ['train', 'dev']:
                 N = len(embeddings[task][set_name])
