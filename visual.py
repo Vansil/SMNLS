@@ -75,9 +75,10 @@ def wic_barplot(results_files_dict, output_file):
                 data[emb].append(None)
     
     # Output to file
+    fig = plt.figure(figsize=(10,6))
     frame = pd.DataFrame(data, index=names)
     frame.plot.bar(rot=0)
-    plt.ylim([50,60])
+    plt.ylim([50,65])
 
     plt.savefig(output_file)
     return frame
