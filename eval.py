@@ -315,7 +315,7 @@ if __name__ == "__main__":
         help="Path to the checkpoint file"
     )
     parser.add_argument(
-        "--method", "-m", type=str, default='all', choices=["all"]+list(eval_methods.keys()),
+        "--method", "-m", type=str, default='wic', choices=["all"]+list(eval_methods.keys()),
         help="Evaluation method"
     )
     parser.add_argument('--senteval_methods', type=str, 
