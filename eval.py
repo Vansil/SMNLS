@@ -42,7 +42,7 @@ def batcher_senteval(params, batch):
     return embeddings
 
 
-def eval_senteval(model, output_dir):
+def eval_senteval(model, output_dir, train_tasks):
     # import SentEval
     sys.path.insert(0, PATH_TO_SENTEVAL)
     import senteval
@@ -83,8 +83,8 @@ def eval_senteval(model, output_dir):
 # Word-in-Context
 ##################################################################################################
 
-def eval_wic(model, output_dir):
-    evaluater = WicEvaluator(model, output_dir)
+def eval_wic(model, output_dir, train_tasks):
+    evaluater = WicEvaluator(model, output_dir, train_tasks)
     return evaluater.evaluate()
 
 def get_sentences(meta):
@@ -109,9 +109,17 @@ class WicEvaluator():
     '''
     Container for WiC evaluation functions
     '''
-    def __init__(self, model, output_dir):
+    def __init__(self, model, output_dir, train_tasks):
         self.model = model
         self.output_dir = output_dir
+        self.train_tasks = train_tasks
+
+        self.positions = {
+            "ELMo": 0,
+            "pos": 1,
+            "vua": 2,
+            "snli": 3
+        }
 
     def evaluate(self):
 
@@ -142,6 +150,19 @@ class WicEvaluator():
                 sentence_pair = data_point['sentences']
                 word_positions = data_point['positions']
                 embedding_sentence = self.model.embed_words(sentence_pair)
+
+                # Fix up the problem of embeddings resulting in a tuple for the jmt model.
+                if isinstance(embedding_sentence, tuple):
+                    if len(self.train_tasks) == 1:
+                        embedding_sentence = embedding_sentence[self.positions[self.train_tasks[0]]]
+                    elif not "ELMo" in self.train_tasks:
+                        e = embedding_sentence[self.positions[self.train_tasks[0]]]
+
+                        for task in self.train_tasks[1:]:
+                            e += embedding_sentence[self.positions[task]]
+
+                        embedding_sentence = e / len(self.train_tasks)
+
                 # Extract the two word embedding
                 embeddings[set_name].append(
                     (embedding_sentence[0, word_positions[0]], 
@@ -277,6 +298,13 @@ if __name__ == "__main__":
         "wic": eval_wic
     }
 
+    train_tasks = [
+        "ELMo",
+        "snli",
+        "pos",
+        "vua"
+    ]
+
     parser = argparse.ArgumentParser()
     parser.add_argument(
         "--checkpoint", "-c", type=str, required=True,
@@ -292,6 +320,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, required=True,
         help="Directory for output files."
+    )
+    parser.add_argument(
+        "--train-task", type=str, required=False, default=["ELMo"], nargs="+", choices=train_tasks,
+        help="The tasks to retrieve the embeddings of."
     )
     args = parser.parse_args()
 
