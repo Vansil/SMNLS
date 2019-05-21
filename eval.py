@@ -168,8 +168,8 @@ class WicEvaluator():
                 # Extract the two word embedding
                 for i in range(len(embedding_sentence)):
                     embeddings[layers[i]][set_name].append(
-                            (embedding_sentence[0, word_positions[0]], 
-                            embedding_sentence[1, word_positions[1]])
+                            (embedding_sentence[i][0, word_positions[0]], 
+                            embedding_sentence[i][1, word_positions[1]])
                         )
 
         # Evaluate thresholded cosine similarity metric
