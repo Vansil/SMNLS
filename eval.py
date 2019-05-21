@@ -299,13 +299,13 @@ if __name__ == "__main__":
 
     # Load model
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
+    print("Device: "+device)
     print("Loading model")
     model = output.OutputWriter.load_model(args.checkpoint, device=device)
     model.eval()
     if model.embedding.has_elmo():
         # Run some batches through ELMo to 'warm it up' (https://github.com/allenai/allennlp/blob/master/tutorials/how_to/elmo.md#notes-on-statefulness-and-non-determinism)
         model.embedding.elmo.warm_up()
-    print("Device: "+device)
     print("Model:" + str(model))
     
     # Perform evaluation

@@ -76,6 +76,7 @@ class OutputWriter(object):
         '''
         model_dict = torch.load(file, map_location=device)
         model = model_dict['model']
+        model.embedding.set_device(device)
 
         print (model)
 
