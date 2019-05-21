@@ -143,7 +143,7 @@ class WicEvaluator():
             layers = ['input','pos','vua','snli','average']
         else:
             layers = ['input']
-        nTasks = len(train_tasks)
+        nTasks = len(layers)
 
         # Extract embedded words, embeddings is a dict for tasks to a dict for datasets to a list of tuples
         print("Embed words")
@@ -158,7 +158,7 @@ class WicEvaluator():
 
                 # Make list of embeddings (input and per hidden layer)
                 if not isinstance(embedding_sentence, tuple):
-                    embedding_sentence = (embedding_sentence)
+                    embedding_sentence = [embedding_sentence]
                 embedding_sentence = list(embedding_sentence)
 
                 # Add average embedding
