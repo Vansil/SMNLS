@@ -4,6 +4,7 @@ results_files_dict = {
     'elmo1': "output/baseline_elmo1/evaluation/results.pt",
     'elmo2': "output/baseline_elmo2/evaluation/results.pt",
     'elmo012': "output/baseline_elmo012/evaluation/results.pt",
+    'random': "output/empty_jmt/evaluation/results.pt",
     'pos': "output/pos/evaluation/results.pt",
     'pos-snli': "output/pos-snli/evaluation/results.pt",
     'pos-vua-snli': "output/pos-vua-snli/evaluation/results.pt",
