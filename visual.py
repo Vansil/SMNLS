@@ -7,6 +7,7 @@ from matplotlib import pyplot as plt
 from csv import DictReader
 
 import eval
+import output
 
 '''
 For analysis and visualisation
@@ -243,12 +244,89 @@ def _wic_table(results_files_dict, output_file, include_thresholds=False, includ
     return table
 
 
-def wicTsne(model, word, output_file):
+class WicTsne(object):
     '''
     Apply t-SNE (t-Distributed Stochastic Neighbour Embedding) to the word-of-interest in the WiC train dataset
     Show all contextualized representations of one word
-    TODO: this should probably become something interactive -> Class
+    TODO: implement average embedding
     '''
+    def __init__(self, model, layer=None, device='cpu'):
+        '''
+        Load WiC train dataset and model if needed
+        Args:
+            model: pytorch Module or path to model saved by an OutputWriter
+            layer: which layer's embedding to use, if None the model's embed layer is assumed to return only one embedding (baseline)
+            device: device to use for embeddings
+        '''
+        # Load dataset
+        print("Loading WiC train data")
+        self.data = eval.WicEvaluator.load_data(os.path.join(eval.PATH_TO_WIC, 'train', 'train.data.txt'))
+        self.labels = eval.WicEvaluator.load_labels(os.path.join(eval.PATH_TO_WIC, 'train', 'train.gold.txt'))
+
+        # Load model if it is a file path
+        if isinstance(model, str):
+            print('Loading model')
+            model = output.OutputWriter.load_model(model, device=device)
+        model.to(device)
+        self.model = model
+        self.layer = layer
+
+
+    def embed(self):
+        '''
+        Embeds all words in the training WiC set with the model
+        '''
+
+        # Embed all words, use only one embedding per word. 
+        # ELMo embedding does not return precisely the same embedding every time
+        # embeddings: {word -> {sentence -> word_embedding}}, word has form "word_pos" with pos = N,V
+        print("Embedding all words")
+        self.embeddings = {}
+        for i, data_point in enumerate(self.data):
+            if i % 100 == 0:
+                print("\t{:02.1f}%".format(i/5428*100))
+            # Embed the two sentences
+            word = data_point['word'] + "_" + data_point['pos']
+            sentence_pair = data_point['sentences']
+            word_positions = data_point['positions']
+            embedding_sentence = self.model.embed_words(sentence_pair)
+            # Add embedding if it was not computed before
+            if word not in self.embeddings.keys():
+                self.embeddings[word] = {}
+            for n in [0,1]:
+                if tuple(sentence_pair[n]) not in self.embeddings[word].keys():
+                    if self.layer is None:
+                        self.embeddings[word][tuple(sentence_pair[n])] = embedding_sentence[n, word_positions[n]].cpu()
+                    else:
+                        self.embeddings[word][tuple(sentence_pair[n])] = embedding_sentence[self.layer][n, word_positions[n]].cpu()
+
+    def save_embeddings(self, file):
+        '''
+        Save model's embeddings to a file
+        '''
+        torch.save(self.embeddings, file)
+
+    def load_embeddings(self, file):
+        '''
+        Loads a model's embeddings from a file
+        '''
+        self.embeddings = torch.load(file, map_location='cpu')
+
+    def word_counts(self):
+        '''
+        Returns the embedded words and in how many sentences they occur
+        '''
+        return sorted([(word, len(sentences)) for word, sentences in enumerate(self.embeddings)],
+            key=lambda item: item[1], reverse=True)
+
+    
+
+
+
+
+
+
+def wicTsne(model, word, output_file):
     # Load dataset
     print("Loading WiC train data")
     data = eval.WicEvaluator.load_data(os.path.join(eval.PATH_TO_WIC, 'train', 'train.data.txt'))
