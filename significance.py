@@ -1,3 +1,4 @@
+import math
 import numpy as np
 from scipy.stats import binom
 import pandas as pd
@@ -50,21 +51,27 @@ def mcnemar_models(a, b):
     p = mcnemar_p(a_wins, b_wins)
     return p
 
-def gen_combs(models, gold, fn):
+def gen_combs(models, gold, fn, ratio=1.0):
     """"generate p-values for each combination. params:
     - models: a list of model names
     - fn: a function to calculate p-values
     returns: a generator of {a, b, p}
     """
+    corrects = {k:model_df(k, gold)['correct'].map(int) for k in models}
+    size = corrects[models[0]].size
+    idxs = np.random.permutation(size)
+    idxs = idxs[:math.floor(ratio*len(idxs))]
+    corrects = {k:df.iloc[idxs] for k,df in corrects.items()}
+
     for a in models:
         for b in models:
-            corrects = [model_df(k, gold)['correct'].map(int) for k in (a, b)]
-            p = fn(*corrects) if a != b else np.nan
+            print(f'{a} - {b}')
+            p = fn(corrects[a], corrects[b]) if a != b else np.nan
             yield {'a':a, 'b':b, 'p':p}
 
-def significance_pivot(models, gold, fn, file):
+def significance_pivot(models, gold, fn, file, ratio=1.0):
     """generate and save to html a pivot of p-values"""
-    rows = gen_combs(models, gold, fn)
+    rows = gen_combs(models, gold, fn, ratio)
     df = pd.DataFrame(rows)
     pivot = df.pivot(index='a', columns='b', values='p')
     pivot.to_html(file)
@@ -75,6 +82,6 @@ if __name__ == "__main__":
     models = ['baseline_elmo0', 'baseline_elmo1', 'baseline_elmo2', 'baseline_elmo012', 'pos', 'pos-snli', 'pos-vua-snli', 'snli', 'vua', 'vua-pos', 'vua-snli']
 
     print('mcnemar')
-    significance_pivot(models, gold, mcnemar_models,  'results/mcnemar.html')
+    significance_pivot(models, gold, mcnemar_models,  'results/mcnemar.html', 1.0)
     print('permutation')
-    significance_pivot(models, gold, permutationtest, 'results/fishers_permutation.html')
+    significance_pivot(models, gold, permutationtest, 'results/fishers_permutation.html', 0.05)
