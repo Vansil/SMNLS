@@ -250,55 +250,58 @@ class WicTsne(object):
     Show all contextualized representations of one word
     TODO: implement average embedding
     '''
-    def __init__(self, model, layer=None, device='cpu'):
+    def __init__(self):
         '''
-        Load WiC train dataset and model if needed
-        Args:
-            model: pytorch Module or path to model saved by an OutputWriter
-            layer: which layer's embedding to use, if None the model's embed layer is assumed to return only one embedding (baseline)
-            device: device to use for embeddings
+        Load WiC train dataset
         '''
         # Load dataset
-        print("Loading WiC train data")
         self.data = eval.WicEvaluator.load_data(os.path.join(eval.PATH_TO_WIC, 'train', 'train.data.txt'))
         self.labels = eval.WicEvaluator.load_labels(os.path.join(eval.PATH_TO_WIC, 'train', 'train.gold.txt'))
 
+    def set_model(self, model, device='cpu'):
+        '''
+        Set the model if the words need to be embedded
+        Args:
+            model: pytorch Module or path to model saved by an OutputWriter
+            device: device to use for embeddings
+        '''
         # Load model if it is a file path
         if isinstance(model, str):
             print('Loading model')
             model = output.OutputWriter.load_model(model, device=device)
         model.to(device)
         self.model = model
-        self.layer = layer
 
-
-    def embed(self):
+    def embed(self, layer=None):
         '''
         Embeds all words in the training WiC set with the model
+        Args:
+            layer: which layer's embedding to use, if None the model's embed layer is assumed to return only one embedding (baseline)
         '''
 
         # Embed all words, use only one embedding per word. 
         # ELMo embedding does not return precisely the same embedding every time
         # embeddings: {word -> {sentence -> word_embedding}}, word has form "word_pos" with pos = N,V
         print("Embedding all words")
-        self.embeddings = {}
-        for i, data_point in enumerate(self.data):
-            if i % 100 == 0:
-                print("\t{:02.1f}%".format(i/5428*100))
-            # Embed the two sentences
-            word = data_point['word'] + "_" + data_point['pos']
-            sentence_pair = data_point['sentences']
-            word_positions = data_point['positions']
-            embedding_sentence = self.model.embed_words(sentence_pair)
-            # Add embedding if it was not computed before
-            if word not in self.embeddings.keys():
-                self.embeddings[word] = {}
-            for n in [0,1]:
-                if tuple(sentence_pair[n]) not in self.embeddings[word].keys():
-                    if self.layer is None:
-                        self.embeddings[word][tuple(sentence_pair[n])] = embedding_sentence[n, word_positions[n]].cpu()
-                    else:
-                        self.embeddings[word][tuple(sentence_pair[n])] = embedding_sentence[self.layer][n, word_positions[n]].cpu()
+        with torch.no_grad():
+            self.embeddings = {}
+            for i, data_point in enumerate(self.data):
+                if i % 100 == 0:
+                    print("\t{:02.1f}%".format(i/5428*100))
+                # Embed the two sentences
+                word = data_point['word'] + "_" + data_point['pos']
+                sentence_pair = data_point['sentences']
+                word_positions = data_point['positions']
+                embedding_sentence = self.model.embed_words(sentence_pair)
+                # Add embedding if it was not computed before
+                if word not in self.embeddings.keys():
+                    self.embeddings[word] = {}
+                for n in [0,1]:
+                    if tuple(sentence_pair[n]) not in self.embeddings[word].keys():
+                        if layer is None:
+                            self.embeddings[word][tuple(sentence_pair[n])] = embedding_sentence[n, word_positions[n]].cpu()
+                        else:
+                            self.embeddings[word][tuple(sentence_pair[n])] = embedding_sentence[layer][n, word_positions[n]].cpu()
 
     def save_embeddings(self, file):
         '''
@@ -316,71 +319,96 @@ class WicTsne(object):
         '''
         Returns the embedded words and in how many sentences they occur
         '''
-        return sorted([(word, len(sentences)) for word, sentences in enumerate(self.embeddings)],
+        return sorted([(word, len(sentences)) for word, sentences in self.embeddings.items()],
             key=lambda item: item[1], reverse=True)
 
-    def compute_tsne(self, word):
+    def set_word(self, word):
+        '''
+        Sets the word to analyse
+        '''
+        self.word = word
+        # process links
+        emb_dict = self.embeddings[word]
+        self.sentences = [sent for sent, _ in emb_dict.items()]
+        sentence_to_id = {self.sentences[i]: i for i in range(len(self.sentences))}
+        self.links = [] # dicts (ids=[x,y], label=T/F)
+        for data_point, label in zip(self.data, self.labels):
+            # Embed the two sentences
+            # Add link if this is the requested word
+            if word == data_point['word']+"_"+data_point['pos']:
+                sentence_pair = data_point['sentences']
+                self.links.append({
+                    'ids': [sentence_to_id[tuple(sentence_pair[i])] for i in [0,1]],
+                    'label': label
+                })
+        # Print
+        print("Sentences:")
+        for i, sent in enumerate(self.sentences):
+            print("\t[{}]  {}".format(i, " ".join(sent)))
+        print("Links:")
+        for i, link in enumerate(self.links):
+            print("\t{} - {} ({})".format(*link['ids'], link['label']))
+
+    def compute_tsne(self):
         '''
         Computes t-sne coordinates of all embeddings of a word
         '''
-        emb_dict = self.embeddings[word]
-        embs = np.vstack([embed for _, embed in enumerate(emb_dict)])
-
-
-        # Extract embedded words
-        print("Embed words")
-        embeddings = [] 
-        links = [] # dicts ([word_ids], [sentences], label=T/F)
-        for data_point, label in zip(data, labels):
-            # Embed the two sentences
-            sentence_pair = data_point['sentences']
-            word_positions = data_point['positions']
-            embedding_sentence = model.embed_words(sentence_pair)
-            # Extract the two word embedding
-            embeddings += [embedding_sentence[0, word_positions[0]], embedding_sentence[1, word_positions[1]]]
-            # Add link if this is the requested word
-            if word == data_point['word']:
-                links.append({
-                    'word_ids': [len(embeddings) - 2, len(embeddings) - 1],
-                    'sentences': sentence_pair,
-                    'label': label
-                })
-            if len(embeddings) % 200 == 0:
-                print("\t{:.1f}%".format(len(embeddings) / len(data)/2 *100))
-        embeddings = np.vstack(embeddings)
-
-        # Apply t-SNE
-        print("Applying t-SNE")
+        # Apply t-SNE to the word embeddings
+        emb_dict = self.embeddings[self.word]
+        embs = np.vstack([embed.detach() for _, embed in emb_dict.items()])
         tsne = TSNE(n_components=2, init='pca', random_state=0)
-        embeddings_tsne = tsne.fit_transform(embeddings)
+        self.tsne_embeddings = tsne.fit_transform(embs)
 
-        # Obtaining word coordinates
-        for i in range(len(links)):
-            indices = links[i]['word_ids']
-            links[i]['tsne'] = [embeddings_tsne[indices[0]], embeddings_tsne[indices[1]]]
+        # Print coordinates
+        print("t-SNE coordinates:")
+        for i, embed in enumerate(self.tsne_embeddings):
+            print("\t[{}]  ({:.4f}, {:.4f})\t{}".format(i,embed[0], embed[1], " ".join(self.sentences[i])))
 
-        # Plot
-        print("Making plot")
+    def plot_tsne(self, ids=None, out_file=None):
+        '''
+        Plot t-SNE for words with the given indices, or all words if ids=None
+        If out_file is not None, the figure will be saved to that location
+        '''
         plt.figure(figsize=(10,10))
         ax = plt.subplot(111)
         all_coors = []
-        for link in links:
+        for link in self.links:
+            index = link['ids']
+            if ids is not None and (index[0] not in ids or index[1] not in ids):
+                continue
             # Obtain coordinates
-            index = link['word_ids']
-            coors = [embeddings_tsne[index[0]], embeddings_tsne[index[1]]]
-            all_coors += coors
-
+            coors = [self.tsne_embeddings[index[i]] for i in [0,1]]
+            
+            # Plot text
             for i in [0,1]:
-                plt.text(coors[i][0], coors[i][1], " ".join(link['sentences'][i]),
-                        fontdict={'size': 9})
+                coor = coors[i]
+                if list(coor) not in all_coors:
+                    all_coors.append(list(coor))
+                    plt.text(coor[0], coor[1], " ".join(self.sentences[index[i]]),
+                            fontdict={'size': 9})
 
+            # Link
             plt.plot([coors[0][0],coors[1][0]], [coors[0][1],coors[1][1]],
                 color='g' if link['label'] else 'r')
 
-    
 
+        plt.xticks([]), plt.yticks([])
 
+        all_coors = np.vstack(all_coors)
+        min_x = min(all_coors[:,0])
+        max_x = max(all_coors[:,0])
+        del_x = max_x - min_x
+        min_y = min(all_coors[:,1])
+        max_y = max(all_coors[:,1])
+        del_y = max_y - min_y
+        plt.xlim((min_x-del_x/10, max_x+del_x/10))
+        plt.ylim((min_y-del_y/10, max_y+del_y/10))
+        plt.title('t-SNE of sentences containing "{}"'.format(self.word))
 
+        if out_file is not None:
+            plt.savefig(out_file)
+
+        plt.show()
 
 
 
