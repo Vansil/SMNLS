@@ -4,14 +4,94 @@ import os
 import numpy as np
 from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
+from csv import DictReader
 
 import eval
 
 '''
+For analysis and visualisation
+
 Ideas:
 + WiC ROC curve
 + t-sne of sentence batch under model
 '''
+
+def changing_prediction(pred_file_from, pred_file_to, print_top=1000):
+    '''
+    Finds all sentences that one model predicts correctly and the other doesn't
+    Args:
+        pred_file_from, pred_file_to: WiC predictions files
+        print_top: if larger than 0, prints top N results based on score difference
+    Returns:
+        to_correct, to_incorrect: predictions that became correct in pred_file_to or 
+            became incorrect, sorted by difference in score. Note that different models
+            use different thresholds, so score difference is not a fully informative measure
+    '''
+    wic_dev_data_file = os.path.join('data','wic','dev','dev.data.txt')
+    wic_dev_label_file = os.path.join('data','wic','dev','dev.gold.txt')
+
+    # Read dev data
+    with open(wic_dev_data_file) as f:
+        reader = DictReader(f, fieldnames=["word","nounverb","positions","sent1","sent2"], delimiter='\t')
+        data = list(reader)
+    # Read dev true labels
+    with open(wic_dev_label_file) as f:
+        labels = [line[0] for line in f.readlines()]
+
+    # Read model predictions
+    predictions = []
+    for pred_file in [pred_file_from, pred_file_to]:
+        with open(pred_file) as f:
+            reader = DictReader(f, fieldnames=["prediction", "score"])
+            predictions.append(list(reader))
+
+    # Select sentences
+    to_correct = [] # observations where the prediction was incorrect and becomes correct
+    to_incorrect = [] # observations where the prediction was correct and becomes incorrect
+    for i in range(len(data)):
+        frm = predictions[0][i]
+        to = predictions[1][i]
+        if frm['prediction'] != to['prediction']:
+            obs = {
+                'pred_from': frm,
+                'pred_to': to,
+                'data': data[i],
+                'label': labels[i],
+                'score_diff': float(to['score']) - float(frm['score'])
+            }
+            if frm['prediction'] == labels[i]:
+                to_incorrect.append(obs)
+            else:
+                to_correct.append(obs)
+
+    # Sort based on largest score difference
+    to_correct = sorted(to_correct, key=lambda obs: abs(obs['score_diff']), reverse=True)
+    to_incorrect = sorted(to_incorrect, key=lambda obs: abs(obs['score_diff']), reverse=True)
+
+    # Print top 10
+    if print_top > 0:
+        print("Predictions that became CORRECT:")
+        for obs in to_correct[:print_top]:
+            print("\t{} sense of '{}' in:\n\t\t{}\n\t\t{}".format(
+                'SAME' if obs['label'] == 'T' else 'DIFFERENT',
+                obs['data']['word'],
+                obs['data']['sent1'],
+                obs['data']['sent2']))
+        print("Predictions that became INCORRECT:")
+        for obs in to_incorrect[:print_top]:
+            print("\tWord {} has {} sense in:\n\t\t{}\n\t\t{}".format(
+                'SAME' if obs['label'] == 'T' else 'DIFFERENT',
+                obs['data']['word'],
+                obs['data']['sent1'],
+                obs['data']['sent2']))
+
+    return to_correct, to_incorrect
+
+
+
+
+
+
 
 def sent_eval_table(results_file, output_file):
     '''
