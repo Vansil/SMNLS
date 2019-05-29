@@ -93,7 +93,7 @@ if __name__ == "__main__":
         }
 
     snli_model = models.SnliModel(word_embedding_module).to(device)
-    vua_model = models.VuaSequenceModel(snli_model).to(device) 
+    vua_model = models.VuaSequenceModel(snli_model).to(device)
 
     vua_optimizer =  torch.optim.Adam(vua_model.parameters(),  lr=args.learning_rate, weight_decay=0.01)
     snli_optimizer = torch.optim.Adam(snli_model.parameters(), lr=args.learning_rate, weight_decay=0.01)

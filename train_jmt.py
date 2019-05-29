@@ -65,8 +65,14 @@ if __name__ == "__main__":
         "--delta-lstm", type=float, default=1e-3, required=False,
         help="The delta parameter used for succesive regularization applied on the lstm layers."
     )
+    parser.add_argument(
+        "--anti", action="store_true", required=False, default=False,
+        help="Use anti-curriculum learning, starting with hard instead of easy tasks."
+    )
 
     args = parser.parse_args()
+    if args.anti:
+        args.tasks = reversed(args.tasks)
 
     arguments = {
         "learning-rate": args.learning_rate,
