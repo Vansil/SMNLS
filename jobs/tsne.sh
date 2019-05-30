@@ -16,4 +16,4 @@ export PYTHONIOENCODING=utf
 source activate dl
 
 cd ..
-srun python test_tsne.py
+srun python tsne_prep.py

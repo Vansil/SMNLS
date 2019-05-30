@@ -19,4 +19,4 @@ export PYTHONIOENCODING=utf
 source activate dl
 
 cd ..
-srun python3 -u train_jmt.py --output output/pos-vua-snli --tasks pos vua snli
+srun python3 -u train_jmt.py --output output/vpos-vua-snli --tasks pos vua snli
