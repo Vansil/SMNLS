@@ -94,15 +94,15 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
 
     print("Creating model.")
-    model = models.JMTModel(device)
+    model = models.JMTModel(device, pos_classes=17)
     model.to(device)
 
     print("Loading datasets.")
     if "pos" in args.tasks:
         pos_dataset = {
-            "train": data.PennDataset("train"),
-            "validation": data.PennDataset("dev"),
-            "test": data.PennDataset("test")
+            "train": data.VuaPosDataset("train"),
+            "validation": data.VuaPosDataset("validation"),
+            "test": data.VuaPosDataset("test")
         }
 
         pos_loaders = {
