@@ -6,12 +6,16 @@ Evaluation methods:
 '''
 import argparse
 import torch
+import torch.nn as nn
 import logging
 import os
 import sys
 import numpy as np
 import output
 from ruamel import yaml
+import itertools
+import sklearn
+from pdb import set_trace
 
 # Set PATHs
 # path to senteval
@@ -25,6 +29,25 @@ PATH_TO_WIC = os.path.join('data','wic')
 
 # SentEval parameter
 SENTEVAL_FAST = True # Set to false to perform slower SentEval with better results
+
+class MLP(nn.Module):
+    """
+    MLP as per Pilehvar: a simple dense network with 100 hidden neurons (ReLU activation), and one output neuron (sigmoid activation)
+    """
+
+    # def __init__(self, in_dim, out_dim=1, hidden_dim=100):
+    def __init__(self, in_dim, out_dim=2, hidden_dim=100):
+        super().__init__()
+        self.net = nn.Sequential(
+            nn.Linear(in_dim, hidden_dim),
+            nn.ReLU(),
+            nn.Linear(hidden_dim, out_dim),
+            # nn.Sigmoid(),
+            nn.Softmax(),
+        )
+
+    def forward(self, input):
+        return self.net(input)
 
 ##################################################################################################
 # SentEval
@@ -96,10 +119,10 @@ def get_sentence(meta, idx):
     meta['sentences'][idx][pos] = f"\emph{{{meta['sentences'][idx][pos]}}}"
     return ' '.join(meta['sentences'][idx])
 
-def get_worst(data, cosine_scores, idxs, reverse):
-    similarities = cosine_scores['dev'][idxs].tolist()
+def get_worst(data, confidences, idxs, reverse):
+    confidences_ = confidences[idxs].tolist()
     qualitative = np.array(data['dev'])[idxs]
-    ranking = sorted(zip(similarities, qualitative), key=lambda tpl: tpl[0], reverse=reverse)
+    ranking = sorted(zip(confidences_, qualitative), key=lambda tpl: tpl[0], reverse=reverse)
     # worst = [{'score':score, 'sentences':get_sentences(meta)} for score, meta in ranking]
     worst = [(round(score, 3), get_sentences(meta)) for score, meta in ranking]
     txt = '\n'.join([f'{score} & {sentences[0]} & {sentences[1]} \\\\' for score, sentences in worst])
@@ -172,40 +195,82 @@ class WicEvaluator():
                             embedding_sentence[i][1, word_positions[1]])
                         )
 
-        # Evaluate thresholded cosine similarity metric
-        # Compute cosine similarity per embedding
-        print("Evaluating cosine similarity - threshold method")
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        print(f"Evaluating - {args.classifier} method")
+
+        best_threshold = 0
         for task in layers:
             print("\tEmbedding name: {}".format(task))
-            cosine_scores = {}
-            for set_name in ['train', 'dev']:
-                N = len(embeddings[task][set_name])
-                cosine_scores[set_name] = np.zeros(N)
-                for i in range(N):
-                    emb = embeddings[task][set_name][i]
-                    score = emb[0] @ emb[1] / emb[0].norm() / emb[1].norm()
-                    cosine_scores[set_name][i] = score
-            # Find best threshold by trying at every 0.02 interval on the training data
-            thresholds = np.linspace(0, 1, 51)
-            best_threshold = 0
-            best_acc = 0
-            train_labels = np.array(labels['train'])
-            for threshold in thresholds:
-                predictions = cosine_scores['train'] > threshold
-                accuracy = (predictions == train_labels).mean()
-                print("Threshold {} -> Train accuracy: {}".format(threshold, accuracy))
-                if accuracy > best_acc:
-                    best_threshold = threshold
-                    best_acc = accuracy
-            # Evaluate dev data using threshold
-            print("Best threshold: {}, Train accuracy: {}".format(best_threshold, best_acc))
+
+            if args.classifier == "threshold":
+                # Evaluate thresholded cosine similarity metric
+                # Compute cosine similarity per embedding
+                scores = {}
+                for set_name in ['train', 'dev']:
+                    N = len(embeddings[task][set_name])
+                    scores[set_name] = np.zeros(N)
+                    for i in range(N):
+                        emb = embeddings[task][set_name][i]
+                        score = emb[0] @ emb[1] / emb[0].norm() / emb[1].norm()
+                        scores[set_name][i] = score
+                # Find best threshold by trying at every 0.02 interval on the training data
+                thresholds = np.linspace(0, 1, 51)
+                best_threshold = 0
+                best_acc = 0
+                train_labels = np.array(labels['train'])
+                for threshold in thresholds:
+                    predictions = scores['train'] > threshold
+                    accuracy = (predictions == train_labels).mean()
+                    print("Threshold {} -> Train accuracy: {}".format(threshold, accuracy))
+                    if accuracy > best_acc:
+                        best_threshold = threshold
+                        best_acc = accuracy
+                # Evaluate dev data using threshold
+                print("Best threshold: {}, Train accuracy: {}".format(best_threshold, best_acc))
+                confidences = scores['dev']
+                predictions = confidences > best_threshold
+
+            elif args.classifier == "mlp":
+                in_dim = 2048  # torch.cat(embeddings[task][set_name][i])
+                model = MLP(in_dim).to(device)
+                # optimizer: Adam
+                lr = 1e-3
+                optimizer = torch.optim.Adam(model.parameters(), lr=lr)
+                # loss: binary crossentropy
+                loss = nn.CrossEntropyLoss()
+                # batch_size = 32
+
+                for set_name in ['train', 'dev']:
+                    X = torch.stack(list(map(torch.cat, embeddings[task][set_name]))).to(device)
+                    Y_hat = model.forward(X)
+
+                    if set_name == 'train':
+                        Y = torch.tensor(labels[set_name]).to(device).long()
+                        output = loss(Y_hat, Y)
+                        # output.backward()
+                        # *** RuntimeError: element 0 of tensors does not require grad and does not have a grad_fn
+                    else:
+                        confidences = Y_hat        [:, 1].cpu().detach().numpy()
+                        predictions = Y_hat.argmax(dim=1).cpu().detach().numpy()
+                    # TODO: Given the stochasticity of the network optimizer, we report average results for five runs (± standard deviation).
+
+            elif args.classifier == "svm":
+                clf = sklearn.svm.SVC(gamma='scale')
+                for set_name in ['train', 'dev']:
+                    Y = list(map(int, labels[set_name]))
+                    X = torch.stack(list(map(torch.cat, embeddings[task][set_name]))).cpu().numpy()
+                    if set_name == 'train':
+                        clf.fit(X, Y)
+                    else:
+                        predictions = clf.predict(X)
+                        confidences = predictions  # useless for worst ranking
+
             dev_labels = np.array(labels['dev'])
-            predictions = cosine_scores['dev'] > best_threshold
             accuracy = (predictions == dev_labels).mean()
             print("Dev accuracy: {}".format(accuracy))
 
-            worst_fp = get_worst(data, cosine_scores, ~dev_labels & predictions, True)
-            worst_fn = get_worst(data, cosine_scores, ~predictions & dev_labels, False)
+            worst_fp = get_worst(data, confidences, ~dev_labels & predictions, True)
+            worst_fn = get_worst(data, confidences, ~predictions & dev_labels, False)
 
             # add performance to results and write predictions to output file
             results[task] = {
@@ -219,7 +284,7 @@ class WicEvaluator():
                 with open(os.path.join(self.output_dir, 'false_negatives_{}.txt'.format(task)), 'w') as f:
                     f.write(worst_fn)
                 with open(os.path.join(self.output_dir, 'wic_dev_predictions_{}.txt'.format(task)), 'w') as f:
-                    for label, score in zip(predictions, cosine_scores['dev']):
+                    for label, score in zip(predictions, scores['dev']):
                         f.write("{},{}\n".format('T' if label else 'F', score))
 
         return results
@@ -324,6 +389,10 @@ if __name__ == "__main__":
     parser.add_argument(
         "--output_dir", "-o", type=str, required=True,
         help="Directory for output files."
+    )
+    parser.add_argument(
+        "--classifier", type=str, choices=("mlp", "svm", "threshold"), default="threshold",
+        help="classifier used to determine whether WiC words are used in the same sense"
     )
     args = parser.parse_args()
 
