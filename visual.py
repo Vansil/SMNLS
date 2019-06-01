@@ -147,7 +147,7 @@ def wic_compare_pos_datasets(file_pairs=[
         r1 = torch.load(f1)['wic']
         r2 = torch.load(f2)['wic']
 
-        for emb in data.keys():
+        for emb in ['input', 'pos', 'vua', 'snli', 'average']:
             acc_pairs.append(
                 (r1[emb]['test_accuracy']*100, r2[emb]['test_accuracy']*100)
             )
