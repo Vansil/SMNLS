@@ -157,7 +157,7 @@ def wic_barplot(results_files_dict, output_file):
     
     # Output to file
     frame = pd.DataFrame(data, index=names)
-    frame.plot.bar(figsize=(5,4))
+    frame.plot.bar(figsize=(10,4))
     plt.ylim([50,65])
 
     plt.savefig(output_file,pad_inches=1,bbox_inches='tight')
