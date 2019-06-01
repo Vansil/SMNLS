@@ -176,8 +176,8 @@ def wic_barplot(results_files_dict, output_file):
     data = {
         'input': [],
         'pos': [],
-        'vua': [],
-        'snli': [],
+        'met': [],
+        'nli': [],
         'average': []
     }
     paper_names = {
@@ -190,14 +190,14 @@ def wic_barplot(results_files_dict, output_file):
     names = []
 
     for name, path in results_files_dict.items():
-        names.append(paper_names[name])
+        names.append(name)
         print(path)
         results = torch.load(path)['wic']
         for emb in data.keys():
             if emb in results.keys():
-                data[emb].append(results[emb]['test_accuracy']*100)
+                data[paper_names[emb]].append(results[emb]['test_accuracy']*100)
             else:
-                data[emb].append(None)
+                data[paper_names[emb]].append(None)
     
     # Output to file
     frame = pd.DataFrame(data, index=names)
