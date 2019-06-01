@@ -19,7 +19,7 @@ export PYTHONIOENCODING=utf
 source activate dl
 
 cd ..
-srun python eval.py -c"output/baseline_elmo0/checkpoints/000000000.pt" -o"output/baseline_elmo0/evaluation/" -m=wic
-srun python eval.py -c"output/baseline_elmo1/checkpoints/000000000.pt" -o"output/baseline_elmo1/evaluation/" -m=wic
-srun python eval.py -c"output/baseline_elmo2/checkpoints/000000000.pt" -o"output/baseline_elmo2/evaluation/" -m=wic
-srun python eval.py -c"output/baseline_elmo012/checkpoints/000000000.pt" -o"output/baseline_elmo012/evaluation/" -m=wic
+srun python eval.py -c"output/baseline_elmo0/checkpoints/000000000.pt" -o"output/baseline_elmo0/evaluation_/" -m=wic
+srun python eval.py -c"output/baseline_elmo1/checkpoints/000000000.pt" -o"output/baseline_elmo1/evaluation_/" -m=wic
+srun python eval.py -c"output/baseline_elmo2/checkpoints/000000000.pt" -o"output/baseline_elmo2/evaluation_/" -m=wic
+srun python eval.py -c"output/baseline_elmo012/checkpoints/000000000.pt" -o"output/baseline_elmo012/evaluation_/" -m=wic
