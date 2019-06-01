@@ -193,7 +193,7 @@ def wic_barplot(results_files_dict, output_file):
         names.append(name)
         print(path)
         results = torch.load(path)['wic']
-        for emb in data.keys():
+        for emb in paper_names.keys():
             if emb in results.keys():
                 data[paper_names[emb]].append(results[emb]['test_accuracy']*100)
             else:
