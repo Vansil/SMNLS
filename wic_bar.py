@@ -17,4 +17,4 @@ results_files_dict = {
     'vpos-vua-snli': "output/vpos-vua-snli/evaluation/results.pt",
     'vua-vpos': "output/vua-vpos/evaluation/results.pt",
 }
-visual.wic_barplot(results_files_dict, 'results/WicBarplotVuapos.png',pad_inches=1,bbox_inches='tight'))
+visual.wic_barplot(results_files_dict, 'results/WicBarplotVuapos.png',pad_inches=1,bbox_inches='tight')
