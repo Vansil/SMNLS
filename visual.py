@@ -126,6 +126,41 @@ def sent_eval_table(results_file, output_file):
     table.to_html(output_file)
     return table
 
+
+def wic_compare_pos_datasets(file_pairs=[
+                                            ("output/pos/evaluation/results.pt", "output/vpos/evaluation/results.pt"),
+                                            ("output/pos-snli/evaluation/results.pt", "output/vpos-snli/evaluation/results.pt"),
+                                            ("output/pos-vua-snli/evaluation/results.pt", "output/vpos-vua-snli/evaluation/results.pt"),
+                                            ("output/vua-pos/evaluation/results.pt", "output/vua-vpos/evaluation/results.pt")
+                                        ]):
+    '''
+    Compares the accuracy between models trained with vua and wsj pos data
+    Args:
+        file_pairs: list of tuples with file names of the same model with different pos data
+    Returns:
+        dict with mean and std of the difference
+    '''
+    acc_pairs = []
+
+    for f1, f2 in file_pairs:
+        print(f1,f2)
+        r1 = torch.load(f1)['wic']
+        r2 = torch.load(f2)['wic']
+        acc_pairs.append(
+            (r1['test_accuracy']*100, r2['test_accuracy']*100)
+        )
+    
+    diff = [i-j for i,j in acc_pairs]
+    out = {
+        'acc_pairs': acc_pairs,
+        'diff': diff,
+        'diff_avg': np.average(diff),
+        'diff_std': np.std(diff)
+    }
+
+    return out
+
+
 def wic_barplot(results_files_dict, output_file):
     '''
     Makes bar plot comparing WiC accuracies per model and embedding layer.
