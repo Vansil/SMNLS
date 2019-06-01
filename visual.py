@@ -160,7 +160,7 @@ def wic_barplot(results_files_dict, output_file):
     frame.plot.bar(figsize=(10,6))
     plt.ylim([50,65])
 
-    plt.savefig(output_file)
+    plt.savefig(output_file,pad_inches=1,bbox_inches='tight')
     return frame
 
 
