@@ -28,7 +28,7 @@ results_files_dict = {
     'nli': "output/snli/evaluation/results.pt",
     'pos-met': "output/vua-vpos/evaluation/results.pt",
     'pos-nli': "output/vpos-snli/evaluation/results.pt",
-    'met-snli': "output/vua-snli/evaluation/results.pt",
+    'met-nli': "output/vua-snli/evaluation/results.pt",
     'pos-met-nli': "output/vpos-vua-snli/evaluation/results.pt",
 }
 visual.wic_barplot(results_files_dict, 'results/WicBarplotForPaper.png')
