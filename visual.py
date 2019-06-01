@@ -327,6 +327,7 @@ class WicTsne(object):
         # ELMo embedding does not return precisely the same embedding every time
         # embeddings: {word -> {sentence -> word_embedding}}, word has form "word_pos" with pos = N,V
         print("Embedding all words")
+        self.all_embeddings = [] # list of all word embeddings, used for t-SNE
         with torch.no_grad():
             self.embeddings = {}
             for i, data_point in enumerate(self.data):
@@ -344,8 +345,29 @@ class WicTsne(object):
                     if tuple(sentence_pair[n]) not in self.embeddings[word].keys():
                         if layer is None:
                             self.embeddings[word][tuple(sentence_pair[n])] = embedding_sentence[n, word_positions[n]].cpu()
+                            for emb in embedding_sentence[n].cpu():
+                                self.all_embeddings.append(emb)
                         else:
                             self.embeddings[word][tuple(sentence_pair[n])] = embedding_sentence[layer][n, word_positions[n]].cpu()
+                            for emb in embedding_sentence[layer][n].cpu():
+                                self.all_embeddings.append(emb)
+
+    def compute_tsne(self):
+        '''
+        Computes t-sne coordinates of all embeddings
+        '''
+        # Apply t-SNE to all embeddings
+        embs = np.vstack(self.all_embeddings)
+        tsne = TSNE(n_components=2, init='pca', random_state=0)
+        tsne_embeddings = tsne.fit_transform(embs)
+        # Make (ugly) dict to map word embedding -> tsne coordinate
+        self.tsne_map = {tuple(float(val) for val in self.all_embeddings[i]): tsne_embeddings[i] for i in range(len(self.all_embeddings))}
+
+    def map_embedding(self, embedding):
+        '''
+        Maps a word embedding to a t-SNE coordinate
+        '''
+        return self.tsne_map[tuple(float(val) for val in embedding)]
 
     def save_embeddings(self, file):
         '''
@@ -358,6 +380,18 @@ class WicTsne(object):
         Loads a model's embeddings from a file
         '''
         self.embeddings = torch.load(file, map_location='cpu')
+
+    def save_tsne_map(self, file):
+        '''
+        Saves map from embedding to t-SNE coordinate to a file
+        '''
+        torch.save(self.tsne_map, file)
+
+    def load_tsne_map(self, load):
+        '''
+        Loads map from embedding to t-SNE coordinate to a file
+        '''
+        self.tsne_map = torch.load(file)
 
     def word_counts(self):
         '''
@@ -393,15 +427,14 @@ class WicTsne(object):
         for i, link in enumerate(self.links):
             print("\t{} - {} ({})".format(*link['ids'], link['label']))
 
-    def compute_tsne(self):
+    def compute_tsne_word(self):
         '''
         Computes t-sne coordinates of all embeddings of a word
         '''
         # Apply t-SNE to the word embeddings
         emb_dict = self.embeddings[self.word]
         embs = np.vstack([embed.detach() for _, embed in emb_dict.items()])
-        tsne = TSNE(n_components=2, init='pca', random_state=0)
-        self.tsne_embeddings = tsne.fit_transform(embs)
+        self.tsne_embeddings = np.vstack([self.map_embedding(emb) for emb in embs])
 
         # Print coordinates
         print("t-SNE coordinates:")
