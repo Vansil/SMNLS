@@ -24,11 +24,11 @@ results_files_dict = {
     'elmo012': "output/baseline_elmo012/evaluation/results.pt",
     'random': "output/empty_jmt/evaluation/results.pt",
     'pos': "output/vpos/evaluation/results.pt",
-    'vua': "output/vua/evaluation/results.pt",
-    'snli': "output/snli/evaluation/results.pt",
-    'pos-vua': "output/vua-vpos/evaluation/results.pt",
-    'pos-snli': "output/vpos-snli/evaluation/results.pt",
-    'vua-snli': "output/vua-snli/evaluation/results.pt",
-    'pos-vua-snli': "output/vpos-vua-snli/evaluation/results.pt",
+    'met': "output/vua/evaluation/results.pt",
+    'nli': "output/snli/evaluation/results.pt",
+    'pos-met': "output/vua-vpos/evaluation/results.pt",
+    'pos-nli': "output/vpos-snli/evaluation/results.pt",
+    'met-snli': "output/vua-snli/evaluation/results.pt",
+    'pos-met-nli': "output/vpos-vua-snli/evaluation/results.pt",
 }
 visual.wic_barplot(results_files_dict, 'results/WicBarplotForPaper.png')
