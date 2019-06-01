@@ -180,10 +180,17 @@ def wic_barplot(results_files_dict, output_file):
         'snli': [],
         'average': []
     }
+    paper_names = {
+        'input': 'input',
+        'pos': 'pos',
+        'vua': 'met',
+        'snli': 'nli',
+        'average': 'average'
+    }
     names = []
 
     for name, path in results_files_dict.items():
-        names.append(name)
+        names.append(paper_names[name])
         print(path)
         results = torch.load(path)['wic']
         for emb in data.keys():
