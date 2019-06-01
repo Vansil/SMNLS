@@ -1,0 +1,29 @@
+-----------------------------------------------------------------------------------------
+Silvan
+
+Discuss project with Samira in the tutorials
+Keep the Google Docs progress document updated for Samira
+
+Write code to perform SentEval sentence representation evaluation
+Write code to perform threshold-based Word-in-Context word representation evaluation
+Implement general-purpose word embedding Pytorch Module that includes ELMo and GloVe embeddings
+Write code to select from GloVe only the embeddings that occur in the data
+Write training script to check if the ELMo module is correctly implemented (training on SNLI)
+Implement Dataset class for Penn WSJ POS data and VUA POS data
+Implement t-SNE visualisation for Word-in-Context embeddings
+Write code to show Word-in-Context results in table and bar chart
+Implement OutputWriter class to write train logs, checkpoints (excluding the word embeddings) and evaluation results to directories in an organised manner
+Test baseline ELMo models and randomly initialised network
+Code to select sentences that obtain different predictions from different models (for analysis)
+
+Read the papers of the models that we base our research on, summarize in our own paper
+Write paper introduction
+
+
+-----------------------------------------------------------------------------------------
+Tycho
+
+
+-----------------------------------------------------------------------------------------
+Bjarne
+
