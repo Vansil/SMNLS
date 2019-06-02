@@ -21,6 +21,8 @@ Write paper Introduction section
 Write paper Results&Analysis section (including figures)
 Write parts of paper Methods section
 Write parts of paper Experiments section
+Write Abstract
+Write Conclusion
 
 
 -----------------------------------------------------------------------------------------
