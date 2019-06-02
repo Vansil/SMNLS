@@ -80,7 +80,7 @@ def changing_prediction(pred_file_from, pred_file_to, print_top=1000):
                 obs['data']['sent2']))
         print("Predictions that became INCORRECT:")
         for obs in to_incorrect[:print_top]:
-            print("\tWord {} has {} sense in:\n\t\t{}\n\t\t{}".format(
+            print("\t{} sense of '{}' in:\n\t\t{}\n\t\t{}".format(
                 'SAME' if obs['label'] == 'T' else 'DIFFERENT',
                 obs['data']['word'],
                 obs['data']['sent1'],
@@ -387,7 +387,7 @@ class WicTsne(object):
         '''
         torch.save(self.tsne_map, file)
 
-    def load_tsne_map(self, load):
+    def load_tsne_map(self, file):
         '''
         Loads map from embedding to t-SNE coordinate to a file
         '''
@@ -426,6 +426,8 @@ class WicTsne(object):
         print("Links:")
         for i, link in enumerate(self.links):
             print("\t{} - {} ({})".format(*link['ids'], link['label']))
+        # Select t-SNE coordinates and print
+        self.compute_tsne_word()
 
     def compute_tsne_word(self):
         '''
@@ -441,7 +443,7 @@ class WicTsne(object):
         for i, embed in enumerate(self.tsne_embeddings):
             print("\t[{}]  ({:.4f}, {:.4f})\t{}".format(i,embed[0], embed[1], " ".join(self.sentences[i])))
 
-    def plot_tsne(self, ids=None, out_file=None):
+    def plot_tsne(self, ids=None, out_file=None, no_text=False):
         '''
         Plot t-SNE for words with the given indices, or all words if ids=None
         If out_file is not None, the figure will be saved to that location
@@ -461,8 +463,9 @@ class WicTsne(object):
                 coor = coors[i]
                 if list(coor) not in all_coors:
                     all_coors.append(list(coor))
-                    plt.text(coor[0], coor[1], " ".join(self.sentences[index[i]]),
-                            fontdict={'size': 9})
+                    if not no_text:
+                            plt.text(coor[0], coor[1], " ".join(self.sentences[index[i]]),
+                                    fontdict={'size': 9})
 
             # Link
             plt.plot([coors[0][0],coors[1][0]], [coors[0][1],coors[1][1]],
@@ -486,6 +489,17 @@ class WicTsne(object):
             plt.savefig(out_file)
 
         plt.show()
+
+    def browse_plots(self, word_ids):
+        '''
+        Show t-SNE plots of selected words, one by one
+        '''
+        for idx in word_ids:
+            word, freq = self.word_counts()[idx]
+            print("{} ({}x)".format(word,freq))
+            self.set_word(word)
+            self.plot_tsne()
+            input()
 
 
 
