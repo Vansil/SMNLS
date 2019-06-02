@@ -17,7 +17,8 @@ Test baseline ELMo models and randomly initialised network
 Code to select sentences that obtain different predictions from different models (for analysis)
 
 Read the papers of the models that we base our research on, summarize in our own paper
-Write paper introduction
+Write paper Introduction section
+Write paper Results&Analysis section (including figures)
 
 
 -----------------------------------------------------------------------------------------
