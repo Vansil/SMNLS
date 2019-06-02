@@ -19,6 +19,8 @@ Code to select sentences that obtain different predictions from different models
 Read the papers of the models that we base our research on, summarize in our own paper
 Write paper Introduction section
 Write paper Results&Analysis section (including figures)
+Write parts of paper Methods section
+Write parts of paper Experiments section
 
 
 -----------------------------------------------------------------------------------------
