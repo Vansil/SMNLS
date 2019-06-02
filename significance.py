@@ -57,20 +57,22 @@ def gen_combs(models, gold, fn, ratio=1.0):
     - fn: a function to calculate p-values
     returns: a generator of {a, b, p}
     """
-    col_name = lambda k: f'{k}:{models[k]}'
-    corrects = {k:model_df(k, v, gold)['correct'].map(int) for k, v in models.items()}
-    size = corrects[list(models.keys())[0]].size
+    col_name = lambda tpl: f'{tpl[0]}:{tpl[1]}'
+    corrects = {col_name(tpl):model_df(*tpl, gold)['correct'].map(int) for tpl in models}
+    size = corrects[col_name(models[0])].size
     idxs = np.random.permutation(size)
     idxs = idxs[:math.floor(ratio*len(idxs))]
-    corrects = {k:df.iloc[idxs] for k,df in corrects.items()}
+    corrects = {k:df.iloc[idxs] for k, df in corrects.items()}
 
-    for a in models:
-        for b in models:
+    for a_tpl in models:
+        a = col_name(a_tpl)
+        for b_tpl in models:
+            b = col_name(b_tpl)
             print(f'{a} - {b}')
             p = np.nan if a == b else \
                 fn(corrects[a], corrects[b])
                 # np.inf if (corrects[a] == corrects[b]).all() else 
-            yield {'a':col_name(a), 'b':col_name(b), 'p':p}
+            yield {'a':a, 'b':b, 'p':p}
 
 def significance_pivot(models, gold, fn, file, ratio=1.0):
     """generate and save to html a pivot of p-values"""
@@ -82,7 +84,13 @@ def significance_pivot(models, gold, fn, file, ratio=1.0):
 if __name__ == "__main__":
     gold = gold_df()
     # wic = wic_df()
-    models = {'baseline_elmo2': 'input', 'baseline_elmo012': 'input', 'vua-snli': 'vua', 'empty_jmt': 'pos'}
+    models = [
+      ('baseline_elmo2', 'input'),
+      ('baseline_elmo012', 'input'),
+      ('vua-snli', 'input'),
+      ('vua-snli', 'vua'),
+      ('empty_jmt', 'pos'),
+    ]
 
     print('mcnemar')
     significance_pivot(models, gold, mcnemar_models,  'results/mcnemar.html', 1.0)
