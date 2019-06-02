@@ -34,9 +34,9 @@ def wic_df():
     df['context2'] = df['context2'].map(words)
     return df
 
-def model_df(model, gold):
+def model_df(model, stage, gold):
     """load in dev set model results for the word in context (WiC) dataset"""
-    df = pd.read_csv(f'output/{model}/evaluation/wic_dev_predictions.txt', names=('pred', 'match'))
+    df = pd.read_csv(f'output/{model}/evaluation/wic_dev_predictions_{stage}.txt', names=('pred', 'match'))
     df['pred'] = df['pred'].map(lambda x: x == 'T')
     df['correct'] = list(map(lambda a_b: a_b[0] == a_b[1], zip(gold['gold'], df['pred'])))
     return df
@@ -57,8 +57,9 @@ def gen_combs(models, gold, fn, ratio=1.0):
     - fn: a function to calculate p-values
     returns: a generator of {a, b, p}
     """
-    corrects = {k:model_df(k, gold)['correct'].map(int) for k in models}
-    size = corrects[models[0]].size
+    col_name = lambda k: f'{k}:{models[k]}'
+    corrects = {k:model_df(k, v, gold)['correct'].map(int) for k, v in models.items()}
+    size = corrects[list(models.keys())[0]].size
     idxs = np.random.permutation(size)
     idxs = idxs[:math.floor(ratio*len(idxs))]
     corrects = {k:df.iloc[idxs] for k,df in corrects.items()}
@@ -66,8 +67,10 @@ def gen_combs(models, gold, fn, ratio=1.0):
     for a in models:
         for b in models:
             print(f'{a} - {b}')
-            p = fn(corrects[a], corrects[b]) if a != b else np.nan
-            yield {'a':a, 'b':b, 'p':p}
+            p = np.nan if a == b else \
+                fn(corrects[a], corrects[b])
+                # np.inf if (corrects[a] == corrects[b]).all() else 
+            yield {'a':col_name(a), 'b':col_name(b), 'p':p}
 
 def significance_pivot(models, gold, fn, file, ratio=1.0):
     """generate and save to html a pivot of p-values"""
@@ -79,7 +82,7 @@ def significance_pivot(models, gold, fn, file, ratio=1.0):
 if __name__ == "__main__":
     gold = gold_df()
     # wic = wic_df()
-    models = ['baseline_elmo0', 'baseline_elmo1', 'baseline_elmo2', 'baseline_elmo012', 'pos', 'pos-snli', 'pos-vua-snli', 'snli', 'vua', 'vua-pos', 'vua-snli']
+    models = {'baseline_elmo2': 'input', 'baseline_elmo012': 'input', 'vua-snli': 'vua', 'empty_jmt': 'pos'}
 
     print('mcnemar')
     significance_pivot(models, gold, mcnemar_models,  'results/mcnemar.html', 1.0)
