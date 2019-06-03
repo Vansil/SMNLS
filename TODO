@@ -5,6 +5,15 @@ Other:
 - Shared LISA account (lgpu0219, Bjachan69)
 
 
+PAPER:
+[ ] Related Work: herschrijven (moet meer over vorig onderzoek over contextualized word embeddings gaan, o.a. de state-of-the-art (BERT-large) die in de tabel in Results wordt genoemd; minder over de individuele taken, omdat we niet focussen op de performance daarvan; moet ook beter aansluiten op de rest van het paper)
+[ ] Methods: BJARNE moet iets schrijven over de loss functie per taak (zie comments in Overleaf)
+[ ] Experiments: schrijf subsection over Data
+[ ] Voeg p-waarde van MET-NLI:input VS MET-NLI:met toe (TYCHO)
+[ ] Eventueel: voeg aan Results een paragraaf toe over de grootste false positives&negatives met een verwijzing naar appendix (alleen als er genoeg ruimte is, of de appendix over de page limit mag gaan -> houd Piazza in de gaten)
+
+
+
 WEEK 6
 Bjarne:
 - [x] Experiment opzetten
