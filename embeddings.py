@@ -8,7 +8,7 @@ import os
 from allennlp.modules.elmo import Elmo, batch_to_ids
 from data import PennDataset, SnliDataset
 from torch.utils.data import DataLoader
-import eval_copy as eval
+import eval
 
 GLOVE_FILE = 'data/glove/glove.840B.300d.txt'
 GLOVE_TRAIN_FILE = os.path.join('data', 'glove', 'glove_selection_snli-wic-wsj.pt') # file with GloVe vectors from all training data
