@@ -40,4 +40,5 @@ Train the model on the various tasks
 
 Write Methods section
 Write parts of the Related Works section
+Write parts of the Expirement section (mostly about data)
 Proofread paper and general editing
