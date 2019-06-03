@@ -201,6 +201,7 @@ class WicEvaluator():
         best_threshold = 0
         for task in layers:
             print("\tEmbedding name: {}".format(task))
+            best_acc = 0
 
             if args.classifier == "threshold":
                 # Evaluate thresholded cosine similarity metric
@@ -216,7 +217,6 @@ class WicEvaluator():
                 # Find best threshold by trying at every 0.02 interval on the training data
                 thresholds = np.linspace(0, 1, 51)
                 best_threshold = 0
-                best_acc = 0
                 train_labels = np.array(labels['train'])
                 for threshold in thresholds:
                     predictions = scores['train'] > threshold
@@ -284,7 +284,7 @@ class WicEvaluator():
                 with open(os.path.join(self.output_dir, 'false_negatives_{}.txt'.format(task)), 'w') as f:
                     f.write(worst_fn)
                 with open(os.path.join(self.output_dir, 'wic_dev_predictions_{}.txt'.format(task)), 'w') as f:
-                    for label, score in zip(predictions, scores['dev']):
+                    for label, score in zip(predictions, confidences):
                         f.write("{},{}\n".format('T' if label else 'F', score))
 
         return results
