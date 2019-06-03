@@ -28,6 +28,17 @@ Write Conclusion
 -----------------------------------------------------------------------------------------
 Tycho
 
+Provide an initial implementation for SentEval testing
+Find and report state-of-the-art results
+Create architecture diagram for initial report draft
+Write parts of the report (introduction, related work, methods)
+Prood-reading the report
+Implement anti-curriculum learning (experiment not included in the end)
+Implement Support Vector Machine and Multi-Layer Perceptron classification methods
+Implement significance testing
+Investigate attention mechanisms for combining word embeddings into sentence embeddings
+Qualitative analysis of false positives/negative (incl. corresponding implementation)
+
 
 -----------------------------------------------------------------------------------------
 Bjarne
