@@ -8,7 +8,7 @@ import os
 from allennlp.modules.elmo import Elmo, batch_to_ids
 from data import PennDataset, SnliDataset
 from torch.utils.data import DataLoader
-import eval_copy as eval
+import eval
 
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.modeling import BertModel

@@ -17,7 +17,12 @@ Test baseline ELMo models and randomly initialised network
 Code to select sentences that obtain different predictions from different models (for analysis)
 
 Read the papers of the models that we base our research on, summarize in our own paper
-Write paper introduction
+Write paper Introduction section
+Write paper Results&Analysis section (including figures)
+Write parts of paper Methods section
+Write parts of paper Experiments section
+Write Abstract
+Write Conclusion
 
 
 -----------------------------------------------------------------------------------------
@@ -27,3 +32,13 @@ Tycho
 -----------------------------------------------------------------------------------------
 Bjarne
 
+Design model based on previous work on Hierarchical learning
+Implement code to train the model on the various tasks and subsets thereof
+Implement dataset classes and loaders SNLI, VUA Metaphor detection, and Word Sense Disambiguation tasks
+Dig trough previous work to find out how to actually train the model
+Train the model on the various tasks
+
+Write Methods section
+Write parts of the Related Works section
+Write parts of the Expirement section (mostly about data)
+Proofread paper and general editing
