@@ -3,3 +3,4 @@ allennlp
 configargparse
 permutation_test
 ruamel.yaml
+pytorch-pretrained-bert
