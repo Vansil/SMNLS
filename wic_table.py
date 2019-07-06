@@ -1,3 +1,5 @@
+"""display our Word in Context (WiC) results as an HTML table"""
+
 import visual
 results_files_dict = {
     'elmo0': "output/baseline_elmo0/evaluation/results.pt",

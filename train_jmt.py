@@ -190,14 +190,14 @@ if __name__ == "__main__":
             {"params": model.snli_classifier.parameters(), "weight_decay": 1e-5, "lr": 1.0}
         ],
     )
-    snli_lr_schedula = torch.optim.lr_scheduler.LambdaLR(
+    snli_lr_schedule = torch.optim.lr_scheduler.LambdaLR(
         snli_optimizer, lr_function
     )
 
     task_objects = {
         "pos": (model, model.pos_forward, pos_optimizer, pos_lr_schedule, pos_loaders, torch.nn.CrossEntropyLoss()),
         "vua": (model, model.metaphor_forward, vua_optimizer, vua_lr_schedule, vua_loaders, torch.nn.CrossEntropyLoss()),
-        "snli": (model, model.snli_forward, snli_optimizer, snli_lr_schedula, snli_loaders, torch.nn.CrossEntropyLoss())
+        "snli": (model, model.snli_forward, snli_optimizer, snli_lr_schedule, snli_loaders, torch.nn.CrossEntropyLoss())
     }
 
     writer = OutputWriter(args.output)

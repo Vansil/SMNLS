@@ -6,7 +6,7 @@ from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
 from csv import DictReader
 
-import eval_copy as eval
+import eval
 import output
 
 '''
@@ -87,11 +87,6 @@ def changing_prediction(pred_file_from, pred_file_to, print_top=1000):
                 obs['data']['sent2']))
 
     return to_correct, to_incorrect
-
-
-
-
-
 
 
 def sent_eval_table(results_file, output_file):
