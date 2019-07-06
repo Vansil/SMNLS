@@ -9,6 +9,7 @@ import yaml
 
 
 
+# TODO: add BERT?
 class OutputWriter(object):
     '''
     Used to directly print log to files

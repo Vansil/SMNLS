@@ -48,7 +48,7 @@ if __name__ == "__main__":
         help="The directory into which tensorboard logs and model checkpoints will be placed."
     )
     parser.add_argument(
-        "--embedding-type", "-e", type=str, choices=["ELMo", "GloVe"], default="GloVe",
+        "--embedding-type", "-e", type=str, choices=["ELMo", "GloVe", "BERT"], default="GloVe",
         help="The type of word embeddings to use."
     )
 

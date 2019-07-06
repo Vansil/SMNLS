@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import torch
 import os
 
-from embeddings import WordEmbedding, ElmoEmbedding, GloveEmbedding
+from embeddings import WordEmbedding, ElmoEmbedding, GloveEmbedding, BertEmbedding
 
 GLOVE_TRAIN_FILE = os.path.join('data', 'glove', 'glove_selection_snli-wic-wsj.pt') # file with GloVe vectors from all training data
 
@@ -39,6 +39,7 @@ class TestModelEmbedding(nn.Module):
         self.embedding = WordEmbedding()
         self.embedding.set_elmo()
         self.embedding.set_glove(GLOVE_TRAIN_FILE)
+        self.embedding.set_bert()
 
         self._l1 = nn.Linear(1324 * 4, hidden_size)
         self._l2 = nn.Linear(hidden_size, output_size)
@@ -234,29 +235,31 @@ class SnliModel(EmbeddingModule):
 
 
 class WordEmbeddingModel(EmbeddingModule):
-    def __init__(self, device, use_glove=True, use_elmo=True):
+    def __init__(self, device, use_glove=True, use_elmo=True, use_bert=True):
         glove_size = 300 if use_glove else 0
         elmo_size = 1024 if use_elmo else 0
         super(WordEmbeddingModel, self).__init__(glove_size + elmo_size)
 
-        if not use_glove and not use_elmo:
+        if not use_glove and not use_elmo and not use_bert:
             raise ValueError("Should use at least one form of embedding.")
 
         if use_elmo:
             self._elmo = ElmoEmbedding(device=device)
         if use_glove:
             self._glove = GloveEmbedding(GLOVE_TRAIN_FILE, device=device)
+        if use_bert:
+            self._bert = BertEmbedding(model_type='bert-large-cased', device=device)
 
         self._use_elmo = use_elmo
+        self._use_bert = use_bert
         self._use_glove = use_glove
 
     def forward(self, sentences, lengths):
-        if self._use_elmo and self._use_glove:
-            return torch.cat([self._elmo(sentences), self._glove(sentences)], dim=2)
-        elif self._use_elmo:
-            return self._elmo(sentences)
-        else:
-            return self._glove(sentences)
+        return torch.cat([
+            self._elmo( sentences) if self._use_elmo()  else [],
+            self._bert( sentences) if self._use_bert()  else [],
+            self._glove(sentences) if self._use_glove() else [],
+        ], dim=2)
 
     def embed(self, sentences, lengths):
         return self.forward(sentences, lengths)
@@ -299,7 +302,7 @@ class LstmModel(BaseModel):
         self._lstm_module = nn.LSTM(input_size, embedding_size, 1, bidirectional=False, dropout=0, batch_first=True)
 
     def _embed(self, X, lengths):
-        bsize = X.size(0)
+        # bsize = X.size(0)
 
         lengths_sorted, idx_sort = torch.sort(lengths)
         inv_idx = torch.arange(lengths.size(0)-1, -1, -1).long().to(lengths.device)
@@ -329,7 +332,7 @@ class BiLstmModel(BaseModel):
         self._embedding_size = embedding_size
 
     def _embed(self, X, lengths):
-        bsize = X.size(0)
+        # bsize = X.size(0)
 
         lengths_sorted, idx_sort = torch.sort(lengths)
         inv_idx = torch.arange(lengths.size(0)-1, -1, -1).long().to(lengths.device)
@@ -360,7 +363,7 @@ class BiLstmMaxModel(BaseModel):
         self._lstm_module = nn.LSTM(input_size, embedding_size, 1, bidirectional=True, dropout=0, batch_first=True)
 
     def _embed(self, X, lengths):
-        bsize = X.size(0)
+        # bsize = X.size(0)
 
         lengths_sorted, idx_sort = torch.sort(lengths)
         inv_idx = torch.arange(lengths.size(0)-1, -1, -1).long().to(lengths.device)
@@ -389,6 +392,7 @@ class JMTModel(nn.Module):
 
         self.embedding = WordEmbedding(device)
         self.embedding.set_elmo()
+        self.embedding.set_bert()
         self.embedding.set_glove()
 
         self.pos_lstm = nn.LSTM(1324, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)

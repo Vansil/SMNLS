@@ -21,7 +21,7 @@ GLOVE_TRAIN_FILE = os.path.join('data', 'glove', 'glove_selection_snli-wic-wsj.p
 class WordEmbedding(nn.Module):
     '''
     General module for word embeddings
-    Supports contextualized ELMo embedding, GloVe vectors and index embedding
+    Supports contextualized ELMo embedding, GloVe vectors, BERT embeddings and index embedding
     '''
 
     def __init__(self, device='cpu'):
@@ -29,6 +29,7 @@ class WordEmbedding(nn.Module):
         # Embedding modules
         self.elmo = None
         self.glove = None
+        self.bert = None
         # Device to which pytorch embeddings should be moved
         self.device = device
         self.to(device)
@@ -42,20 +43,26 @@ class WordEmbedding(nn.Module):
             self.elmo.set_device(device)
         elif self.has_glove():
             self.glove.set_device(device)
+        elif self.has_bert():
+            self.bert.set_device(device)
 
     def clear(self):
         '''
-        Sets ELMo and GloVe to None
+        Sets ELMo, BERT and GloVe to None
         Used for saving models
         '''
         self.elmo = None
         self.glove = None
+        self.bert = None
 
     def has_elmo(self):
         return self.elmo is not None
 
     def has_glove(self):
         return self.glove is not None
+
+    def has_bert(self):
+        return self.bert is not None
 
     def set_elmo(self, mix_parameters=None):
         '''
@@ -76,6 +83,15 @@ class WordEmbedding(nn.Module):
         '''
         self.glove = GloveEmbedding(glove_file=glove_file, device=self.device)
 
+    def set_bert(self, model_type='bert-large-cased'):
+        '''
+        Add a BERT word embedding.
+        Args:
+            see BertEmbedding class
+        '''
+        self.bert = BertEmbedding(model_type, device=self.device)
+
+
     def forward(self, batch):
         '''
         Embed a batch of sentences
@@ -87,14 +103,13 @@ class WordEmbedding(nn.Module):
             embeddings: tensor of concatenated words embeddings with dimensions (batch_size, sequence_length, embed_dim)
             TODO: lengths: sequence lengths for packing
         '''
-        if self.has_elmo() and self.has_glove():
-            return torch.cat([self.elmo(batch), self.glove(batch)], dim=2)
-        elif self.has_elmo():
-            return self.elmo(batch)
-        elif self.has_glove():
-            return self.glove(batch)
-        else:
-            raise Exception("WordEmbedding contains no ELMo and no GloVe")
+        if not self.has_elmo() and not self.has_glove() and not self.has_bert():
+            raise Exception("WordEmbedding contains no ELMo, BERT and no GloVe")
+        return torch.cat([
+            self.elmo( batch) if self.has_elmo()  else [],
+            self.bert( batch) if self.has_bert()  else [],
+            self.glove(batch) if self.has_glove() else [],
+        ], dim=2)
 
 
 class GloveEmbedding(nn.Module):
@@ -277,7 +292,7 @@ class ElmoEmbedding(nn.Module):
 
 
 class BertEmbedding(nn.Module):
-    def __init__(self, model_type):
+    def __init__(self, model_type, device=torch.device("cpu")):
         '''
         Args:
             model_type: str
@@ -291,7 +306,7 @@ class BertEmbedding(nn.Module):
         self.model_type = model_type
         self.bert_model = BertModel.from_pretrained(model_type)
         self.tokenizer = BertTokenizer.from_pretrained(model_type)
-        self.device = torch.device("cpu")
+        self.device = device
 
     def state_dict(self):
         return {
