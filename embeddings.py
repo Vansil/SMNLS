@@ -8,7 +8,7 @@ import os
 from allennlp.modules.elmo import Elmo, batch_to_ids
 from data import PennDataset, SnliDataset
 from torch.utils.data import DataLoader
-import eval
+# import eval
 
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.modeling import BertModel
@@ -354,16 +354,16 @@ class BertEmbedding(nn.Module):
                 if token[:2] == "##":
                     word_embeddings[-1].append(sentence_embedding[j])
                 else:
-                    word_embeddings.append(sentence_embedding[j])
+                    word_embeddings.append([sentence_embedding[j]])
 
             word_embeddings = [torch.mean(torch.stack(em), dim=0) for em in word_embeddings]
 
             merged_embeddings.append(word_embeddings)
 
         # Now we only need to make a single tensor out of it.
-        max_length = np.max(len(em) for em in merged_embeddings)
+        max_length = np.max([len(em) for em in merged_embeddings])
 
-        zeros = torch.zeros(128, dtype=torch.float32, device=self.device)
+        zeros = torch.zeros(embeddings.size(-1), dtype=torch.float32, device=self.device)
 
         merged_embeddings = [
             torch.stack(em + [zeros] * (max_length - len(em)))
@@ -390,11 +390,10 @@ class BertEmbedding(nn.Module):
         batch_tokens = [self.tokenize_sentence(" ".join(sentence)) for sentence in sentences]
         batch_ids = [self.tokenizer.convert_tokens_to_ids(tokens) for tokens in batch_tokens]
 
-        max_length = np.max(len(tokens) for tokens in batch_tokens)
-        max_sentence_length = np.max(len(sentence) for sentence in sentences)
+        max_sentence_length = np.max([len(sentence) for sentence in batch_tokens])
 
         padded_batch_ids = [
-            self.pad_to_length(input_ids, max_length) for input_ids in batch_ids]
+            self.pad_to_length(input_ids, max_sentence_length) for input_ids in batch_ids
         ]
 
         return batch_tokens, padded_batch_ids
@@ -404,7 +403,7 @@ class BertEmbedding(nn.Module):
 
         return tokens
 
-    def pad_to_length(input_ids, length):
+    def pad_to_length(self, input_ids, length):
         return input_ids + [0] * (length - len(input_ids))
 
 
