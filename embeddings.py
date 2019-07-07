@@ -311,7 +311,7 @@ class BertEmbedding(nn.Module):
         self.tokenizer = BertTokenizer.from_pretrained(model_type, do_lower_case=False)
         self.device = device
         self.embedding_size = 1024 if "large" in self.model_type else 768
-        self._modules = OrderedDict()
+        self.bert_model._load_from_state_dict = lambda x, y, z, u, v, w, a, b: None
 
     def state_dict(self, destination=None, prefix="", keep_vars=False):
         if destination is None:
@@ -331,6 +331,7 @@ class BertEmbedding(nn.Module):
             self.bert_model = BertModel.from_pretrained(self.model_type)
             self.bert_model.eval()
             self.tokenizer = BertTokenizer.from_pretrained(self.model_type, do_lower_case=False)
+            self.bert_model._load_from_state_dict = lambda x, y, z, u, v, w, a, b: None
 
         if strict:
             for ukey in state_dict.keys():

@@ -99,8 +99,9 @@ class OutputWriter(object):
             model.embedding.set_device(device)
         else:
             model = models.JMTModel(pos_classes=17, embedding_model="bert-base-cased", device=device)
-            print(model_dict["model"].keys())
             model.load_state_dict(model_dict["model"])
+
+            print(model)
 
         model.to(device)
 
