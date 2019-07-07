@@ -66,7 +66,7 @@ if __name__ == "__main__":
         help="The delta parameter used for succesive regularization applied on the lstm layers."
     )
     parser.add_argument(
-        "--embedding-model", type=str, choices=["ELMo+GloVe", "bert-base-cased", "bert-large-cased"], default="ELMo+GloVe",
+        "--embedding-model", type=str, choices=["ELMo+GloVe", "bert-base-cased", "bert-large-cased"], default="ELMo+GloVe", required=False,
         help="The embedding model to use to generate the contextual word embeddings."
     )
 
