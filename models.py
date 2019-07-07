@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import torch
 import os
 
-from embeddings import WordEmbedding, ElmoEmbedding, GloveEmbedding
+from embeddings import WordEmbedding, ElmoEmbedding, GloveEmbedding, BertEmbedding
 
 GLOVE_TRAIN_FILE = os.path.join('data', 'glove', 'glove_selection_snli-wic-wsj.pt') # file with GloVe vectors from all training data
 
@@ -39,6 +39,7 @@ class TestModelEmbedding(nn.Module):
         self.embedding = WordEmbedding()
         self.embedding.set_elmo()
         self.embedding.set_glove(GLOVE_TRAIN_FILE)
+        self.embedding.set_bert()
 
         self._l1 = nn.Linear(1324 * 4, hidden_size)
         self._l2 = nn.Linear(hidden_size, output_size)
@@ -246,17 +247,19 @@ class WordEmbeddingModel(EmbeddingModule):
             self._elmo = ElmoEmbedding(device=device)
         if use_glove:
             self._glove = GloveEmbedding(GLOVE_TRAIN_FILE, device=device)
+        # if use_bert:
+        #     self._bert = BertEmbedding(model_type='bert-large-cased', device=device)
 
         self._use_elmo = use_elmo
+        # self._use_bert = use_bert
         self._use_glove = use_glove
 
     def forward(self, sentences, lengths):
-        if self._use_elmo and self._use_glove:
-            return torch.cat([self._elmo(sentences), self._glove(sentences)], dim=2)
-        elif self._use_elmo:
-            return self._elmo(sentences)
-        else:
-            return self._glove(sentences)
+        return torch.cat([
+            self._elmo( sentences) if self._use_elmo()  else [],
+            # self._bert( sentences) if self._use_bert()  else [],
+            self._glove(sentences) if self._use_glove() else [],
+        ], dim=2)
 
     def embed(self, sentences, lengths):
         return self.forward(sentences, lengths)
@@ -299,7 +302,7 @@ class LstmModel(BaseModel):
         self._lstm_module = nn.LSTM(input_size, embedding_size, 1, bidirectional=False, dropout=0, batch_first=True)
 
     def _embed(self, X, lengths):
-        bsize = X.size(0)
+        # bsize = X.size(0)
 
         lengths_sorted, idx_sort = torch.sort(lengths)
         inv_idx = torch.arange(lengths.size(0)-1, -1, -1).long().to(lengths.device)
@@ -329,7 +332,7 @@ class BiLstmModel(BaseModel):
         self._embedding_size = embedding_size
 
     def _embed(self, X, lengths):
-        bsize = X.size(0)
+        # bsize = X.size(0)
 
         lengths_sorted, idx_sort = torch.sort(lengths)
         inv_idx = torch.arange(lengths.size(0)-1, -1, -1).long().to(lengths.device)
@@ -360,7 +363,7 @@ class BiLstmMaxModel(BaseModel):
         self._lstm_module = nn.LSTM(input_size, embedding_size, 1, bidirectional=True, dropout=0, batch_first=True)
 
     def _embed(self, X, lengths):
-        bsize = X.size(0)
+        # bsize = X.size(0)
 
         lengths_sorted, idx_sort = torch.sort(lengths)
         inv_idx = torch.arange(lengths.size(0)-1, -1, -1).long().to(lengths.device)
@@ -384,20 +387,26 @@ class BiLstmMaxModel(BaseModel):
 
 
 class JMTModel(nn.Module):
-    def __init__(self, device, pos_classes=45, metaphor_classes=2, snli_classes=3, lstm_hidden_size=100, dropout=0):
+    def __init__(self, device, pos_classes=45, metaphor_classes=2, snli_classes=3, lstm_hidden_size=100, dropout=0, embedding_model="ELMo+GloVe"):
         super(JMTModel, self).__init__()
 
-        self.embedding = WordEmbedding(device)
-        self.embedding.set_elmo()
-        self.embedding.set_glove()
+        if embedding_model == "ELMo+GloVe":
+            self.embedding = WordEmbedding(device)
+            self.embedding.set_elmo()
+            # self.embedding.set_bert()
+            self.embedding.set_glove()
+            embedding_size = 1324
+        else:
+            self.embedding = BertEmbedding(embedding_model, device)
+            embedding_size = self.embedding.embedding_size
 
-        self.pos_lstm = nn.LSTM(1324, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)
+        self.pos_lstm = nn.LSTM(embedding_size, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)
         self.pos_classifier = nn.Linear(2 * lstm_hidden_size, pos_classes)
 
-        self.metaphor_lstm = nn.LSTM(1324 + 2 * lstm_hidden_size + pos_classes, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)
+        self.metaphor_lstm = nn.LSTM(embedding_size + 2 * lstm_hidden_size + pos_classes, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)
         self.metaphor_classifier = nn.Linear(2 * lstm_hidden_size, metaphor_classes)
 
-        self.snli_lstm = nn.LSTM(1324 + 4 * lstm_hidden_size + metaphor_classes, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)
+        self.snli_lstm = nn.LSTM(embedding_size + 4 * lstm_hidden_size + metaphor_classes, lstm_hidden_size, 1, bidirectional=True, dropout=dropout, batch_first=True)
         self.snli_classifier = nn.Linear(2 * lstm_hidden_size * 4, snli_classes)
 
     def pos_forward(self, sentences, lengths):

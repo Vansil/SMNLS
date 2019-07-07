@@ -66,13 +66,11 @@ if __name__ == "__main__":
         help="The delta parameter used for succesive regularization applied on the lstm layers."
     )
     parser.add_argument(
-        "--anti", action="store_true", required=False, default=False,
-        help="Use anti-curriculum learning, starting with hard instead of easy tasks."
+        "--embedding-model", type=str, choices=["ELMo+GloVe", "bert-base-cased", "bert-large-cased"], default="ELMo+GloVe", required=False,
+        help="The embedding model to use to generate the contextual word embeddings."
     )
 
     args = parser.parse_args()
-    if args.anti:
-        args.tasks = reversed(args.tasks)
 
     arguments = {
         "learning-rate": args.learning_rate,
@@ -82,7 +80,8 @@ if __name__ == "__main__":
         "epsilon": args.epsilon,
         "rho": args.rho,
         "delta-classifier": args.delta_classifier,
-        "delta-lstm": args.delta_lstm
+        "delta-lstm": args.delta_lstm,
+        "embedding-model": args.embedding_model
     }
 
     if args.output:
@@ -94,7 +93,7 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
 
     print("Creating model.")
-    model = models.JMTModel(device, pos_classes=17)
+    model = models.JMTModel(device, pos_classes=17, embedding_model=args.embedding_model)
     model.to(device)
 
     print("Loading datasets.")
@@ -169,8 +168,8 @@ if __name__ == "__main__":
 
     vua_optimizer = torch.optim.SGD(
         [
-            {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - 1e-3) if "pos" in args.tasks else 1.0},
-            {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - 1e-2) if "pos" in args.tasks else 1.0},
+            {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - args.delta_lstm) if "pos" in args.tasks else 1.0},
+            {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - args.delta_classifier) if "pos" in args.tasks else 1.0},
             {"params": model.metaphor_lstm.parameters(), "weight_decay": 1e-6, "lr": 1.0},
             {"params": model.metaphor_classifier.parameters(), "weight_decay": 1e-5, "lr": 1.0}
         ],
@@ -182,25 +181,25 @@ if __name__ == "__main__":
 
     snli_optimizer = torch.optim.SGD(
         [
-            {"params": model.metaphor_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - 1e-2) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
-            {"params": model.metaphor_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - 1e-3) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
-            {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - 1e-2) if "vua" in args.tasks else 1.0},
-            {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - 1e-2) if "vua" in args.tasks else 1.0},
+            {"params": model.metaphor_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - args.delta_lstm) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
+            {"params": model.metaphor_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - args.delta_classifier) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
+            {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - args.delta_lstm) if "vua" in args.tasks else 1.0},
+            {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - args.delta_classifier) if "vua" in args.tasks else 1.0},
             {"params": model.snli_lstm.parameters(), "weight_decay": 1e-6, "lr": 1.0},
             {"params": model.snli_classifier.parameters(), "weight_decay": 1e-5, "lr": 1.0}
         ],
     )
-    snli_lr_schedula = torch.optim.lr_scheduler.LambdaLR(
+    snli_lr_schedule = torch.optim.lr_scheduler.LambdaLR(
         snli_optimizer, lr_function
     )
 
     task_objects = {
         "pos": (model, model.pos_forward, pos_optimizer, pos_lr_schedule, pos_loaders, torch.nn.CrossEntropyLoss()),
         "vua": (model, model.metaphor_forward, vua_optimizer, vua_lr_schedule, vua_loaders, torch.nn.CrossEntropyLoss()),
-        "snli": (model, model.snli_forward, snli_optimizer, snli_lr_schedula, snli_loaders, torch.nn.CrossEntropyLoss())
+        "snli": (model, model.snli_forward, snli_optimizer, snli_lr_schedule, snli_loaders, torch.nn.CrossEntropyLoss())
     }
 
-    writer = OutputWriter(args.output)
+    writer = OutputWriter(args.output, custom_saving=args.embedding_model == "ELMo+GloVe")
 
     writer.save_arguments(arguments)
 
