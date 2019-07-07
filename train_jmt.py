@@ -65,6 +65,10 @@ if __name__ == "__main__":
         "--delta-lstm", type=float, default=1e-3, required=False,
         help="The delta parameter used for succesive regularization applied on the lstm layers."
     )
+    parser.add_argument(
+        "--embedding-model", type=str, choices=["ELMo+GloVe", "bert-base-cased", "bert-large-cased"], default="ELMo+GloVe",
+        help="The embedding model to use to generate the contextual word embeddings."
+    )
 
     args = parser.parse_args()
 
@@ -76,7 +80,8 @@ if __name__ == "__main__":
         "epsilon": args.epsilon,
         "rho": args.rho,
         "delta-classifier": args.delta_classifier,
-        "delta-lstm": args.delta_lstm
+        "delta-lstm": args.delta_lstm,
+        "embedding-model": args.embedding_model
     }
 
     if args.output:
@@ -88,7 +93,7 @@ if __name__ == "__main__":
     device = torch.device("cuda" if torch.cuda.is_available() and not args.no_cuda else "cpu")
 
     print("Creating model.")
-    model = models.JMTModel(device, pos_classes=17)
+    model = models.JMTModel(device, pos_classes=17, embedding_model=args.embedding_model)
     model.to(device)
 
     print("Loading datasets.")
@@ -194,7 +199,7 @@ if __name__ == "__main__":
         "snli": (model, model.snli_forward, snli_optimizer, snli_lr_schedule, snli_loaders, torch.nn.CrossEntropyLoss())
     }
 
-    writer = OutputWriter(args.output)
+    writer = OutputWriter(args.output, custom_saving=args.embedding_model == "ELMo+GloVe")
 
     writer.save_arguments(arguments)
 

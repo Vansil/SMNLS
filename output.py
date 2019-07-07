@@ -9,7 +9,7 @@ import yaml
 
 
 
-# TODO: add BERT?
+# TODO: Fixed in BERT itself...
 class OutputWriter(object):
     '''
     Used to directly print log to files
@@ -19,7 +19,7 @@ class OutputWriter(object):
         checkpoints in the checkpoint directory
         tensorboard files in the board directory
     '''
-    def __init__(self, path_dir):
+    def __init__(self, path_dir, custom_saving=True):
         self.dir = path_dir
         self.dir_check = os.path.join(path_dir, 'checkpoints')
         self.dir_board = os.path.join(path_dir, "board")
@@ -27,6 +27,7 @@ class OutputWriter(object):
         os.makedirs(self.dir_board, exist_ok=True)
 
         self.writer = SummaryWriter(self.dir_board)
+        self.custom_saving = custom_saving
         
     def add_scalar(self, tag, scalar_value, global_step=None):
         '''
@@ -53,41 +54,54 @@ class OutputWriter(object):
         Save from the embedding layer only the ELMo mix parameters and GloVe embedding file
         Load model using load_model
         '''
-        model_dict = {
-            'has_elmo': model.embedding.has_elmo(),
-            'has_glove': model.embedding.has_glove()
-        }
+        if self.custom_saving:
+            model_dict = {
+                'has_elmo': model.embedding.has_elmo(),
+                'has_glove': model.embedding.has_glove()
+            }
 
-        # Obtain embedding parameters
-        if model.embedding.has_elmo():
-            model_dict['elmo_params'] = model.embedding.elmo.get_mix_parameters()
-        if model.embedding.has_glove():
-            model_dict['glove_file'] = model.embedding.glove.glove_file
+            # Obtain embedding parameters
+            if model.embedding.has_elmo():
+                model_dict['elmo_params'] = model.embedding.elmo.get_mix_parameters()
+            if model.embedding.has_glove():
+                model_dict['glove_file'] = model.embedding.glove.glove_file
 
-        model_copy = copy.deepcopy(model)
-        model_copy.embedding.clear()
-        model_dict['model'] = model_copy
+            model_copy = copy.deepcopy(model)
+            model_copy.embedding.clear()
+            model_dict['model'] = model_copy
+        else:
+            model_dict = {
+                "model": model.state_dict()
+            }
         
         torch.save(model_dict, os.path.join(self.dir_check, '{}.pt'.format(name)))
 
     @classmethod
-    def load_model(cls, file, device='cuda'):
+    def load_model(cls, file, device=torch.device('cpu'), custom_saving=True):
         '''
         Load a model that was saved by save_model()
         '''
         model_dict = torch.load(file, map_location=device)
-        model = model_dict['model']
-        model.embedding.set_device(device)
 
-        print (model)
+        if custom_saving:
+            model = model_dict['model']
 
-        # Add embeddings
-        if model_dict['has_elmo']:
-            model.embedding.set_elmo(mix_parameters=model_dict['elmo_params'])
-        if model_dict['has_glove']:
-            model.embedding.set_glove(model_dict['glove_file'])
+            model.embedding.set_device(device)
 
-        model.embedding.set_device(device)
+            print (model)
+
+            # Add embeddings
+            if model_dict['has_elmo']:
+                model.embedding.set_elmo(mix_parameters=model_dict['elmo_params'])
+            if model_dict['has_glove']:
+                model.embedding.set_glove(model_dict['glove_file'])
+
+            model.embedding.set_device(device)
+        else:
+            model = models.JMTModel(pos_classes=17, embedding_model="bert-base-cased", device=device)
+            print(model_dict["model"].keys())
+            model.load_state_dict(model_dict["model"])
+
         model.to(device)
 
         return model

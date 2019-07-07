@@ -13,6 +13,8 @@ from torch.utils.data import DataLoader
 from pytorch_pretrained_bert.tokenization import BertTokenizer
 from pytorch_pretrained_bert.modeling import BertModel
 
+from collections import OrderedDict
+
 GLOVE_FILE = 'data/glove/glove.840B.300d.txt'
 GLOVE_TRAIN_FILE = os.path.join('data', 'glove', 'glove_selection_snli-wic-wsj.pt') # file with GloVe vectors from all training data
 
@@ -29,7 +31,7 @@ class WordEmbedding(nn.Module):
         # Embedding modules
         self.elmo = None
         self.glove = None
-        self.bert = None
+        # self.bert = None
         # Device to which pytorch embeddings should be moved
         self.device = device
         self.to(device)
@@ -43,8 +45,8 @@ class WordEmbedding(nn.Module):
             self.elmo.set_device(device)
         elif self.has_glove():
             self.glove.set_device(device)
-        elif self.has_bert():
-            self.bert.set_device(device)
+        # elif self.has_bert():
+        #     self.bert.set_device(device)
 
     def clear(self):
         '''
@@ -53,7 +55,7 @@ class WordEmbedding(nn.Module):
         '''
         self.elmo = None
         self.glove = None
-        self.bert = None
+        # self.bert = None
 
     def has_elmo(self):
         return self.elmo is not None
@@ -61,8 +63,8 @@ class WordEmbedding(nn.Module):
     def has_glove(self):
         return self.glove is not None
 
-    def has_bert(self):
-        return self.bert is not None
+    # def has_bert(self):
+    #     return self.bert is not None
 
     def set_elmo(self, mix_parameters=None):
         '''
@@ -83,13 +85,13 @@ class WordEmbedding(nn.Module):
         '''
         self.glove = GloveEmbedding(glove_file=glove_file, device=self.device)
 
-    def set_bert(self, model_type='bert-large-cased'):
-        '''
-        Add a BERT word embedding.
-        Args:
-            see BertEmbedding class
-        '''
-        self.bert = BertEmbedding(model_type, device=self.device)
+    # def set_bert(self, model_type='bert-large-cased'):
+    #     '''
+    #     Add a BERT word embedding.
+    #     Args:
+    #         see BertEmbedding class
+    #     '''
+    #     self.bert = BertEmbedding(model_type, device=self.device)
 
 
     def forward(self, batch):
@@ -107,7 +109,7 @@ class WordEmbedding(nn.Module):
             raise Exception("WordEmbedding contains no ELMo, BERT and no GloVe")
         return torch.cat([
             self.elmo( batch) if self.has_elmo()  else [],
-            self.bert( batch) if self.has_bert()  else [],
+            # self.bert( batch) if self.has_bert()  else [],
             self.glove(batch) if self.has_glove() else [],
         ], dim=2)
 
@@ -305,29 +307,44 @@ class BertEmbedding(nn.Module):
 
         self.model_type = model_type
         self.bert_model = BertModel.from_pretrained(model_type)
-        self.tokenizer = BertTokenizer.from_pretrained(model_type)
+        self.bert_model.eval()
+        self.tokenizer = BertTokenizer.from_pretrained(model_type, do_lower_case=False)
         self.device = device
+        self.embedding_size = 1024 if "large" in self.model_type else 768
+        self._modules = OrderedDict()
 
-    def state_dict(self):
-        return {
-            "model_type": self.model_type
-        }
+    def state_dict(self, destination=None, prefix="", keep_vars=False):
+        if destination is None:
+            destination = OrderedDict()
 
-    def load_state_dict(self, state_dict):
-        self.model_type = state_dict["model_type"]
-        self.bert_model = BertModel.from_pretrained(self.model_type)
-        self.tokenizer = BertTokenizer.from_pretrained(self.model_type)
+        destination[prefix + "model_type"] = self.model_type
 
-    def to(self, device):
-        self.bert_model.to(device)
-        self.device = device
+        return destination
 
-        return self
+    def _load_from_state_dict(self, state_dict, prefix, local_metadata, strict, missing_keys, unexpected_keys, error_msgs):
+        key = prefix + "model_type"
+
+        if key not in state_dict and strict:
+            missing_keys.append(key)
+        else:
+            self.model_type = state_dict[key]
+            self.bert_model = BertModel.from_pretrained(self.model_type)
+            self.bert_model.eval()
+            self.tokenizer = BertTokenizer.from_pretrained(self.model_type, do_lower_case=False)
+
+        if strict:
+            for ukey in state_dict.keys():
+                if ukey.startswith(prefix) and ukey != key:
+                    unexpected_keys.append(ukey)
+
+        self._modules = OrderedDict()
 
     def forward(self, sentences):
         tokens, input_ids = self.tokenize(sentences)
-        embeddings = self.embed(input_ids)
-        merged_embeddings = self.merge_word_piece_embeddings(tokens, embeddings)
+        with torch.no_grad():
+            embeddings = self.embed(input_ids)
+
+            merged_embeddings = self.merge_word_piece_embeddings(tokens, embeddings)
 
         return merged_embeddings
 
@@ -338,7 +355,7 @@ class BertEmbedding(nn.Module):
         # Skip the classification token.
         return all_encoded_layers[-1][:, 1:, :]
 
-    def merge_word_piece_embeddings(self, tokens, embeddings):
+    def merge_word_piece_embeddings(self, batch_merge_windows, embeddings):
         # And now for the tricky part.
         # BERT creates embeddings for complex words through what they call word-piece tokens
         # and then process those pieces individually.
@@ -346,19 +363,20 @@ class BertEmbedding(nn.Module):
 
         merged_embeddings = []
 
-        for i, sentence_tokens in enumerate(tokens):
+        for i, merge_windows in enumerate(batch_merge_windows):
             sentence_embedding = embeddings[i]
 
             word_embeddings = []
 
-            # Group all the embeddings by which word they come from.
-            for j, token in enumerate(sentence_tokens[1:-1]):  # Skip [CLS] and [SEP] token.
-                if token[:2] == "##":
-                    word_embeddings[-1].append(sentence_embedding[j])
-                else:
-                    word_embeddings.append([sentence_embedding[j]])
+            k = 0
 
-            word_embeddings = [torch.mean(torch.stack(em), dim=0) for em in word_embeddings]
+            # Group all the embeddings by which word they come from.
+            for merge_window in merge_windows:  # Skip [CLS] and [SEP] token.
+                word_embeddings.append(
+                    torch.mean(sentence_embedding[k: k + merge_window], dim=0)
+                )
+
+                k += merge_window
 
             merged_embeddings.append(word_embeddings)
 
@@ -389,7 +407,7 @@ class BertEmbedding(nn.Module):
                     A tensor containing the length of each sentence.
         '''
 
-        batch_tokens = [self.tokenize_sentence(" ".join(sentence)) for sentence in sentences]
+        batch_tokens, batch_merge_windows = zip(*[self.tokenize_sentence(sentence) for sentence in sentences])
         batch_ids = [self.tokenizer.convert_tokens_to_ids(tokens) for tokens in batch_tokens]
 
         max_sentence_length = np.max([len(sentence) for sentence in batch_tokens])
@@ -398,12 +416,17 @@ class BertEmbedding(nn.Module):
             self.pad_to_length(input_ids, max_sentence_length) for input_ids in batch_ids
         ]
 
-        return batch_tokens, padded_batch_ids
+        return batch_merge_windows, padded_batch_ids
 
     def tokenize_sentence(self, sentence):
-        tokens = ["[CLS]"] + self.tokenizer.tokenize(sentence) + ["[SEP]"]
+        tokens = []
+        merge_window = []  # Keep track of the amount of pieces that each word gets tokenized into.
+        for word in sentence:
+            token = self.tokenizer.tokenize(word)
+            tokens.extend(token)
+            merge_window.append(len(token))
 
-        return tokens
+        return ["[CLS]"] + tokens + ["[SEP]"], merge_window
 
     def pad_to_length(self, input_ids, length):
         return input_ids + [0] * (length - len(input_ids))
