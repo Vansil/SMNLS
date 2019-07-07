@@ -406,6 +406,10 @@ class BertEmbedding(nn.Module):
     def pad_to_length(self, input_ids, length):
         return input_ids + [0] * (length - len(input_ids))
 
+    def parameters(self):
+        while False:
+            yield None
+
 
 def make_selected_glove_training():
     '''
