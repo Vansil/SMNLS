@@ -322,6 +322,8 @@ class BertEmbedding(nn.Module):
         self.bert_model.to(device)
         self.device = device
 
+        return self
+
     def forward(self, sentences):
         tokens, input_ids = self.tokenize(sentences)
         embeddings = self.embed(input_ids)
