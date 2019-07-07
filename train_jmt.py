@@ -168,8 +168,8 @@ if __name__ == "__main__":
 
     vua_optimizer = torch.optim.SGD(
         [
-            {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - 1e-3) if "pos" in args.tasks else 1.0},
-            {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - 1e-2) if "pos" in args.tasks else 1.0},
+            {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - args.delta_lstm) if "pos" in args.tasks else 1.0},
+            {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - args.delta_classifier) if "pos" in args.tasks else 1.0},
             {"params": model.metaphor_lstm.parameters(), "weight_decay": 1e-6, "lr": 1.0},
             {"params": model.metaphor_classifier.parameters(), "weight_decay": 1e-5, "lr": 1.0}
         ],
@@ -181,10 +181,10 @@ if __name__ == "__main__":
 
     snli_optimizer = torch.optim.SGD(
         [
-            {"params": model.metaphor_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - 1e-2) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
-            {"params": model.metaphor_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - 1e-3) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
-            {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - 1e-2) if "vua" in args.tasks else 1.0},
-            {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - 1e-2) if "vua" in args.tasks else 1.0},
+            {"params": model.metaphor_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - args.delta_lstm) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
+            {"params": model.metaphor_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - args.delta_classifier) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
+            {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - args.delta_lstm) if "vua" in args.tasks else 1.0},
+            {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - args.delta_classifier) if "vua" in args.tasks else 1.0},
             {"params": model.snli_lstm.parameters(), "weight_decay": 1e-6, "lr": 1.0},
             {"params": model.snli_classifier.parameters(), "weight_decay": 1e-5, "lr": 1.0}
         ],
