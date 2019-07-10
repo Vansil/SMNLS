@@ -6,8 +6,9 @@ data/*
 !data/get_data.sh
 
 # Outputs
-runs/*
-output/*
+runs/
+output0/
+*/checkpoints/*
 
 # Cluster job files
 jobs/archive/
