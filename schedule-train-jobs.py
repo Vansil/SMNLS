@@ -13,7 +13,7 @@ def write_job_file(tasks, job_name, embedding_model, output_file):
     print(f"#SBATCH --ntasks-per-node=1", file=output_file)
     print(f"#SBATCH --time=48:00:00", file=output_file)
     print(f"#SBATCH --mem=16384M", file=output_file)
-    print(f"#SBACTH --partition=gpu_shared_course", file=output_file)
+    print(f"#SBATCH --partition=gpu_shared_course", file=output_file)
     print(f"#SBATCH --gres=gpu:1", file=output_file)
     print(f"", file=output_file)
     print(f"module purge", file=output_file)
