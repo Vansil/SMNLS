@@ -5,9 +5,10 @@ This is our research project for the Statistical Methods for Natural Language Se
 ## Usage
 
 ```bash
-bash ./data/get_data.sh
 conda env create -n dl -f environment.yml
 conda env update -n dl -f environment.yml
 source activate dl
+cd ./data
+bash ./get_data.sh
 pip install -r requirements.txt
 ```
