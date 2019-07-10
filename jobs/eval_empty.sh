@@ -19,4 +19,4 @@ export PYTHONIOENCODING=utf
 source activate dl
 
 cd ..
-srun python eval.py -c"output/empty_jmt/checkpoints/model.pt" -o"output/empty_jmt/evaluation/"
+srun python eval.py -c"output0/empty_jmt/checkpoints/model.pt" -o"output0/empty_jmt/evaluation/"

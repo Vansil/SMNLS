@@ -19,10 +19,10 @@ export PYTHONIOENCODING=utf
 source activate dl
 
 cd ..
-srun python eval.py -c"output/pos/checkpoints/pos_epoch20.pt" -o"output/pos/evaluation/"
-srun python eval.py -c"output/pos-snli/checkpoints/snli_epoch20.pt" -o"output/pos-snli/evaluation/" 
-srun python eval.py -c"output/pos-vua-snli/checkpoints/snli_epoch15.pt" -o"output/pos-vua-snli/evaluation/"
-srun python eval.py -c"output/snli/checkpoints/snli_epoch20.pt" -o"output/snli/evaluation/"
-srun python eval.py -c"output/vua/checkpoints/vua_epoch20.pt" -o"output/vua/evaluation/"
-srun python eval.py -c"output/vua-pos/checkpoints/vua_epoch20.pt" -o"output/vua-pos/evaluation/"
-srun python eval.py -c"output/vua-snli/checkpoints/snli_epoch14.pt" -o"output/vua-snli/evaluation/"
+srun python eval.py -c"output0/pos/checkpoints/pos_epoch20.pt" -o"output0/pos/evaluation/"
+srun python eval.py -c"output0/pos-snli/checkpoints/snli_epoch20.pt" -o"output0/pos-snli/evaluation/" 
+srun python eval.py -c"output0/pos-vua-snli/checkpoints/snli_epoch15.pt" -o"output0/pos-vua-snli/evaluation/"
+srun python eval.py -c"output0/snli/checkpoints/snli_epoch20.pt" -o"output0/snli/evaluation/"
+srun python eval.py -c"output0/vua/checkpoints/vua_epoch20.pt" -o"output0/vua/evaluation/"
+srun python eval.py -c"output0/vua-pos/checkpoints/vua_epoch20.pt" -o"output0/vua-pos/evaluation/"
+srun python eval.py -c"output0/vua-snli/checkpoints/snli_epoch14.pt" -o"output0/vua-snli/evaluation/"

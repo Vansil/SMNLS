@@ -19,4 +19,4 @@ export PYTHONIOENCODING=utf
 source activate dl
 
 cd ..
-srun python3 eval.py -c=output/pos-vua-snli/checkpoints/snli_epoch16.pt -m=wic -o=output/pos-vua-snli/evaluation/
+srun python3 eval.py -c=output0/pos-vua-snli/checkpoints/snli_epoch16.pt -m=wic -o=output0/pos-vua-snli/evaluation/
