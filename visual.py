@@ -244,45 +244,6 @@ def wic_table(results_files_dict, output_file, include_thresholds=False, include
     return table
 
 
-def _wic_table(results_files_dict, output_file, include_thresholds=False, include_train_acc=False):
-    '''
-    DEPRECATED because results now distinguish between different embeddings
-    Makes html table comparing WiC accuracies.
-    Args:
-        results_files_dict: dictionary with keys model name, values result file path of the model
-        output_file: html table is written here
-        include_thresholds: set to True to include best performing threshold
-        include_train_acc: set to True to include best training accuracy
-    Returns:
-        pandas table
-    '''
-    # Load data from result files
-    names = []
-    test_accs = []
-    train_accs = []
-    thresholds = []
-    for name, path in results_files_dict.items():
-        print(path)
-        results = torch.load(path)['wic']
-        names.append(name)
-        test_accs.append("{:.1f}%".format(results['test_accuracy']*100))
-        train_accs.append("{:.1f}%".format(results['train_accuracy']*100))
-        thresholds.append("{:.2f}".format(results['threshold']))
-    
-    # Make table
-    frame = {'Model': names}
-    if include_thresholds:
-        frame['Threshold'] = thresholds
-    if include_train_acc:
-        frame['Train acc'] = train_accs
-    frame['Test acc'] = test_accs
-
-    # Output to file
-    table = pd.DataFrame(frame)
-    table.to_html(output_file)
-    return table
-
-
 class WicTsne(object):
     '''
     Apply t-SNE (t-Distributed Stochastic Neighbour Embedding) to the word-of-interest in the WiC train dataset
