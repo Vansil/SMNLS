@@ -95,7 +95,8 @@ if __name__ == "__main__":
     random.seed(args.seed)
 
     if args.output:
-        arguments["output"] = args.output
+        path = os.path.normpath(args.output).split(os.sep)
+        arguments["output"] = os.sep.join(path + [args.seed])
 
     if args.no_cuda:
         arguments["no-cuda"] = True
