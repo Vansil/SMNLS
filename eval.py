@@ -252,7 +252,6 @@ class WicEvaluator():
                     else:
                         confidences = Y_hat        [:, 1].cpu().detach().numpy()
                         predictions = Y_hat.argmax(dim=1).cpu().detach().numpy()
-                    # TODO: Given the stochasticity of the network optimizer, we report average results for five runs (± standard deviation).
 
             elif args.classifier == "svm":
                 clf = sklearn.svm.SVC(gamma='scale')
@@ -394,6 +393,10 @@ if __name__ == "__main__":
         "--classifier", type=str, choices=("mlp", "svm", "threshold"), default="threshold",
         help="classifier used to determine whether WiC words are used in the same sense"
     )
+    parser.add_argument(
+        "--runs", type=int, default=5,
+        help="given the stochasticity of the network optimizer, we report average results for n runs (± standard deviation)"
+    )
     args = parser.parse_args()
 
     # Create output directory
@@ -421,8 +424,10 @@ if __name__ == "__main__":
     with torch.no_grad():
         for method in methods:
             print("Starting new evaluation: " + method)
-            result = eval_methods[method](model, args.output_dir)
-            results[method] = result
+            run_results = [eval_methods[method](model, args.output_dir) for run in args.runs]
+            result = run_results[0]
+            results = {task:{[res[task][k] for res in run_results] for k in result[task]} for task in result}
+            results[method] = results
 
     # Output results
     torch.save(results, os.path.join(args.output_dir, 'results.pt'))

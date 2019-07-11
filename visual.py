@@ -144,7 +144,7 @@ def wic_compare_pos_datasets(file_pairs=[
 
         for emb in ['pos', 'vua', 'snli', 'average']:
             acc_pairs.append(
-                (r1[emb]['test_accuracy']*100, r2[emb]['test_accuracy']*100)
+                (np.average(r1[emb]['test_accuracy'])*100, np.average(r2[emb]['test_accuracy'])*100)
             )
     
     diff = [i-j for i,j in acc_pairs]
@@ -196,7 +196,7 @@ def wic_barplot(results_files_dict, output_file):
     
     # Output to file
     frame = pd.DataFrame(data, index=names)
-    frame.plot.bar(figsize=(5,4))
+    frame.plot.box(figsize=(5,4))
     plt.ylim([50,65])
 
     plt.savefig(output_file,pad_inches=1,bbox_inches='tight')
@@ -226,9 +226,12 @@ def wic_table(results_files_dict, output_file, include_thresholds=False, include
         for emb in results.keys():
             names.append(name)
             embeddings.append(emb)
-            test_accs.append("{:.1f}%".format(results[emb]['test_accuracy']*100))
-            train_accs.append("{:.1f}%".format(results[emb]['train_accuracy']*100))
-            thresholds.append("{:.2f}".format(results[emb]['threshold']))
+            test_accuracies = results[emb]['test_accuracy']
+            train_accuracies = results[emb]['train_accuracy']
+            threshold_list = results[emb]['threshold']
+            test_accs.append("{:.1f}% ± {:.1f}%".format(np.average(test_accuracies)*100, np.std(test_accuracies)*100))
+            train_accs.append("{:.1f}% ± {:.1f}%".format(np.average(train_accuracies)*100, np.std(train_accuracies)*100))
+            thresholds.append("{:.2f} ± {:.2f}".format(np.average(threshold_list), np.std(threshold_list)))
     
     # Make table
     frame = {'Model': names, 'Embedding': embeddings}
