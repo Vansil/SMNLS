@@ -9,8 +9,6 @@ import pickle
 from csv import DictReader
 import xml.etree.ElementTree as ET
 
-PENN_TREEBANK_PATH = "data/penn/wsj/"
-
 
 class SnliDataset(Dataset):
     def __init__(self, json_file):
@@ -187,87 +185,3 @@ class VuaPosDataset(Dataset):
         Returns pairs of [(word list, label list)]
         '''
         return self._data[idx]
-        
-
-
-
-class PennDataset(Dataset):
-    '''
-    Dataset for English Penn Treebank Wall Street Journal POS
-    '''
-    def __init__(self, set_name="train", sections=[], first_label=True):
-        '''
-        Initialise POS dataset.
-        Args:
-            set_name: use standard sections of the dataset, options: train, dev, test, manual
-            sections: if set_name is manual, list sections to be used here
-            first_label: set to False to get a list of correct labels instead of the first correct label
-        '''
-        # standard splits (c.f. A Joint Many-Task Model: Growing a Neural Network for Multiple NLP Tasks)
-        sections_standard = {
-            'train': [s for s in range(19)],
-            'dev': [s for s in range(19, 22)],
-            'test': [s for s in range(22,25)]
-        }
-        self.id_to_label = ['#', '$', "''", '(', ')', ',', '.', ':', 'CC', 'CD', 'DT', 'EX', 'FW', 'IN', 'JJ', 'JJR', 'JJS', 'LS', 'MD', 'NN', 'NNP', 'NNPS', 'NNS', 'PDT', 'POS', 'PRP', 'PRP$', 'RB', 'RBR', 'RBS', 'RP', 'SYM', 'TO', 'UH', 'VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ', 'WDT', 'WP', 'WP$', 'WRB', '``']
-        self.label_to_id = {self.id_to_label[i]: i for i in range(len(self.id_to_label))}
-
-        # obtain split from argument
-        sections = sections_standard.get(set_name, sections)
-
-        # Collect data
-        data = []
-        for section in sections:
-            path = os.path.join(PENN_TREEBANK_PATH, "{:02d}".format(section))
-            files = os.listdir(path)
-            for file_name in files:
-                file_path = os.path.join(path, file_name)
-                with open(file_path, 'r') as f:
-                    content = f.read()
-                    data.extend([[self.split_pair(pair) for pair in sent] 
-                        for sent in [re.sub(r"[\[\]\n]","",s).split() 
-                        for s in re.sub("======================================\n","", content).split("\n\n")] 
-                        if sent])
-
-        # Store data in right format
-        if first_label:
-            self._data = [(
-                [pair[0] for pair in sent],
-                [self.label_to_id[pair[1][0]] for pair in sent]
-                ) for sent in data]
-        else:
-            self._data = [(
-                [pair[0] for pair in sent],
-                [[self.label_to_id[label] for label in pair[1]] for pair in sent]
-                ) for sent in data]
-
-    def __len__(self):
-        return len(self._data)
-
-    def __getitem__(self, idx):
-        '''
-        Returns a list of words, and a list of labels.
-        If first_label is False, the label is represented by a list of correct labels
-        '''
-        return self._data[idx]
-
-    def split_pair(self, pair):
-        '''returns (word, [POS tags])'''
-        split = [x[::-1] for x in pair[::-1].split("/",1)]
-        return (split[1], split[0].split("|"))
-
-
-def penn_collate_fn(batch):
-    sentences = [b[0] for b in batch]
-    labels = [b[1] for b in batch]
-
-    max_len = max(len(s) for s in sentences)
-
-    lengths = torch.LongTensor([len(s) for s in sentences])
-
-    l = -torch.ones(len(labels), max_len, dtype=torch.int64) * 100
-
-    for i, label in enumerate(labels):
-        l[i, 0:len(label)] = torch.LongTensor(label)
-
-    return sentences, lengths, l
