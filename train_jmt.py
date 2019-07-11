@@ -66,7 +66,7 @@ if __name__ == "__main__":
         help="The delta parameter used for succesive regularization applied on the lstm layers."
     )
     parser.add_argument(
-        "--embedding-model", type=str, choices=["ELMo+GloVe", "bert-base-cased", "bert-large-cased"], default="ELMo+GloVe", required=False,
+        "--embedding-model", type=str, choices=["ELMo3+GloVe", "ELMo2+GloVe", "bert-base-cased", "bert-large-cased"], default="ELMo3+GloVe", required=False,
         help="The embedding model to use to generate the contextual word embeddings."
     )
 
@@ -156,30 +156,20 @@ if __name__ == "__main__":
 
     lr_function = lambda epoch: args.epsilon / (1.0 + args.rho * (epoch))
 
-    pos_optimizer = torch.optim.SGD(
+    # Standard optimizer parameter groups
+    pos_optimizer_group =\
         [
             {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": 1.0},
             {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": 1.0},
         ]
-    )
-    pos_lr_schedule = torch.optim.lr_scheduler.LambdaLR(
-        pos_optimizer, lr_function
-    )
-
-    vua_optimizer = torch.optim.SGD(
+    vua_optimizer_group =\
         [
             {"params": model.pos_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - args.delta_lstm) if "pos" in args.tasks else 1.0},
             {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - args.delta_classifier) if "pos" in args.tasks else 1.0},
             {"params": model.metaphor_lstm.parameters(), "weight_decay": 1e-6, "lr": 1.0},
             {"params": model.metaphor_classifier.parameters(), "weight_decay": 1e-5, "lr": 1.0}
-        ],
-        lr=1
-    )
-    vua_lr_schedule = torch.optim.lr_scheduler.LambdaLR(
-        vua_optimizer, lr_function
-    )
-
-    snli_optimizer = torch.optim.SGD(
+        ]
+    snli_optimizer_group =\
         [
             {"params": model.metaphor_lstm.parameters(), "weight_decay": 1e-6, "lr": (1.0 - args.delta_lstm) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
             {"params": model.metaphor_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - args.delta_classifier) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
@@ -187,7 +177,31 @@ if __name__ == "__main__":
             {"params": model.pos_classifier.parameters(), "weight_decay": 1e-5, "lr": (1.0 - args.delta_classifier) if "vua" in args.tasks else 1.0},
             {"params": model.snli_lstm.parameters(), "weight_decay": 1e-6, "lr": 1.0},
             {"params": model.snli_classifier.parameters(), "weight_decay": 1e-5, "lr": 1.0}
-        ],
+        ]
+
+    # Adding ELMo embedding mixing params to optimizers if applicable
+    if arguments['embedding_model'] in ["ELMo3+GloVe","ELMo2+GloVe"]: # train ELMo mixing params
+        pos_optimizer_group.append(
+            {"params": model.embedding.elmo.parameters(), "weight_decay": 1e-6, "lr": 1.0}
+        )
+        vua_optimizer_group.append(
+            {"params": model.embedding.elmo.parameters(), "weight_decay": 1e-6, "lr": (1.0 - args.delta_lstm) if "pos" in args.tasks else 1.0}
+        )
+        snli_optimizer_group.append(
+            {"params": model.embedding.elmo.parameters(), "weight_decay": 1e-6, "lr": (1.0 - args.delta_lstm) if "pos" in args.tasks or "vua" in args.tasks else 1.0},
+        )
+
+    # Construct optimizers
+    pos_optimizer = torch.optim.SGD(pos_optimizer_group)
+    vua_optimizer = torch.optim.SGD(vua_optimizer_group,lr=1)
+    snli_optimizer = torch.optim.SGD(snli_optimizer_group,)
+
+    # Learning rate schedules
+    vua_lr_schedule = torch.optim.lr_scheduler.LambdaLR(
+        vua_optimizer, lr_function
+    )
+    pos_lr_schedule = torch.optim.lr_scheduler.LambdaLR(
+        pos_optimizer, lr_function
     )
     snli_lr_schedule = torch.optim.lr_scheduler.LambdaLR(
         snli_optimizer, lr_function
@@ -199,7 +213,7 @@ if __name__ == "__main__":
         "snli": (model, model.snli_forward, snli_optimizer, snli_lr_schedule, snli_loaders, torch.nn.CrossEntropyLoss())
     }
 
-    writer = OutputWriter(args.output, custom_saving=args.embedding_model == "ELMo+GloVe")
+    writer = OutputWriter(args.output, custom_saving=args.embedding_model in ["ELMo2+GloVe","ELMo3+GloVe"])
 
     writer.save_arguments(arguments)
 
