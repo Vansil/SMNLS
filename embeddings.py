@@ -6,7 +6,7 @@ import numpy as np
 import os
 
 from allennlp.modules.elmo import Elmo, batch_to_ids
-from data import SnliDataset
+from data import PennDataset, SnliDataset
 from torch.utils.data import DataLoader
 # import eval
 
@@ -451,6 +451,14 @@ def make_selected_glove_training():
     # Collect words
     print("Collecting Words")
     words = []
+    print("\tPenn Treebank POS")
+    for set_name in ['train', 'dev', 'test']:
+        dataset = PennDataset(set_name, first_label=False)
+        ws = []
+        for sent in dataset:
+            ws += sent[0]
+        words += list(set(ws))
+        print("\t\t...")
     print("\tSNLI")
     for fname in ["snli_1.0_train.jsonl", "snli_1.0_dev.jsonl", "snli_1.0_test.jsonl"]:
         dataset = SnliDataset(os.path.join('data', 'snli', fname))
