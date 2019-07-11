@@ -19,4 +19,4 @@ export PYTHONIOENCODING=utf
 source activate dl
 
 cd ..
-srun python3 -u train_jmt.py --output output/snli --tasks snli
+srun python3 -u train_jmt.py --output output/snli --tasks snli --seed=1

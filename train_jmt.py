@@ -95,8 +95,7 @@ if __name__ == "__main__":
     random.seed(args.seed)
 
     if args.output:
-        path = os.path.normpath(args.output).split(os.sep)
-        arguments["output"] = os.sep.join(path + [args.seed])
+        arguments["output"] = args.output
 
     if args.no_cuda:
         arguments["no-cuda"] = True
@@ -303,4 +302,4 @@ if __name__ == "__main__":
                         f"{task}/validation/accuracy", accuracy, global_step=len(loaders["train"]) * (epoch + 1)
                     )
 
-                    writer.save_model(model, "{}_epoch{:02d}".format(task, epoch+1))
+                    writer.save_model(model, os.sep.join(["{}_epoch{:02d}".format(task, epoch+1), args.seed]))

@@ -19,4 +19,4 @@ export PYTHONIOENCODING=utf
 source activate dl
 
 cd ..
-srun python eval.py -c"output0/s002_sentevaltest/check.pt" -o"output0/s002_sentevaltest/evaluation2/"
+srun python eval.py -c"output/s002_sentevaltest/check.pt" -o"output/s002_sentevaltest/evaluation2/"

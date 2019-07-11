@@ -74,7 +74,9 @@ class OutputWriter(object):
                 "model": model.state_dict()
             }
         
-        torch.save(model_dict, os.path.join(self.dir_check, '{}.pt'.format(name)))
+        file_path = os.path.join(self.dir_check, '{}.pt'.format(name))
+        os.makedirs(os.path.dirname(os.path.realpath(file_path)), exist_ok=True)
+        torch.save(model_dict, file_path)
 
     @classmethod
     def load_model(cls, file, device=torch.device('cpu'), custom_saving=True):
