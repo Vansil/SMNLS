@@ -19,4 +19,4 @@ export PYTHONIOENCODING=utf
 source activate dl
 
 cd ..
-srun python eval.py -c"output0/s001_elmotest/checkpoints/000017000.pt" -o"output0/s001_elmotest/evaluation/" -m"wic"
+srun python eval.py -c"output/s001_elmotest/checkpoints/000017000.pt" -o"output/s001_elmotest/evaluation/" -m"wic"
