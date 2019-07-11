@@ -190,7 +190,7 @@ if __name__ == "__main__":
         ]
 
     # Adding ELMo embedding mixing params to optimizers if applicable
-    if arguments['embedding_model'] in ["ELMo3+GloVe","ELMo2+GloVe"]: # train ELMo mixing params
+    if arguments['embedding-model'] in ["ELMo3+GloVe","ELMo2+GloVe"]: # train ELMo mixing params
         pos_optimizer_group.append(
             {"params": model.embedding.elmo.parameters(), "weight_decay": 1e-6, "lr": 1.0}
         )
