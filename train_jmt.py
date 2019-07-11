@@ -7,6 +7,7 @@ from tensorboardX import SummaryWriter
 import os
 from output import OutputWriter
 import numpy as np
+import random
 
 try:
     from tqdm import tqdm
@@ -69,6 +70,9 @@ if __name__ == "__main__":
         "--embedding-model", type=str, choices=["ELMo3+GloVe", "ELMo2+GloVe", "bert-base-cased", "bert-large-cased"], default="ELMo3+GloVe", required=False,
         help="The embedding model to use to generate the contextual word embeddings."
     )
+    parser.add_argument(
+        '--seed', type=int, required=True, help="Seed for training"
+    )
 
     args = parser.parse_args()
 
@@ -81,8 +85,14 @@ if __name__ == "__main__":
         "rho": args.rho,
         "delta-classifier": args.delta_classifier,
         "delta-lstm": args.delta_lstm,
-        "embedding-model": args.embedding_model
+        "embedding-model": args.embedding_model,
+        "seed": args.seed,
     }
+
+    # Set random seeds
+    torch.manual_seed(args.seed)
+    np.random.seed(args.seed)
+    random.seed(args.seed)
 
     if args.output:
         arguments["output"] = args.output
