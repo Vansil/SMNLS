@@ -66,13 +66,13 @@ class WordEmbedding(nn.Module):
     # def has_bert(self):
     #     return self.bert is not None
 
-    def set_elmo(self, mix_parameters=None):
+    def set_elmo(self, mode="123", mix_parameters=None):
         '''
         Add a contextual ELMo word embedding.
         Args:
             see ElmoEmbedding class
         '''
-        self.elmo = ElmoEmbedding(mix_parameters=mix_parameters, device=self.device)
+        self.elmo = ElmoEmbedding(mode, mix_parameters=mix_parameters, device=self.device)
         # self.add_module("elmo", self.elmo)
 
 
@@ -226,9 +226,11 @@ class ElmoEmbedding(nn.Module):
     the monolingual news crawl data from WMT 2008-2012 (3.6B).
     Model weights are fixed, mixing weights are either trained or fixed.
     '''
-    def __init__(self, mix_parameters=None, device='cuda'):
+    def __init__(self, mode="123", mix_parameters=None, device='cuda'):
         '''
         Args:
+            mode: training mode, "23" sets the character embedding mixing parameter to zero and trains the two
+                LSTM parameters, "123" trains all mixing parameters
             mix_parameters: weights responsible for averaging between the character embedding 
                 and the two LSTM states in that order; if None these weights are trained
         '''
@@ -239,6 +241,9 @@ class ElmoEmbedding(nn.Module):
         # initialise ELMo embedding
         self.elmo = Elmo(options_file, weight_file, num_output_representations=1, dropout=0,
             requires_grad=False, scalar_mix_parameters=mix_parameters)
+        if mix_parameters is None:
+            if mode == "23": # turn gradient updates for character embedding off
+                list(self.elmo.scalar_mix_0.scalar_parameters)[0].requires_grad = False
         
         # store device for embedding
         self.device = device

@@ -390,9 +390,9 @@ class JMTModel(nn.Module):
     def __init__(self, device, pos_classes=45, metaphor_classes=2, snli_classes=3, lstm_hidden_size=100, dropout=0, embedding_model="ELMo+GloVe"):
         super(JMTModel, self).__init__()
 
-        if embedding_model == "ELMo+GloVe":
+        if embedding_model in ["ELMo2+GloVe","ELMo3+GloVe"]:
             self.embedding = WordEmbedding(device)
-            self.embedding.set_elmo()
+            self.embedding.set_elmo("23" if embedding_model=="ELMo2+GloVe" else "123")
             # self.embedding.set_bert()
             self.embedding.set_glove()
             embedding_size = 1324
