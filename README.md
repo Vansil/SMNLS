@@ -8,7 +8,7 @@ This is our research project for the Statistical Methods for Natural Language Se
 conda env create -n dl -f environment.yml
 conda env update -n dl -f environment.yml
 source activate dl
+pip install -r requirements.txt
 cd ./data
 bash ./get_data.sh
-pip install -r requirements.txt
 ```
