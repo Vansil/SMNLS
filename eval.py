@@ -16,6 +16,7 @@ from ruamel import yaml
 import itertools
 import sklearn
 from pdb import set_trace
+from collections import defaultdict
 
 # Set PATHs
 # path to senteval
@@ -402,27 +403,35 @@ if __name__ == "__main__":
     # Load model
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     print("Device: "+device)
-    print("Loading model")
-    model = output.OutputWriter.load_model(args.checkpoint, device=device)
-    model.eval()
-    if model.embedding.has_elmo():
-        # Run some batches through ELMo to 'warm it up' (https://github.com/allenai/allennlp/blob/master/tutorials/how_to/elmo.md#notes-on-statefulness-and-non-determinism)
-        model.embedding.elmo.warm_up()
-        print("Model:" + str(model))
-    
+
     # Perform evaluation
     if args.method == 'all':
         methods = list(eval_methods.keys())
     else:
         methods = [args.method]
-    
-    results = {}
+    results = defaultdict(list)
+    directory = os.fsencode(args.checkpoint)
+    for file in os.listdir(directory):
+        filename = os.fsdecode(file)
+        if filename.endswith(".pt"): 
+            model_path = os.path.join(directory.decode('ascii'), filename)
 
-    with torch.no_grad():
-        for method in methods:
-            print("Starting new evaluation: " + method)
-            result = eval_methods[method](model, args.output_dir)
-            results[method] = result
+            print("Loading model " + model_path)
+            model = output.OutputWriter.load_model(model_path, device=device)
+            model.eval()
+            if model.embedding.has_elmo():
+                # Run some batches through ELMo to 'warm it up' (https://github.com/allenai/allennlp/blob/master/tutorials/how_to/elmo.md#notes-on-statefulness-and-non-determinism)
+                model.embedding.elmo.warm_up()
+                print("Model:" + str(model))
+            
+            with torch.no_grad():
+                for method in methods:
+                    print("Starting new evaluation: " + method)
+                    results[method].append(eval_methods[method](model, args.output_dir))
+
+    result = results[methods[0]][0]
+    tasks = result.keys()
+    results = {method:{task:{k:[res[task][k] for res in results[method]] for k in result[task]} for task in tasks} for method in methods}
 
     # Output results
     torch.save(results, os.path.join(args.output_dir, 'results.pt'))

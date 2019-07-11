@@ -19,4 +19,4 @@ export PYTHONIOENCODING=utf
 source activate dl
 
 cd ..
-srun python3 -u train_jmt.py --output output/vua --tasks vua
+srun python3 -u train_jmt.py --output output/vua --tasks vua --seed=1
