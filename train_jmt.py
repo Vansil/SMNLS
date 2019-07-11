@@ -47,7 +47,7 @@ if __name__ == "__main__":
         help="The amount of epochs to train for."
     )
     parser.add_argument(
-        "--num-workers", "-n", type=int, default=0, required=False,
+        "--num_workers", "-n", type=int, default=0, required=False,
         help="The number of workers to use for data loading."
     )
     parser.add_argument(
