@@ -6,7 +6,7 @@ import numpy as np
 import os
 
 from allennlp.modules.elmo import Elmo, batch_to_ids
-from data import PennDataset, SnliDataset
+from data import PennDataset, SnliDataset, VuaPosDataset
 from torch.utils.data import DataLoader
 # import eval
 
