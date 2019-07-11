@@ -292,7 +292,7 @@ class ElmoEmbedding(nn.Module):
         Runs some batches to "warm up" (https://github.com/allenai/allennlp/blob/master/tutorials/how_to/elmo.md#notes-on-statefulness-and-non-determinism)
         Recommended to do before evaluation or inference, so that results are more reproducable and constant
         '''
-        dataset = PennDataset()
+        dataset = VuaPosDataset("train")
         for i in range(10):
             batch = [pair[0] for pair in dataset[i*100:(i+1)*100]]
             self(batch)
