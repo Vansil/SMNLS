@@ -229,9 +229,9 @@ def wic_table(results_files_dict, output_file, include_thresholds=False, include
             test_accuracies = results[emb]['test_accuracy']
             train_accuracies = results[emb]['train_accuracy']
             threshold_list = results[emb]['threshold']
-            test_accs.append("{:.1f}% ± {:.1f}%".format(np.average(test_accuracies)*100, np.std(test_accuracies)*100))
-            train_accs.append("{:.1f}% ± {:.1f}%".format(np.average(train_accuracies)*100, np.std(train_accuracies)*100))
-            thresholds.append("{:.2f} ± {:.2f}".format(np.average(threshold_list), np.std(threshold_list)))
+            test_accs.append("{:.1f}% &plusmn; {:.1f}%".format(np.average(test_accuracies)*100, np.std(test_accuracies)*100))
+            train_accs.append("{:.1f}% &plusmn; {:.1f}%".format(np.average(train_accuracies)*100, np.std(train_accuracies)*100))
+            thresholds.append("{:.2f} &plusmn; {:.2f}".format(np.average(threshold_list), np.std(threshold_list)))
     
     # Make table
     frame = {'Model': names, 'Embedding': embeddings}
