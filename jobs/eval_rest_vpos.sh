@@ -19,7 +19,7 @@ export PYTHONIOENCODING=utf
 source activate dl
 
 cd ..
-srun python eval.py -c"output/vpos/checkpoints/pos_epoch20.pt" -o"output/vpos/evaluation/"
-srun python eval.py -c"output/vpos-snli/checkpoints/snli_epoch20.pt" -o"output/vpos-snli/evaluation/" 
-srun python eval.py -c"output/vpos-vua-snli/checkpoints/snli_epoch15.pt" -o"output/vpos-vua-snli/evaluation/"
-srun python eval.py -c"output/vua-vpos/checkpoints/vua_epoch20.pt" -o"output/vua-vpos/evaluation/"
+srun python eval.py -c"output/vpos/checkpoints/pos_epoch20/" -o"output/vpos/evaluation/"
+srun python eval.py -c"output/vpos-snli/checkpoints/snli_epoch20/" -o"output/vpos-snli/evaluation/" 
+srun python eval.py -c"output/vpos-vua-snli/checkpoints/snli_epoch20/" -o"output/vpos-vua-snli/evaluation/"
+srun python eval.py -c"output/vua-vpos/checkpoints/vua_epoch20/" -o"output/vua-vpos/evaluation/"
