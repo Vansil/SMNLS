@@ -8,6 +8,7 @@ import os
 from output import OutputWriter
 import numpy as np
 import random
+from pdb import set_trace
 
 try:
     from tqdm import tqdm
@@ -302,4 +303,5 @@ if __name__ == "__main__":
                         f"{task}/validation/accuracy", accuracy, global_step=len(loaders["train"]) * (epoch + 1)
                     )
 
+                    set_trace()
                     writer.save_model(model, os.sep.join(["{}_epoch{:02d}".format(task, epoch+1), str(args.seed)]))
