@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -x
 
 #SBATCH --job-name=eval.elmo
 #SBATCH --ntasks=1
