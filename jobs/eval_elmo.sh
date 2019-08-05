@@ -1,4 +1,4 @@
-#!/bin/bash -x
+#!/bin/bash
 
 #SBATCH --job-name=eval.elmo
 #SBATCH --ntasks=1
@@ -19,16 +19,4 @@ export PYTHONIOENCODING=utf
 source activate dl
 
 cd ..
-# elmo-2
-srun python eval.py -c"output/elmo-2/snli/checkpoints/snli_epoch20" -o"output/elmo-2/snli/evaluation/"
-srun python eval.py -c"output/elmo-2/vpos/checkpoints/pos_epoch20" -o"output/elmo-2/vpos/evaluation/"
-srun python eval.py -c"output/elmo-2/vpos-snli/checkpoints/snli_epoch20" -o"output/elmo-2/vpos-snli/evaluation/"
-srun python eval.py -c"output/elmo-2/vpos-vua-snli/checkpoints/snli_epoch20" -o"output/elmo-2/vpos-vua-snli/evaluation/"
-srun python eval.py -c"output/elmo-2/vua/checkpoints/vua_epoch20" -o"output/elmo-2/vua/evaluation/"
-srun python eval.py -c"output/elmo-2/vua-snli/checkpoints/snli_epoch20" -o"output/elmo-2/vua-snli/evaluation/"
-srun python eval.py -c"output/elmo-2/vua-vpos/checkpoints/vua_epoch20" -o"output/elmo-2/vua-vpos/evaluation/"
-# elmo-3
-srun python eval.py -c"output/elmo-3/vpos/checkpoints/pos_epoch20" -o"output/elmo-3/vpos/evaluation/"
-srun python eval.py -c"output/elmo-3/vpos-snli/checkpoints/snli_epoch20" -o"output/elmo-3/vpos-snli/evaluation/"
-srun python eval.py -c"output/elmo-3/vpos-vua-snli/checkpoints/snli_epoch20" -o"output/elmo-3/vpos-vua-snli/evaluation/"
-srun python eval.py -c"output/elmo-3/vua-vpos/checkpoints/vua_epoch20" -o"output/elmo-3/vua-vpos/evaluation/"
+srun python eval.py -c"output/s001_elmotest/checkpoints/000017000/" -o"output/s001_elmotest/evaluation/"

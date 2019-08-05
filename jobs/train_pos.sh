@@ -18,5 +18,5 @@ module load cuDNN/7.3.1-CUDA-9.0.176
 export PYTHONIOENCODING=utf
 source activate dl
 
-cd /home/lgpu0269/SMNLS
-srun python3 -u ./train_jmt.py --output output/vpos --tasks pos --seed=1
+cd ..
+srun python3 -u train_jmt.py --output output/vpos --tasks pos --seed=1
