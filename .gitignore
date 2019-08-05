@@ -9,7 +9,7 @@ data/*
 # Outputs
 runs/
 output0/
-*/checkpoints/*
+**/checkpoints/*
 
 # Cluster job files
 jobs/archive/
