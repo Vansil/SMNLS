@@ -1,3 +1,4 @@
+import os.path
 import math
 import numpy as np
 from scipy.stats import binom
@@ -34,9 +35,11 @@ def wic_df():
     df['context2'] = df['context2'].map(words)
     return df
 
-def model_df(model, stage, gold):
+def model_df(model, gold):
     """load in dev set model results for the word in context (WiC) dataset"""
-    df = pd.read_csv(f'output/{model}/evaluation/wic_dev_predictions_{stage}.txt', names=('pred', 'match'))
+    fname = lambda stage: f'output/{model}/evaluation/wic_dev_predictions_{stage}.txt'
+    fpath = next((fname(stage) for stage in ('snli', 'vua', 'pos') if os.path.isfile(fname(stage))), 'input')
+    df = pd.read_csv(fpath, names=('pred', 'match'))
     df['pred'] = df['pred'].map(lambda x: x == 'T')
     df['correct'] = list(map(lambda a_b: a_b[0] == a_b[1], zip(gold['gold'], df['pred'])))
     return df
@@ -57,17 +60,14 @@ def gen_combs(models, gold, fn, ratio=1.0):
     - fn: a function to calculate p-values
     returns: a generator of {a, b, p}
     """
-    col_name = lambda tpl: f'{tpl[0]}:{tpl[1]}'
-    corrects = {col_name(tpl):model_df(*tpl, gold)['correct'].map(int) for tpl in models}
-    size = corrects[col_name(models[0])].size
+    corrects = {mdl:model_df(mdl, gold)['correct'].map(int) for mdl in models}
+    size = corrects[models[0]].size
     idxs = np.random.permutation(size)
     idxs = idxs[:math.floor(ratio*len(idxs))]
     corrects = {k:df.iloc[idxs] for k, df in corrects.items()}
 
-    for a_tpl in models:
-        a = col_name(a_tpl)
-        for b_tpl in models:
-            b = col_name(b_tpl)
+    for a in models:
+        for b in models:
             print(f'{a} - {b}')
             p = np.nan if a == b else \
                 fn(corrects[a], corrects[b])
@@ -85,11 +85,22 @@ if __name__ == "__main__":
     gold = gold_df()
     # wic = wic_df()
     models = [
-      ('baseline_elmo2', 'input'),
-      ('baseline_elmo012', 'input'),
-      ('vua-snli', 'input'),
-      ('vua-snli', 'vua'),
-      ('empty_jmt', 'pos'),
+      # elmo-2
+      'elmo-2/snli',
+      'elmo-2/vpos',
+      'elmo-2/vpos-snli',
+      'elmo-2/vpos-vua-snli',
+      'elmo-2/vua',
+      'elmo-2/vua-snli',
+      'elmo-2/vua-vpos',
+      # elmo-3
+      'elmo-3/snli',
+      'elmo-3/vpos',
+      'elmo-3/vpos-snli',
+      'elmo-3/vpos-vua-snli',
+      'elmo-3/vua',
+      'elmo-3/vua-snli',
+      'elmo-3/vua-vpos',
     ]
 
     print('mcnemar')
