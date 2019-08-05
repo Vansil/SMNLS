@@ -10,6 +10,7 @@ data/*
 runs/
 output0/
 **/checkpoints/*
+**/board/*
 
 # Cluster job files
 jobs/archive/
