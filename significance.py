@@ -35,10 +35,12 @@ def wic_df():
     df['context2'] = df['context2'].map(words)
     return df
 
-def model_df(model, gold):
+def model_df(model, stages, gold):
     """load in dev set model results for the word in context (WiC) dataset"""
-    fname = lambda stage: f'output/{model}/evaluation/wic_dev_predictions_{stage}.txt'
-    fpath = next((fname(stage) for stage in ('snli', 'vua', 'pos') if os.path.isfile(fname(stage))), 'input')
+    stage = stages.split('-')[-1]
+    if stage == 'vpos':
+        stage = 'pos'
+    fpath = f'output/{model}/evaluation/wic_dev_predictions_{stage}.txt'
     df = pd.read_csv(fpath, names=('pred', 'match'))
     df['pred'] = df['pred'].map(lambda x: x == 'T')
     df['correct'] = list(map(lambda a_b: a_b[0] == a_b[1], zip(gold['gold'], df['pred'])))
@@ -56,18 +58,20 @@ def mcnemar_models(a, b):
 
 def gen_combs(models, gold, fn, ratio=1.0):
     """"generate p-values for each combination. params:
-    - models: a list of model names
+    - models: a list of (model, stages) tuples
     - fn: a function to calculate p-values
     returns: a generator of {a, b, p}
     """
-    corrects = {mdl:model_df(mdl, gold)['correct'].map(int) for mdl in models}
-    size = corrects[models[0]].size
+    dic = {f'{model}/{stages}': stages for (model, stages) in models}
+
+    corrects = {mdl:model_df(mdl, stages, gold)['correct'].map(int) for mdl, stages in dic.items()}
+    size = corrects[list(dic.keys())[0]].size
     idxs = np.random.permutation(size)
     idxs = idxs[:math.floor(ratio*len(idxs))]
     corrects = {k:df.iloc[idxs] for k, df in corrects.items()}
 
-    for a in models:
-        for b in models:
+    for a in dic:
+        for b in dic:
             print(f'{a} - {b}')
             p = np.nan if a == b else \
                 fn(corrects[a], corrects[b])
@@ -84,24 +88,11 @@ def significance_pivot(models, gold, fn, file, ratio=1.0):
 if __name__ == "__main__":
     gold = gold_df()
     # wic = wic_df()
-    models = [
-      # elmo-2
-      'elmo-2/snli',
-      'elmo-2/vpos',
-      'elmo-2/vpos-snli',
-      'elmo-2/vpos-vua-snli',
-      'elmo-2/vua',
-      'elmo-2/vua-snli',
-      'elmo-2/vua-vpos',
-      # elmo-3
-      'elmo-3/snli',
-      'elmo-3/vpos',
-      'elmo-3/vpos-snli',
-      'elmo-3/vpos-vua-snli',
-      'elmo-3/vua',
-      'elmo-3/vua-snli',
-      'elmo-3/vua-vpos',
-    ]
+
+    elmo_stages = ('snli', 'vpos', 'vpos-snli', 'vpos-vua-snli', 'vua', 'vua-snli', 'vua-vpos')
+    bert_stages = ('snli', 'pos', 'pos-snli', 'pos-vua-snli', 'vua', 'vua-snli', 'pos-vua')
+    models = [(model, stages) for model in ('elmo-2', 'elmo-3') for stages in elmo_stages] + \
+            [(f'bert-{size}-{i}', stages) for size in ('base', 'large') for i in ('0', '1', '2', '3', '4') for stages in bert_stages]
 
     print('mcnemar')
     significance_pivot(models, gold, mcnemar_models,  'results/mcnemar.html', 1.0)
