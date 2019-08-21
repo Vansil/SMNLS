@@ -15,6 +15,7 @@ module load Miniconda3/4.3.27
 export PYTHONIOENCODING=utf
 source activate dl
 
-cd ..
+# cd ..
+cd /home/lgpu0269/SMNLS/
 srun python3 wic_table.py
 srun python3 wic_bar.py
