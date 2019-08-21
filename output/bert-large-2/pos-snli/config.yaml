@@ -1,0 +1,12 @@
+delta-classifier: 0.01
+delta-lstm: 0.001
+embedding-model: bert-large-cased
+epochs: 20
+epsilon: 1.0
+learning-rate: 0.01
+num-workers: 0
+output: output/bert-large-2/pos-snli
+rho: 0.3
+tasks:
+- pos
+- snli

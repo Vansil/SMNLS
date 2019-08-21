@@ -1,0 +1,68 @@
+0.067 & Let 's \emph{\emph{\emph{\emph{\emph{hang}}}}} this cute animal in the nursery . & \emph{\emph{\emph{\emph{\emph{Hang}}}}} wallpaper . \\
+0.2 & \emph{\emph{\emph{\emph{\emph{Sign}}}}} an intersection . & This road has been \emph{\emph{\emph{\emph{\emph{signed}}}}} . \\
+0.221 & \emph{\emph{\emph{\emph{\emph{Answer}}}}} the question . & She did n't want to \emph{\emph{\emph{\emph{\emph{answer}}}}} . \\
+0.222 & \emph{\emph{\emph{\emph{\emph{Admit}}}}} someone to the profession . & She was \emph{\emph{\emph{\emph{\emph{admitted}}}}} to the New Jersey Bar . \\
+0.272 & \emph{\emph{\emph{\emph{\emph{Bell}}}}} cows . & Who will \emph{\emph{\emph{\emph{\emph{bell}}}}} the cat ? \\
+0.3 & On entering a host cell , a virus will start to \emph{\emph{\emph{\emph{\emph{replicate}}}}} . & \emph{\emph{\emph{\emph{\emph{Replicate}}}}} the cell . \\
+0.317 & I woke up in the \emph{\emph{\emph{\emph{\emph{middle}}}}} of the night . & A whole is that which has beginning , \emph{\emph{\emph{\emph{\emph{middle}}}}} , and end - Aristotle . \\
+0.325 & \emph{\emph{\emph{\emph{\emph{Hew}}}}} out a path in the rock . & One of the most widely used typefaces in the world was \emph{\emph{\emph{\emph{\emph{hewn}}}}} by the English printer and typographer John Baskerville . \\
+0.326 & \emph{\emph{\emph{\emph{\emph{Hook}}}}} a fish . & He \emph{\emph{\emph{\emph{\emph{hooked}}}}} a snake accidentally , and was so scared he dropped his rod into the water . \\
+0.33 & \emph{\emph{\emph{\emph{\emph{Boot}}}}} your computer . & When arriving at the office , first thing I do is \emph{\emph{\emph{\emph{\emph{booting}}}}} my machine . \\
+0.34 & Always a \emph{\emph{\emph{\emph{\emph{step}}}}} behind . & Keep in \emph{\emph{\emph{\emph{\emph{step}}}}} with the fashions . \\
+0.343 & There are drugs designed to \emph{\emph{\emph{\emph{\emph{excite}}}}} certain nerves in our body . & \emph{\emph{\emph{\emph{\emph{Excite}}}}} the audience . \\
+0.349 & \emph{\emph{\emph{\emph{\emph{Hail}}}}} a cab . & He was \emph{\emph{\emph{\emph{\emph{hailed}}}}} as a hero . \\
+0.352 & \emph{\emph{\emph{\emph{\emph{Build}}}}} up confidence . & They had to \emph{\emph{\emph{\emph{\emph{build}}}}} up their fortress to protect against attack . \\
+0.353 & Please can I have a look , if I promise not to \emph{\emph{\emph{\emph{\emph{touch}}}}} ? & Carrie \emph{\emph{\emph{\emph{\emph{touched}}}}} his shoulder with the stick . \\
+0.371 & It is none of your \emph{\emph{\emph{\emph{\emph{affair}}}}} . & He used a hook - shaped \emph{\emph{\emph{\emph{\emph{affair}}}}} with a long handle to unlock the car . \\
+0.373 & The symphony was hailed as an ingenious \emph{\emph{\emph{\emph{\emph{work}}}}} . & Erosion is the \emph{\emph{\emph{\emph{\emph{work}}}}} of wind or water over time . \\
+0.376 & A pedestrian was able to \emph{\emph{\emph{\emph{\emph{trip}}}}} the burglar as he was running away . & The questions on the test \emph{\emph{\emph{\emph{\emph{tripped}}}}} him up . \\
+0.381 & I already have a son , so I would like to have a \emph{\emph{\emph{daughter}}} . & Her \emph{\emph{\emph{daughter}}} cared for her in her old age . \\
+0.393 & Wear gloves so your hands \emph{\emph{\emph{\emph{\emph{stay}}}}} warm . & \emph{\emph{\emph{\emph{\emph{Stay}}}}} with me , please . \\
+0.402 & We had a \emph{\emph{\emph{\emph{\emph{word}}}}} or two about it . & There was then a long discussion of whether to capitalize \emph{\emph{\emph{\emph{\emph{words}}}}} like " east " . \\
+0.403 & Do n't \emph{\emph{\emph{handle}}} the merchandise . & About his altar , \emph{\emph{\emph{handling}}} holy things - John Milton . \\
+0.406 & Canadian tariffs enabled United States lumber companies to raise prices at \emph{\emph{\emph{\emph{\emph{home}}}}} . & His \emph{\emph{\emph{\emph{\emph{home}}}}} is New Jersey . \\
+0.407 & To \emph{\emph{\emph{\emph{shock}}}} rye . & \emph{\emph{\emph{\emph{Shock}}}} grain . \\
+0.407 & The \emph{\emph{\emph{\emph{\emph{ball}}}}} at the base of the thumb . & He stood on the \emph{\emph{\emph{\emph{\emph{balls}}}}} of his feet . \\
+0.409 & Lydia put the change in her left \emph{\emph{\emph{\emph{pocket}}}} . & Lydia \emph{\emph{\emph{\emph{pocketed}}}} the change . \\
+0.413 & She ordered some \emph{\emph{\emph{\emph{\emph{wine}}}}} for the meal . & \emph{\emph{\emph{\emph{\emph{Wine}}}}} is stronger than beer . \\
+0.413 & He had n't seen his \emph{\emph{\emph{\emph{\emph{dad}}}}} in years . & \emph{\emph{\emph{\emph{\emph{Dad}}}}} , happy Father 's Day ! \\
+0.417 & They departed hurriedly because of some great \emph{\emph{\emph{\emph{urgency}}}} in their affairs . & I 'll be there , barring any \emph{\emph{\emph{\emph{urgencies}}}} . \\
+0.42 & $ 50 wo n't even \emph{\emph{\emph{\emph{buy}}}} a dress . & FMC has \emph{\emph{\emph{\emph{bought}}}} 565 . \\
+0.42 & \emph{\emph{\emph{\emph{\emph{Spend}}}}} money . & He \emph{\emph{\emph{\emph{\emph{spends}}}}} far more on gambling than he does on living proper . \\
+0.422 & Let 's \emph{\emph{\emph{\emph{\emph{peg}}}}} the rug to the floor . & \emph{\emph{\emph{\emph{\emph{Peg}}}}} a tent . \\
+0.422 & He came out of \emph{\emph{\emph{nowhere}}} . & They went on a cruise to \emph{\emph{\emph{nowhere}}} . \\
+0.423 & He tripled to the rightfield \emph{\emph{\emph{\emph{\emph{corner}}}}} . & The southeastern \emph{\emph{\emph{\emph{\emph{corner}}}}} of the Mediterranean . \\
+0.43 & The plane made a smooth \emph{\emph{\emph{\emph{landing}}}} . & His \emph{\emph{\emph{\emph{landing}}}} on his feet was catlike . \\
+0.431 & You need to \emph{\emph{\emph{push}}} quite hard to get this door open . & Nora \emph{\emph{\emph{pushed}}} through the crowd . \\
+0.433 & To \emph{\emph{\emph{\emph{\emph{lay}}}}} a tax on land . & \emph{\emph{\emph{\emph{\emph{Lay}}}}} a responsibility on someone . \\
+0.434 & A \emph{\emph{\emph{\emph{\emph{branch}}}}} of Congress . & We have \emph{\emph{\emph{\emph{\emph{branches}}}}} in all major suburbs . \\
+0.435 & He was a familiar \emph{\emph{\emph{\emph{sight}}}} on the television . & They went to Paris to see the \emph{\emph{\emph{\emph{sights}}}} . \\
+0.435 & Experiments show clearly that genes \emph{\emph{\emph{\emph{\emph{segregate}}}}} . & Many towns \emph{\emph{\emph{\emph{\emph{segregated}}}}} into new counties . \\
+0.436 & \emph{\emph{\emph{\emph{Send}}}} me your latest results . & Nora \emph{\emph{\emph{\emph{sent}}}} the book from Paris . \\
+0.447 & \emph{\emph{\emph{\emph{\emph{Analyze}}}}} your real motives . & The inspector \emph{\emph{\emph{\emph{\emph{analyzed}}}}} the building 's soundness . \\
+0.447 & \emph{\emph{\emph{\emph{\emph{Sugar}}}}} your tea . & John heavily \emph{\emph{\emph{\emph{\emph{sugars}}}}} his coffee . \\
+0.448 & I am reading a good \emph{\emph{\emph{book}}} on economics . & He was frustrated because he could n't find anything about dinosaurs in the \emph{\emph{\emph{book}}} . \\
+0.449 & To \emph{\emph{\emph{\emph{\emph{command}}}}} an army or a ship . & \emph{\emph{\emph{\emph{\emph{Command}}}}} the military forces . \\
+0.451 & He was indebted to the pioneering \emph{\emph{\emph{\emph{work}}}} of John Dewey . & The \emph{\emph{\emph{\emph{work}}}} of an active imagination . \\
+0.454 & She can not \emph{\emph{conceive}} . & Assisted procreation can help those trying to \emph{\emph{conceive}} . \\
+0.455 & - Who 's the \emph{\emph{\emph{\emph{caller}}}} ? & There were so many \emph{\emph{\emph{\emph{callers}}}} that he finally disconnected the telephone . \\
+0.462 & The politician wore a bright yellow \emph{\emph{\emph{button}}} with the slogan " Vote Smart " emblazoned on it . & They passed out campaign \emph{\emph{\emph{buttons}}} for their candidate . \\
+0.464 & How did your interview \emph{\emph{\emph{\emph{\emph{go}}}}} ? & She was \emph{\emph{\emph{\emph{\emph{going}}}}} that way anyway , so she offered to show him where it was . \\
+0.467 & \emph{\emph{\emph{\emph{\emph{Result}}}}} in tragedy . & This measure will \emph{\emph{\emph{\emph{\emph{result}}}}} in good or in evil . \\
+0.469 & In my \emph{\emph{\emph{opinion}}} , white chocolate is better than milk chocolate . & I would like to know your \emph{\emph{\emph{opinions}}} on the new systems . \\
+0.472 & You \emph{\emph{\emph{\emph{shuffle}}}} , I 'll deal . & \emph{\emph{\emph{\emph{Shuffle}}}} the cards . \\
+0.475 & The \emph{\emph{\emph{minister}}} said a prayer on behalf of the entire congregation . & Clergymen are usually called \emph{\emph{\emph{ministers}}} in Protestant churches . \\
+0.475 & A generous \emph{\emph{\emph{tipper}}} . & The Americans are among the most generous \emph{\emph{\emph{tippers}}} in the world . \\
+0.475 & \emph{\emph{\emph{\emph{\emph{Want}}}}} the strength to go on living . & Flood victims \emph{\emph{\emph{\emph{\emph{wanting}}}}} food and shelter . \\
+0.479 & He experimented on a particular \emph{\emph{\emph{breed}}} of white rats . & A \emph{\emph{\emph{breed}}} of animal . \\
+0.48 & We decided to \emph{\emph{\emph{forge}}} ahead with our plans even though our biggest underwriter backed out . & He \emph{\emph{\emph{forged}}} ahead . \\
+0.481 & \emph{\emph{\emph{\emph{Bag}}}} a few pheasants . & We \emph{\emph{\emph{\emph{bagged}}}} three deer yesterday . \\
+0.484 & A good \emph{\emph{\emph{\emph{\emph{lead}}}}} for a job . & Joe is a great addition to our sales team , he has numerous \emph{\emph{\emph{\emph{\emph{leads}}}}} in the paper industry . \\
+0.484 & The strike was supported by the union \emph{\emph{\emph{rank}}} and file . & He rose from the \emph{\emph{\emph{ranks}}} to become a colonel . \\
+0.484 & A girl 's \emph{\emph{\emph{\emph{\emph{education}}}}} was less important than a boy 's . & \emph{\emph{\emph{\emph{\emph{Education}}}}} is a preparation for life . \\
+0.486 & He trained at putting the \emph{\emph{\emph{shot}}} . & The \emph{\emph{\emph{shot}}} flew twenty metres , and nearly landed on the judge 's foot . \\
+0.488 & \emph{\emph{\emph{\emph{\emph{Preserve}}}}} the peace in the family . & To \emph{\emph{\emph{\emph{\emph{preserve}}}}} silence . \\
+0.491 & His \emph{\emph{manipulation}} of his friends was scandalous . & He found that the new manager was known for his Machiavellian \emph{\emph{manipulations}} in his last two positions . \\
+0.491 & I am trying to \emph{\emph{contact}} my sister . & He never \emph{\emph{contacted}} his children after he emigrated to Australia . \\
+0.495 & His work established a new \emph{\emph{\emph{\emph{department}}}} of literature . & Baking is not my \emph{\emph{\emph{\emph{department}}}} . \\
+0.497 & He beat his \emph{\emph{\emph{\emph{breast}}}} in anger . & The robin has a red \emph{\emph{\emph{\emph{breast}}}} . \\

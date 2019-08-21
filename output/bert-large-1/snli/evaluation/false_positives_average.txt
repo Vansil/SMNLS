@@ -1,0 +1,177 @@
+0.891 & \emph{\emph{\emph{\emph{\emph{Engrave}}}}} a letter . & \emph{\emph{\emph{\emph{\emph{Engrave}}}}} a pen . \\
+0.849 & He could not conceal his \emph{\emph{\emph{\emph{\emph{hostility}}}}} . & He could no longer contain his \emph{\emph{\emph{\emph{\emph{hostility}}}}} . \\
+0.801 & He lived in \emph{\emph{\emph{\emph{\emph{exile}}}}} . & She lived as an \emph{\emph{\emph{\emph{\emph{exile}}}}} . \\
+0.735 & Let 's not \emph{\emph{\emph{\emph{\emph{whitewash}}}}} the crimes of Stalin . & In his sermon , the minister did n't try to \emph{\emph{\emph{\emph{\emph{whitewash}}}}} over the sins of his church . \\
+0.731 & \emph{\emph{\emph{\emph{\emph{Indent}}}}} the documents . & \emph{\emph{\emph{\emph{\emph{Indent}}}}} the paragraphs of a letter . \\
+0.729 & The senator received severe \emph{\emph{\emph{\emph{\emph{criticism}}}}} from his opponent . & The politician received a lot of public \emph{\emph{\emph{\emph{\emph{criticism}}}}} for his controversial stance on the issue . \\
+0.728 & She felt a \emph{\emph{\emph{\emph{\emph{tremor}}}}} in her stomach before going on stage . & Did you feel the \emph{\emph{\emph{\emph{\emph{tremor}}}}} this morning ? \\
+0.725 & He was a \emph{\emph{\emph{\emph{\emph{bull}}}}} of a man . & He made a bad \emph{\emph{\emph{\emph{\emph{bull}}}}} of the assignment . \\
+0.708 & The \emph{\emph{\emph{\emph{\emph{promulgation}}}}} was written in English . & His \emph{\emph{\emph{\emph{\emph{promulgation}}}}} of the policy proved to be premature . \\
+0.707 & \emph{\emph{\emph{\emph{\emph{Map}}}}} the genes . & \emph{\emph{\emph{\emph{\emph{Map}}}}} the surface of Venus . \\
+0.698 & The world 's \emph{\emph{\emph{\emph{\emph{heritage}}}}} of knowledge . & A \emph{\emph{\emph{\emph{\emph{heritage}}}}} of freedom . \\
+0.693 & The \emph{\emph{\emph{\emph{\emph{reappearance}}}}} of Halley 's comet . & His \emph{\emph{\emph{\emph{\emph{reappearance}}}}} as Hamlet has been long awaited . \\
+0.667 & Students making \emph{\emph{\emph{\emph{\emph{aliyah}}}}} . & He was called on for an \emph{\emph{\emph{\emph{\emph{aliyah}}}}} . \\
+0.664 & A \emph{\emph{\emph{\emph{\emph{look}}}}} of triumph . & His \emph{\emph{\emph{\emph{\emph{look}}}}} was fixed on her eyes . \\
+0.661 & The restaurant had an upper class \emph{\emph{\emph{\emph{\emph{patronage}}}}} . & Even before noon there was a considerable \emph{\emph{\emph{\emph{\emph{patronage}}}}} . \\
+0.637 & There was a \emph{\emph{\emph{\emph{\emph{blockage}}}}} in the sewer , so we called out the plumber . & We had to call a plumber to clear out the \emph{\emph{\emph{\emph{\emph{blockage}}}}} in the drainpipe . \\
+0.63 & The \emph{\emph{\emph{\emph{\emph{dissipation}}}}} of the mist . & Mindless \emph{\emph{\emph{\emph{\emph{dissipation}}}}} of natural resources . \\
+0.621 & I 'd \emph{\emph{\emph{\emph{\emph{flip}}}}} if anyone broke my phone . & He \emph{\emph{\emph{\emph{\emph{flipped}}}}} when he heard that he was accepted into Princeton University . \\
+0.62 & I could just make out her face in the \emph{\emph{\emph{\emph{\emph{twilight}}}}} . & He loved the \emph{\emph{\emph{\emph{\emph{twilight}}}}} . \\
+0.619 & It was a miracle that he survived the \emph{\emph{\emph{\emph{\emph{drop}}}}} from that height . & That was a long \emph{\emph{\emph{\emph{\emph{drop}}}}} , but fortunately I did n't break any bones . \\
+0.613 & He 's a \emph{\emph{\emph{\emph{\emph{shtik}}}}} crazy . & How did you ever fall for a \emph{\emph{\emph{\emph{\emph{shtik}}}}} like that ? \\
+0.601 & A clothes \emph{\emph{\emph{\emph{\emph{horse}}}}} . & 500 \emph{\emph{\emph{\emph{\emph{horse}}}}} led the attack . \\
+0.6 & This behavior will \emph{\emph{\emph{\emph{ruin}}}} your chances of winning the election . & The country lay \emph{\emph{\emph{\emph{ruined}}}} after the war . \\
+0.598 & They swam in the \emph{\emph{\emph{\emph{\emph{nude}}}}} . & The marketing rule ' \emph{\emph{\emph{\emph{\emph{nude}}}}} sells ' spread from verbal to visual mainstream media in the 20th century . \\
+0.596 & His \emph{\emph{\emph{\emph{date}}}} never stopped talking . & The \emph{\emph{\emph{\emph{date}}}} for pleading . \\
+0.595 & \emph{\emph{\emph{\emph{\emph{Shoot}}}}} cloth . & \emph{\emph{\emph{\emph{\emph{Shoot}}}}} a star . \\
+0.585 & An \emph{\emph{\emph{\emph{\emph{assurance}}}}} of help when needed . & His \emph{\emph{\emph{\emph{\emph{assurance}}}}} in his superiority did not make him popular . \\
+0.585 & The \emph{\emph{\emph{\emph{\emph{impregnation}}}}} of wood with preservative . & The \emph{\emph{\emph{\emph{\emph{impregnation}}}}} , whatever it was , had turned the rock blue . \\
+0.585 & He practiced the art of \emph{\emph{\emph{\emph{\emph{sophistication}}}}} upon reason . & Understanding affine transformations requires considerable mathematical \emph{\emph{\emph{\emph{\emph{sophistication}}}}} . \\
+0.579 & It will \emph{\emph{\emph{\emph{avail}}}} them to dispose of their booty . & He \emph{\emph{\emph{\emph{availed}}}} himself of the available resources . \\
+0.577 & A \emph{\emph{\emph{\emph{\emph{joy}}}}} to behold . & The \emph{\emph{\emph{\emph{\emph{joys}}}}} and demands of parenthood . \\
+0.568 & I \emph{\emph{\emph{\emph{seem}}}} to be misunderstood by everyone . & There \emph{\emph{\emph{\emph{seems}}}} no reason to go ahead with the project now . \\
+0.562 & The might have repercussions of unimaginable \emph{\emph{\emph{\emph{\emph{largeness}}}}} . & A man distinguished by the \emph{\emph{\emph{\emph{\emph{largeness}}}}} and scope of his views . \\
+0.561 & Be careful crossing the \emph{\emph{\emph{\emph{\emph{street}}}}} . & The whole \emph{\emph{\emph{\emph{\emph{street}}}}} protested the absence of lights . \\
+0.559 & The court 's \emph{\emph{\emph{\emph{\emph{tilt}}}}} toward conservative rulings . & The tower had a pronounced \emph{\emph{\emph{\emph{\emph{tilt}}}}} . \\
+0.558 & Guests should never be late to a \emph{\emph{\emph{\emph{\emph{dinner}}}}} party . & On Sundays they had a large \emph{\emph{\emph{\emph{\emph{dinner}}}}} when they returned from church . \\
+0.557 & \emph{\emph{\emph{\emph{\emph{Scallop}}}}} the hem of the dress . & \emph{\emph{\emph{\emph{\emph{Scallop}}}}} the meat . \\
+0.554 & The bald eagle is a \emph{\emph{\emph{\emph{\emph{denizen}}}}} of the northern part of the state . & The giant squid is one of many \emph{\emph{\emph{\emph{\emph{denizens}}}}} of the deep . \\
+0.554 & After so much stress , he suffered a \emph{\emph{\emph{\emph{\emph{breakdown}}}}} and simply gave up . & His warning came after the \emph{\emph{\emph{\emph{\emph{breakdown}}}}} of talks in London . \\
+0.552 & \emph{\emph{\emph{\emph{\emph{Heel}}}}} a golf ball . & \emph{\emph{\emph{\emph{\emph{Heel}}}}} that dance . \\
+0.551 & The \emph{\emph{\emph{\emph{\emph{embodiment}}}}} of hope . & A circle was the \emph{\emph{\emph{\emph{\emph{embodiment}}}}} of his concept of life . \\
+0.547 & She lost all her respect and \emph{\emph{\emph{\emph{\emph{authority}}}}} after turning up drunk to the meeting . & This book is the final \emph{\emph{\emph{\emph{\emph{authority}}}}} on the life of Milton . \\
+0.547 & An eyebrow \emph{\emph{\emph{\emph{\emph{pencil}}}}} . & This artist 's favorite medium is \emph{\emph{\emph{\emph{\emph{pencil}}}}} . \\
+0.543 & He used \emph{\emph{\emph{\emph{\emph{terror}}}}} to make them confess . & He was the \emph{\emph{\emph{\emph{\emph{terror}}}}} of the neighborhood . \\
+0.538 & It was not what it appeared to be on the \emph{\emph{\emph{\emph{\emph{surface}}}}} . & The cloth had a pattern of red dots on a white \emph{\emph{\emph{\emph{\emph{surface}}}}} . \\
+0.537 & Do n't \emph{\emph{\emph{\emph{\emph{fiddle}}}}} with the screws . & She always \emph{\emph{\emph{\emph{\emph{fiddles}}}}} with her van on the weekend . \\
+0.532 & Do n't \emph{\emph{\emph{\emph{\emph{strain}}}}} your mind too much . & The rope \emph{\emph{\emph{\emph{\emph{strained}}}}} when the weight was attached . \\
+0.53 & I know of the man ; but have no \emph{\emph{\emph{\emph{\emph{acquaintance}}}}} with him . & I have trouble remembering the names of all my \emph{\emph{\emph{\emph{\emph{acquaintances}}}}} . \\
+0.529 & He used \emph{\emph{\emph{\emph{\emph{pressure}}}}} to stop the bleeding . & The sensitivity of his skin to \emph{\emph{\emph{\emph{\emph{pressure}}}}} and temperature was normal . \\
+0.529 & The very \emph{\emph{\emph{\emph{\emph{easiness}}}}} of the deed held her back . & There was an \emph{\emph{\emph{\emph{\emph{easiness}}}}} between them . \\
+0.526 & The annual \emph{\emph{\emph{\emph{\emph{crop}}}}} of students brings many new ideas . & The latest \emph{\emph{\emph{\emph{\emph{crop}}}}} of fashions is about to hit the stores . \\
+0.525 & The \emph{\emph{\emph{\emph{\emph{catch}}}}} was only 10 fish . & He shared his \emph{\emph{\emph{\emph{\emph{catch}}}}} with the others . \\
+0.525 & The \emph{\emph{\emph{\emph{\emph{peak}}}}} of perfection . & The view from the \emph{\emph{\emph{\emph{\emph{peak}}}}} was magnificent . \\
+0.524 & We did not understand his \emph{\emph{\emph{\emph{\emph{motivation}}}}} . & His \emph{\emph{\emph{\emph{\emph{motivation}}}}} was at a high level . \\
+0.519 & The floats and horses in the \emph{\emph{\emph{\emph{\emph{parade}}}}} were impressive , but the marching bands were really amazing . & She made a \emph{\emph{\emph{\emph{\emph{parade}}}}} of her sorrows . \\
+0.518 & They \emph{\emph{\emph{\emph{\emph{worship}}}}} in the traditional manner . & Many Hindus \emph{\emph{\emph{\emph{\emph{worship}}}}} Shiva . \\
+0.518 & A valuable financial \emph{\emph{\emph{\emph{affiliation}}}} . & Welcomed the \emph{\emph{\emph{\emph{affiliation}}}} of the research center with the university . \\
+0.518 & The house was a \emph{\emph{\emph{\emph{\emph{mess}}}}} . & My boss dumped a whole \emph{\emph{\emph{\emph{\emph{mess}}}}} of projects on my desk today . \\
+0.517 & The city has an excellent natural \emph{\emph{\emph{\emph{\emph{harbour}}}}} . & The neighbourhood is a well - known \emph{\emph{\emph{\emph{\emph{harbour}}}}} for petty thieves . \\
+0.517 & \emph{\emph{\emph{\emph{\emph{Afflict}}}}} with the plague . & She was \emph{\emph{\emph{\emph{\emph{afflicted}}}}} by the death of her parents . \\
+0.517 & \emph{\emph{\emph{Collapse}}} the music stand . & The school system is \emph{\emph{\emph{collapsing}}} . \\
+0.516 & He took a \emph{\emph{\emph{\emph{\emph{stab}}}}} at forecasting . & She felt a \emph{\emph{\emph{\emph{\emph{stab}}}}} of excitement . \\
+0.513 & War is \emph{\emph{\emph{\emph{\emph{hell}}}}} . & The \emph{\emph{\emph{\emph{\emph{hell}}}}} of battle . \\
+0.508 & You should have read the small print on your \emph{\emph{\emph{\emph{\emph{policy}}}}} . & It was a \emph{\emph{\emph{\emph{\emph{policy}}}}} of retribution . \\
+0.508 & The children began to \emph{\emph{\emph{\emph{\emph{clap}}}}} in time with the music . & The big bird \emph{\emph{\emph{\emph{\emph{clapped}}}}} its wings . \\
+0.503 & To \emph{\emph{\emph{\emph{crush}}}} grapes . & The car \emph{\emph{\emph{\emph{crushed}}}} the toy . \\
+0.503 & Instant replay caused too long a \emph{\emph{\emph{\emph{\emph{delay}}}}} . & The \emph{\emph{\emph{\emph{\emph{delay}}}}} before the echo of a sound . \\
+0.5 & \emph{\emph{\emph{\emph{\emph{Create}}}}} a poem . & \emph{\emph{\emph{\emph{\emph{Create}}}}} one a peer . \\
+0.494 & It was the \emph{\emph{\emph{\emph{\emph{deliberation}}}}} of his act that was insulting . & The \emph{\emph{\emph{\emph{\emph{deliberations}}}}} of the jury . \\
+0.492 & The level of \emph{\emph{\emph{\emph{\emph{activity}}}}} declines with age . & His sphere of \emph{\emph{\emph{\emph{\emph{activity}}}}} . \\
+0.491 & From the window he could catch a \emph{\emph{\emph{\emph{\emph{glimpse}}}}} of the lake . & He caught only a \emph{\emph{\emph{\emph{\emph{glimpse}}}}} of the professor 's meaning . \\
+0.49 & He got a \emph{\emph{\emph{\emph{\emph{bang}}}}} on the head . & They got a great \emph{\emph{\emph{\emph{\emph{bang}}}}} out of it . \\
+0.488 & They were restrained by a \emph{\emph{\emph{\emph{\emph{prohibition}}}}} in their charter . & In 1920 the 18th amendment to the Constitution established \emph{\emph{\emph{\emph{\emph{prohibition}}}}} in the US . \\
+0.488 & \emph{\emph{\emph{\emph{Absorb}}}} the costs for something . & He \emph{\emph{\emph{\emph{absorbed}}}} the knowledge or beliefs of his tribe . \\
+0.486 & The animal died a painful \emph{\emph{\emph{\emph{\emph{death}}}}} . & He seemed more content in \emph{\emph{\emph{\emph{\emph{death}}}}} than he had ever been in life . \\
+0.486 & When England defeated Pakistan it ended a ten - year \emph{\emph{\emph{\emph{\emph{drought}}}}} . & Farmers most affected by the \emph{\emph{\emph{\emph{\emph{drought}}}}} hope that there may yet be sufficient rain early in the growing season . \\
+0.486 & This car could be just the \emph{\emph{\emph{\emph{ticket}}}} for a small family . & Joe will be running on an anti - crime \emph{\emph{\emph{\emph{ticket}}}} . \\
+0.483 & Printing at higher \emph{\emph{\emph{\emph{resolution}}}} will cause a reduction in performance . & They never did achieve a final \emph{\emph{\emph{\emph{resolution}}}} of their differences . \\
+0.482 & I \emph{\emph{\emph{\emph{\emph{swear}}}}} by my grandmother 's recipes . & Before God I \emph{\emph{\emph{\emph{\emph{swear}}}}} I am innocent . \\
+0.482 & They served me a \emph{\emph{\emph{\emph{\emph{dish}}}}} of rice . & We gave them a set of \emph{\emph{\emph{\emph{\emph{dishes}}}}} for a wedding present . \\
+0.481 & His \emph{\emph{\emph{\emph{\emph{detention}}}}} was politically motivated . & The \emph{\emph{\emph{\emph{\emph{detention}}}}} of tardy pupils . \\
+0.48 & \emph{\emph{\emph{\emph{Militarize}}}} the Civil Service . & \emph{\emph{\emph{\emph{Militarize}}}} Germany again after the war . \\
+0.48 & The \emph{\emph{\emph{\emph{\emph{buzz}}}}} of excitement was so great that a formal denial was issued . & The \emph{\emph{\emph{\emph{\emph{buzz}}}}} of a bumble bee . \\
+0.476 & He was ordered to report for \emph{\emph{\emph{\emph{induction}}}} into the army . & The \emph{\emph{\emph{\emph{induction}}}} of an anesthetic state . \\
+0.475 & You can not be convicted of criminal guilt by \emph{\emph{\emph{\emph{association}}}} . & He joined the Modern Language \emph{\emph{\emph{\emph{Association}}}} . \\
+0.473 & Geometry is the mathematical science of \emph{\emph{\emph{shape}}} . & He could barely make out their \emph{\emph{\emph{shapes}}} . \\
+0.47 & The linebackers were ready to stop a \emph{\emph{\emph{\emph{rush}}}} . & Come back after the \emph{\emph{\emph{\emph{rush}}}} . \\
+0.47 & \emph{\emph{\emph{\emph{\emph{Misdirect}}}}} the letter . & The pedestrian \emph{\emph{\emph{\emph{\emph{misdirected}}}}} the out - of - town driver . \\
+0.469 & \emph{\emph{\emph{\emph{Wail}}}} in self - pity . & She \emph{\emph{\emph{\emph{wailed}}}} with pain . \\
+0.469 & The imperialist nation wanted to \emph{\emph{\emph{\emph{\emph{strangle}}}}} the free trade between the two small countries . & A man in Boston has been \emph{\emph{\emph{\emph{\emph{strangling}}}}} several dozen prostitutes . \\
+0.469 & A right \emph{\emph{\emph{identity}}} , x * I = x for any x in the structure . & You can lose your \emph{\emph{\emph{identity}}} when you join the army . \\
+0.468 & These paintings \emph{\emph{\emph{\emph{\emph{exalt}}}}} the imagination . & The man was \emph{\emph{\emph{\emph{\emph{exalted}}}}} from a humble carpenter to a minister . \\
+0.468 & To \emph{\emph{\emph{\emph{bull}}}} railroad bonds . & He \emph{\emph{\emph{\emph{bulled}}}} his way in . \\
+0.465 & He could not \emph{\emph{\emph{\emph{touch}}}} the meaning of the poem . & Helen Keller felt the physical world by \emph{\emph{\emph{\emph{touching}}}} people and objects around her . \\
+0.463 & He was a \emph{\emph{\emph{\emph{tool}}}} , no more than a pawn to her . & I do n't have the right \emph{\emph{\emph{\emph{tools}}}} to start fiddling around with the engine . \\
+0.459 & Particle detectors \emph{\emph{\emph{\emph{sense}}}} ionization . & She immediately \emph{\emph{\emph{\emph{sensed}}}} her disdain . \\
+0.459 & He has been on \emph{\emph{\emph{\emph{relief}}}} for many years . & Was the \emph{\emph{\emph{\emph{relief}}}} supposed to be protection from future harm or compensation for past injury ? \\
+0.459 & He gave a speech as part of his \emph{\emph{\emph{installation}}} into the hall of fame . & The telephone \emph{\emph{\emph{installation}}} took only a few minutes . \\
+0.459 & Do n't \emph{\emph{\emph{\emph{fuss}}}} too much over the grandchildren -- they are quite big now . & She \emph{\emph{\emph{\emph{fusses}}}} over her husband . \\
+0.459 & It 's my \emph{\emph{\emph{\emph{go}}}} . & I 'll give it a \emph{\emph{\emph{\emph{go}}}} . \\
+0.458 & Make a \emph{\emph{\emph{\emph{break}}}} for it . & He finally got his big \emph{\emph{\emph{\emph{break}}}} . \\
+0.458 & A mule is a \emph{\emph{\emph{\emph{cross}}}} between a horse and a donkey . & That is his \emph{\emph{\emph{\emph{cross}}}} to bear . \\
+0.455 & “ Among other native delicacies , they give you fresh \emph{\emph{\emph{\emph{\emph{char}}}}} . ” . & “ I had to scrub the kitchen today , because the \emph{\emph{\emph{\emph{\emph{char}}}}} could n't come ” . \\
+0.455 & Let 's \emph{\emph{\emph{\emph{\emph{eliminate}}}}} the course on Akkadian hieroglyphics . & This possibility can be \emph{\emph{\emph{\emph{\emph{eliminated}}}}} from our consideration . \\
+0.453 & \emph{\emph{\emph{\emph{\emph{Cleat}}}}} running shoes for better traction . & \emph{\emph{\emph{\emph{\emph{Cleat}}}}} a line . \\
+0.452 & They went bankrupt during the economic \emph{\emph{\emph{crisis}}} . & After the \emph{\emph{\emph{crisis}}} the patient either dies or gets better . \\
+0.45 & Time seems to \emph{\emph{\emph{\emph{\emph{drag}}}}} when you 're waiting for a bus . & The speech \emph{\emph{\emph{\emph{\emph{dragged}}}}} on for two hours . \\
+0.448 & My neighbor was the lead \emph{\emph{\emph{\emph{\emph{role}}}}} in last year 's village play . & Play its \emph{\emph{\emph{\emph{\emph{role}}}}} . \\
+0.448 & Making a hobby of \emph{\emph{\emph{\emph{\emph{domesticity}}}}} . & A royal family living in unpretentious \emph{\emph{\emph{\emph{\emph{domesticity}}}}} . \\
+0.446 & The duke 's \emph{\emph{\emph{\emph{\emph{fiefdom}}}}} had been greatly expanded as a reward for his dutiful military service on behalf of the king . & Most of our company 's computers are standardized , but the IT director allows the employees in his own little \emph{\emph{\emph{\emph{\emph{fiefdom}}}}} to specify their own machines . \\
+0.446 & The unhappy couple got into a terrible \emph{\emph{\emph{\emph{scrap}}}} . & That car is n't good for anything but \emph{\emph{\emph{\emph{scrap}}}} . \\
+0.445 & Businessmen of every \emph{\emph{\emph{stripe}}} joined in opposition to the proposal . & They earned their \emph{\emph{\emph{stripes}}} in Kuwait . \\
+0.444 & He took the manuscript in both hands and gave it a mighty \emph{\emph{\emph{tear}}} . & There were big \emph{\emph{\emph{tears}}} rolling down Lisa 's cheeks . \\
+0.444 & That 's a \emph{\emph{\emph{\emph{\emph{load}}}}} off my mind . & I 'm worried that the \emph{\emph{\emph{\emph{\emph{load}}}}} on that transformer will be too high . \\
+0.44 & A \emph{\emph{\emph{string}}} of islands . & The \emph{\emph{\emph{strings}}} played superlatively well . \\
+0.439 & \emph{\emph{\emph{Calibrate}}} a gun . & He \emph{\emph{\emph{calibrated}}} the thermometer for the Celsius scale . \\
+0.437 & The child 's \emph{\emph{\emph{\emph{acquisition}}}} of language . & That graphite tennis racquet is quite an \emph{\emph{\emph{\emph{acquisition}}}} . \\
+0.433 & The \emph{\emph{board}} has seven members . & He got out the \emph{\emph{board}} and set up the pieces . \\
+0.432 & The publisher wants to \emph{\emph{\emph{distribute}}} the book in Asia . & The function \emph{\emph{\emph{distributes}}} the values evenly . \\
+0.429 & Children must \emph{\emph{\emph{\emph{\emph{develop}}}}} a sense of right and wrong . & We have \emph{\emph{\emph{\emph{\emph{developed}}}}} a new theory of evolution . \\
+0.429 & He worships the almighty \emph{\emph{\emph{\emph{\emph{dollar}}}}} . & The \emph{\emph{\emph{\emph{\emph{dollar}}}}} coin has never been popular in the United States . \\
+0.426 & They set up camp next to the \emph{\emph{\emph{dig}}} . & She takes a \emph{\emph{\emph{dig}}} at me every chance she gets . \\
+0.425 & Her dog likes to \emph{\emph{\emph{tree}}} squirrels . & This lot should be \emph{\emph{\emph{treed}}} so that the house will be shaded in summer . \\
+0.425 & To \emph{\emph{\emph{\emph{\emph{pierce}}}}} a mystery . & The path \emph{\emph{\emph{\emph{\emph{pierced}}}}} the jungle . \\
+0.424 & He played the trumps in \emph{\emph{\emph{\emph{\emph{sequence}}}}} . & The doctor saw a \emph{\emph{\emph{\emph{\emph{sequence}}}}} of patients . \\
+0.423 & The government must do its \emph{\emph{\emph{\emph{part}}}} . & Religions in all \emph{\emph{\emph{\emph{parts}}}} of the world . \\
+0.423 & \emph{\emph{Disable}} this command on your computer . & He was \emph{\emph{disabled}} in a car accident . \\
+0.423 & Territorial disputes were resolved in Guatemala 's \emph{\emph{\emph{\emph{\emph{recognition}}}}} of Belize in 1991 . & The partners were delighted with the \emph{\emph{\emph{\emph{\emph{recognition}}}}} of their work . \\
+0.422 & Surgeons must \emph{\emph{\emph{\emph{scrub}}}} prior to an operation . & She \emph{\emph{\emph{\emph{scrubbed}}}} his back . \\
+0.421 & He was driving his car like a \emph{\emph{\emph{\emph{nut}}}} . & I kicked him in the \emph{\emph{\emph{\emph{nuts}}}} . \\
+0.42 & \emph{\emph{\emph{\emph{Cloister}}}} the garden . & She \emph{\emph{\emph{\emph{cloistered}}}} herself in the office . \\
+0.417 & \emph{\emph{\emph{Dip}}} the brush into the paint . & She \emph{\emph{\emph{dipped}}} her knee . \\
+0.417 & It 's a \emph{\emph{\emph{\emph{pity}}}} he could n't do it . & The blind are too often objects of \emph{\emph{\emph{\emph{pity}}}} . \\
+0.417 & Rock fracture and rock \emph{\emph{\emph{\emph{flowage}}}} are different types of geological deformation . & Many campsites were located near the \emph{\emph{\emph{\emph{flowage}}}} . \\
+0.417 & He knew that it was trash day , when the garbage collectors made all the \emph{\emph{\emph{\emph{noise}}}} . & They heard indistinct \emph{\emph{\emph{\emph{noises}}}} of people talking . \\
+0.416 & He had the \emph{\emph{\emph{\emph{gem}}}} set in a ring for his wife . & She 's an absolute \emph{\emph{\emph{\emph{gem}}}} . \\
+0.415 & Will the new rules \emph{\emph{\emph{\emph{affect}}}} me ? & The medicine \emph{\emph{\emph{\emph{affects}}}} my heart rate . \\
+0.414 & He has a \emph{\emph{\emph{touch}}} of rheumatism . & He longed for the \emph{\emph{\emph{touch}}} of her hand . \\
+0.412 & The \emph{\emph{\emph{\emph{party}}}} of the first part . & He planned a \emph{\emph{\emph{\emph{party}}}} to celebrate Bastille Day . \\
+0.41 & We must \emph{\emph{\emph{follow}}} closely the economic development is Cuba . & It \emph{\emph{\emph{follows}}} that your assertion is false . \\
+0.408 & A \emph{\emph{\emph{\emph{deal}}}} of trouble . & He made a \emph{\emph{\emph{\emph{deal}}}} with the devil . \\
+0.408 & \emph{\emph{\emph{Probation}}} is part of the sentencing process . & You 'll be on \emph{\emph{\emph{probation}}} for first six months . After that , if you work out , they 'll hire you permanently . \\
+0.408 & He drank a \emph{\emph{\emph{\emph{\emph{mixture}}}}} of beer and lemonade . & The \emph{\emph{\emph{\emph{\emph{mixture}}}}} of sulphuric acid and water produces heat . \\
+0.405 & There 's too much \emph{\emph{\emph{\emph{shadiness}}}} to take good photographs . & The \emph{\emph{\emph{\emph{shadiness}}}} of their transactions . \\
+0.395 & \emph{\emph{\emph{Submerge}}} your head completely . & The submarine \emph{\emph{\emph{submerged}}} in the water . \\
+0.394 & Catalytic \emph{\emph{\emph{\emph{activity}}}} . & They avoided all recreational \emph{\emph{\emph{\emph{activity}}}} . \\
+0.393 & \emph{\emph{\emph{\emph{Triangulate}}}} the piece of cardboard . & The land surveyor worked by \emph{\emph{\emph{\emph{triangulating}}}} the plot . \\
+0.393 & These delicate plants do not \emph{\emph{\emph{transplant}}} easily . & \emph{\emph{\emph{Transplant}}} the young rice plants . \\
+0.392 & A \emph{\emph{\emph{\emph{growth}}}} of hair . & The \emph{\emph{\emph{\emph{growth}}}} of culture . \\
+0.389 & It was a long \emph{\emph{pull}} but we made it . & He was sidelined with a hamstring \emph{\emph{pull}} . \\
+0.389 & I could see it in the \emph{\emph{\emph{distance}}} . & The \emph{\emph{\emph{distance}}} from New York to Chicago . \\
+0.388 & His \emph{\emph{\emph{\emph{\emph{treatment}}}}} of the race question is badly biased . & His \emph{\emph{\emph{\emph{\emph{treatment}}}}} of space borrows from Italian architecture . \\
+0.388 & \emph{\emph{\emph{\emph{Ease}}}} the pain in your legs . & The pain \emph{\emph{\emph{\emph{eased}}}} overnight . \\
+0.385 & Those who \emph{\emph{\emph{\emph{criticize}}}} others often are not perfect , either . & The paper \emph{\emph{\emph{\emph{criticized}}}} the new movie . \\
+0.384 & He left the \emph{\emph{\emph{\emph{\emph{preparation}}}}} of meals to his wife . & The resolution of one dissonance is often the \emph{\emph{\emph{\emph{\emph{preparation}}}}} for another dissonance . \\
+0.382 & A place \emph{\emph{\emph{\emph{setting}}}} of sterling flatware . & He changed the \emph{\emph{\emph{\emph{setting}}}} on the thermostat . \\
+0.382 & He was a bad \emph{\emph{\emph{\emph{\emph{influence}}}}} on the children . & Used her parents ' \emph{\emph{\emph{\emph{\emph{influence}}}}} to get the job . \\
+0.381 & \emph{\emph{Inject}} hydrogen into the balloon . & Now lie back while we \emph{\emph{inject}} you with the anesthetic . \\
+0.381 & Google represents a new \emph{\emph{\emph{\emph{breed}}}} of entrepreneurs . & A \emph{\emph{\emph{\emph{breed}}}} of tulip . \\
+0.381 & Some people put the \emph{\emph{\emph{\emph{stress}}}} on the first syllable of “ controversy ” ; others put it on the second . & The intensity of \emph{\emph{\emph{\emph{stress}}}} is expressed in units of force divided by units of area . \\
+0.379 & We \emph{\emph{\emph{combust}}} coal and other fossil fuels . & The professor \emph{\emph{\emph{combusted}}} when the student did n't know the answer to a very elementary question . \\
+0.379 & The new car is a \emph{\emph{\emph{delight}}} . & His \emph{\emph{\emph{delight}}} to see her was obvious to all . \\
+0.376 & He got his \emph{\emph{wish}} . & My best \emph{\emph{wishes}} . \\
+0.376 & In Britain they call a bobby pin a \emph{\emph{\emph{\emph{grip}}}} . & They kept a firm \emph{\emph{\emph{\emph{grip}}}} on the two top priorities . \\
+0.376 & He tried to clear his head of the whisky \emph{\emph{\emph{\emph{fuzz}}}} . & Peach \emph{\emph{\emph{\emph{fuzz}}}} . \\
+0.375 & All that bowing and \emph{\emph{\emph{scraping}}} did not impress him . & They collected blood \emph{\emph{\emph{scrapings}}} for analysis . \\
+0.375 & An amendment to \emph{\emph{\emph{\emph{piggyback}}}} the current law . & He \emph{\emph{\emph{\emph{piggybacked}}}} her child so she could see the show . \\
+0.375 & As he called the role he put a \emph{\emph{\emph{\emph{check}}}} mark by each student 's name . & A \emph{\emph{\emph{\emph{check}}}} on its dependability under stress . \\
+0.374 & In the \emph{\emph{\emph{\emph{\emph{middle}}}}} of the marathon , David collapsed from fatigue . & Rain during the \emph{\emph{\emph{\emph{\emph{middle}}}}} of April . \\
+0.372 & The \emph{\emph{\emph{\emph{kick}}}} must be synchronized with the arm movements . & A sidecar is a smooth drink but it has a powerful \emph{\emph{\emph{\emph{kick}}}} . \\
+0.369 & A \emph{\emph{force}} out was recorded on the scorecard . & A public \emph{\emph{force}} is necessary to give security to the rights of citizens . \\
+0.369 & \emph{\emph{\emph{Direct}}} your anger towards others , not towards yourself . & He \emph{\emph{\emph{directed}}} all his energies into his dissertation . \\
+0.368 & \emph{Excite} the neurons . & The fireworks which opened the festivities \emph{excited} anyone present . \\
+0.366 & They regretted the \emph{\emph{closure}} of the day care center . & He needed to grieve before he could achieve a sense of \emph{\emph{closure}} . \\
+0.362 & The \emph{\emph{transfer}} of the music from record to tape suppressed much of the background noise . & The best student was a \emph{\emph{transfer}} from LSU . \\
+0.361 & The entire \emph{\emph{\emph{\emph{building}}}} complained about the noise . & The \emph{\emph{\emph{\emph{building}}}} of the bridge will be completed in a couple of weeks . \\
+0.361 & The army retreated in \emph{\emph{\emph{\emph{confusion}}}} . & A \emph{\emph{\emph{\emph{confusion}}}} of impressions . \\
