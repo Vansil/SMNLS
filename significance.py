@@ -96,5 +96,5 @@ if __name__ == "__main__":
 
     print('mcnemar')
     significance_pivot(models, gold, mcnemar_models,  'results/mcnemar.html', 1.0)
-    print('permutation')
-    significance_pivot(models, gold, permutationtest, 'results/fishers_permutation.html', 0.01)
+    # print('permutation')
+    # significance_pivot(models, gold, permutationtest, 'results/fishers_permutation.html', 0.01)
