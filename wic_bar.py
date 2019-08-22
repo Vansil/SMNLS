@@ -8,4 +8,4 @@ pairs = [(model, stages) for model in ('elmo-2', 'elmo-3') for stages in elmo_st
          [(f'bert-{size}-{i}', stages) for size in ('base', 'large') for i in ('0', '1', '2', '3', '4') for stages in bert_stages]
 results_files_dict = {f'{model}_{stages}': f"output/{model}/{stages}/evaluation/results.pt" for model, stages in pairs}
 
-visual.wic_barplot(results_files_dict, 'results/WicBarplotForPaper.png')
+visual.wic_barplot(results_files_dict, 'results/WicBoxplotForPaper.png')
