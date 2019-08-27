@@ -1,0 +1,94 @@
+0.087 & \emph{Hew} out a path in the rock . & One of the most widely used typefaces in the world was \emph{hewn} by the English printer and typographer John Baskerville . \\
+0.105 & \emph{Hail} a cab . & He was \emph{hailed} as a hero . \\
+0.18 & \emph{Gargle} with this liquid . & Every morning he \emph{gargled} a little cheap Scotch . \\
+0.181 & \emph{Bell} cows . & Who will \emph{bell} the cat ? \\
+0.192 & \emph{Boot} your computer . & When arriving at the office , first thing I do is \emph{booting} my machine . \\
+0.245 & \emph{Hook} a fish . & He \emph{hooked} a snake accidentally , and was so scared he dropped his rod into the water . \\
+0.246 & Lydia put the change in her left \emph{pocket} . & Lydia \emph{pocketed} the change . \\
+0.261 & Let 's \emph{peg} the rug to the floor . & \emph{Peg} a tent . \\
+0.264 & \emph{Bag} a few pheasants . & We \emph{bagged} three deer yesterday . \\
+0.277 & The steak was tough to \emph{chew} as it had been cooked too long . & \emph{Chew} your food and do n't swallow it ! \\
+0.278 & \emph{Admit} someone to the profession . & She was \emph{admitted} to the New Jersey Bar . \\
+0.289 & To \emph{clutch} power . & She \emph{clutched} her purse . \\
+0.292 & \emph{Carve} one 's name into the bark . & That chisel \emph{carved} the statue . \\
+0.292 & \emph{Fold} up the newspaper . & Tony \emph{folded} the flaps open . \\
+0.305 & There are drugs designed to \emph{excite} certain nerves in our body . & \emph{Excite} the audience . \\
+0.325 & The neoclassical \emph{canon} . & \emph{Canons} of polite society . \\
+0.343 & She led a low \emph{spade} . & \emph{Spades} were trumps . \\
+0.36 & The new law might \emph{abridge} our freedom of expression . & He had his rights \emph{abridged} by the crooked sheriff . \\
+0.361 & \emph{Sign} an intersection . & This road has been \emph{signed} . \\
+0.375 & \emph{Leave} your child the nurse 's care . & He \emph{left} the decision to his deputy . \\
+0.375 & The strike was supported by the union \emph{rank} and file . & He rose from the \emph{ranks} to become a colonel . \\
+0.375 & \emph{Glaze} the bread with eggwhite . & The potter \emph{glazed} the dishes . \\
+0.376 & \emph{Leave} lots of time for the trip . & This \emph{leaves} no room for improvement . \\
+0.379 & To \emph{moderate} a synod . & John \emph{moderated} the discussion . \\
+0.389 & \emph{Sugar} your tea . & John heavily \emph{sugars} his coffee . \\
+0.395 & To \emph{embellish} a story , the truth . & The old book cover was \emph{embellished} with golden letters . \\
+0.397 & \emph{Send} me your latest results . & Nora \emph{sent} the book from Paris . \\
+0.404 & \emph{Analyze} your real motives . & The inspector \emph{analyzed} the building 's soundness . \\
+0.407 & Do n't \emph{handle} the merchandise . & About his altar , \emph{handling} holy things - John Milton . \\
+0.408 & Please can I have a look , if I promise not to \emph{touch} ? & Carrie \emph{touched} his shoulder with the stick . \\
+0.409 & A pedestrian was able to \emph{trip} the burglar as he was running away . & The questions on the test \emph{tripped} him up . \\
+0.41 & The captain was obliged to \emph{allowance} his crew . & Our provisions were \emph{allowanced} . \\
+0.416 & He went from \emph{grunt} to chairman in six years . & Infantrymen in Vietnam were called \emph{grunts} . \\
+0.424 & $ 50 wo n't even \emph{buy} a dress . & FMC has \emph{bought} 565 . \\
+0.426 & How did your interview \emph{go} ? & She was \emph{going} that way anyway , so she offered to show him where it was . \\
+0.43 & A \emph{thing} of the spirit . & \emph{Things} of the heart . \\
+0.433 & \emph{Tap} a cask of wine . & He \emph{tapped} a new barrel of beer . \\
+0.436 & \emph{Whimsy} can be humorous to someone with time to enjoy it . & He had a \emph{whimsy} about flying to the moon . \\
+0.44 & Always a \emph{step} behind . & Keep in \emph{step} with the fashions . \\
+0.453 & We had a \emph{word} or two about it . & There was then a long discussion of whether to capitalize \emph{words} like " east " . \\
+0.46 & \emph{Want} the strength to go on living . & Flood victims \emph{wanting} food and shelter . \\
+0.461 & Hooligans \emph{destroy} unprovoked . & The fire \emph{destroyed} the house . \\
+0.463 & A \emph{branch} of Congress . & We have \emph{branches} in all major suburbs . \\
+0.464 & A good \emph{lead} for a job . & Joe is a great addition to our sales team , he has numerous \emph{leads} in the paper industry . \\
+0.464 & To \emph{cushion} a blow . & \emph{Cushion} the blow . \\
+0.464 & On entering a host cell , a virus will start to \emph{replicate} . & \emph{Replicate} the cell . \\
+0.464 & He wishes to \emph{accumulate} a sum of money . & Journals are \emph{accumulating} in my office . \\
+0.468 & We went there by \emph{foot} because we could not afford a taxi . & There is a lot of \emph{foot} traffic on this street . \\
+0.468 & I would like to thank the \emph{brother} who just spoke . & None of his \emph{brothers} would betray him . \\
+0.469 & He was a familiar \emph{sight} on the television . & They went to Paris to see the \emph{sights} . \\
+0.473 & \emph{Spend} money . & He \emph{spends} far more on gambling than he does on living proper . \\
+0.474 & We must not \emph{proliferate} nuclear arms . & The flowers \emph{proliferated} rapidly all spring . \\
+0.477 & They had to \emph{consult} before arriving at a decision . & \emph{Consult} your local broker . \\
+0.477 & The woman charged that her jailer was a \emph{fondler} . & Not all \emph{fondlers} are sexual perverts . \\
+0.478 & Let \emph{loose} mines . & \emph{Loose} terrible plagues upon humanity . \\
+0.483 & It was his last \emph{wish} . & They should respect the \emph{wishes} of the people . \\
+0.486 & He was given a \emph{month} to pay the bill . & We went on holiday for two \emph{months} . \\
+0.487 & The \emph{intention} of this legislation is to boost the economy . & Good \emph{intentions} are not enough . \\
+0.488 & To \emph{lay} a tax on land . & \emph{Lay} a responsibility on someone . \\
+0.49 & To \emph{command} an army or a ship . & \emph{Command} the military forces . \\
+0.493 & \emph{Answer} the question . & She did n't want to \emph{answer} . \\
+0.494 & \emph{Percolate} coffee . & I 'll \emph{percolate} some coffee . \\
+0.495 & Some languages \emph{sexualize} all nouns and do not have a neuter gender . & The god was \emph{sexualized} and married to another god . \\
+0.498 & They departed hurriedly because of some great \emph{urgency} in their affairs . & I 'll be there , barring any \emph{urgencies} . \\
+0.501 & \emph{Result} in tragedy . & This measure will \emph{result} in good or in evil . \\
+0.503 & He had n't seen his \emph{dad} in years . & \emph{Dad} , happy Father 's Day ! \\
+0.504 & In my \emph{opinion} , white chocolate is better than milk chocolate . & I would like to know your \emph{opinions} on the new systems . \\
+0.505 & The \emph{minister} said a prayer on behalf of the entire congregation . & Clergymen are usually called \emph{ministers} in Protestant churches . \\
+0.506 & You can \emph{characterize} his behavior as that of an egotist . & This poem can be \emph{characterized} as a lament for a dead lover . \\
+0.509 & To \emph{shock} rye . & \emph{Shock} grain . \\
+0.513 & At \emph{liberty} to choose whatever occupation one wishes . & \emph{Liberty} to think or feel or do just as one pleases . \\
+0.513 & Let 's \emph{hang} this cute animal in the nursery . & \emph{Hang} wallpaper . \\
+0.516 & Plants from a cold \emph{clime} travel best in winter . & After working hard all of his life , Max retired to warmer \emph{climes} in Florida . \\
+0.52 & He is an \emph{officer} of the court . & The club elected its \emph{officers} for the coming year . \\
+0.528 & He wasted his \emph{pay} on drink . & Many employers have rules designed to keep employees from comparing their \emph{pays} . \\
+0.532 & The force required to \emph{compress} a spring varies linearly with the displacement . & She \emph{compressed} her lips . \\
+0.533 & \emph{Donate} money to the orphanage . & I \emph{donated} blood to the Red Cross for the victims of the earthquake . \\
+0.535 & \emph{Build} up confidence . & They had to \emph{build} up their fortress to protect against attack . \\
+0.536 & A \emph{mince} of mushrooms . & \emph{Mince} tastes really good fried in a pan with some chopped onion and tomato . \\
+0.536 & Students receive \emph{instruction} in the arts and sciences . & \emph{Instruction} will be provided on how to handle difficult customers . \\
+0.537 & You \emph{shuffle} , I 'll deal . & \emph{Shuffle} the cards . \\
+0.539 & You need to \emph{push} quite hard to get this door open . & Nora \emph{pushed} through the crowd . \\
+0.54 & Please \emph{modify} this letter to make it more polite . & He \emph{modified} his views on same - gender marriage . \\
+0.541 & The \emph{collapse} of the old star under its own gravity . & The roof is in danger of \emph{collapse} . \\
+0.542 & I am trying to \emph{contact} my sister . & He never \emph{contacted} his children after he emigrated to Australia . \\
+0.544 & Wear gloves so your hands \emph{stay} warm . & \emph{Stay} with me , please . \\
+0.549 & I 'll \emph{toss} you for it . & Steve \emph{tossed} John the ball . \\
+0.55 & The book tells the \emph{story} of two roommates . & Disney 's \emph{stories} entertain adults as well as children . \\
+0.551 & Pioneers had to cross the \emph{continent} on foot . & There are seven \emph{continents} . \\
+0.552 & Washing dishes is a \emph{chore} , but we can not just stop eating . & The farmer 's morning \emph{chores} . \\
+0.554 & The fibers \emph{decussate} . & This nerve \emph{decussates} the other . \\
+0.556 & I woke up in the \emph{middle} of the night . & A whole is that which has beginning , \emph{middle} , and end - Aristotle . \\
+0.559 & She wants to \emph{act} Lady Macbeth , but she is too young for the role . & I started \emph{acting} at the age of eleven in my local theatre . \\
+0.56 & The \emph{ball} at the base of the thumb . & He stood on the \emph{balls} of his feet . \\

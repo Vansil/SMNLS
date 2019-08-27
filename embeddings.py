@@ -108,9 +108,9 @@ class WordEmbedding(nn.Module):
         if not self.has_elmo() and not self.has_glove() and not self.has_bert():
             raise Exception("WordEmbedding contains no ELMo, BERT and no GloVe")
         return torch.cat([
-            self.elmo( batch) if self.has_elmo()  else [],
-            # self.bert( batch) if self.has_bert()  else [],
-            self.glove(batch) if self.has_glove() else [],
+            (self.elmo( batch) if self.has_elmo()  else torch.tensor([])).to(self.device),
+            # (self.bert( batch) if self.has_bert()  else torch.tensor([])).to(self.device),
+            (self.glove(batch) if self.has_glove() else torch.tensor([])).to(self.device),
         ], dim=2)
 
 
