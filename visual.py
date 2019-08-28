@@ -5,6 +5,7 @@ import numpy as np
 from sklearn.manifold import TSNE
 from matplotlib import pyplot as plt
 from csv import DictReader
+from pdb import set_trace
 
 import eval
 import output
@@ -232,7 +233,10 @@ def wic_table(results_files_dict, output_file, include_thresholds=False, include
             test_accs.append("{:.1f}% ± {:.1f}%".format(np.average(test_accuracies)*100, np.std(test_accuracies)*100))
             train_accs.append("{:.1f}% ± {:.1f}%".format(np.average(train_accuracies)*100, np.std(train_accuracies)*100))
             thresholds.append("{:.2f} ± {:.2f}".format(np.average(threshold_list), np.std(threshold_list)))
-    
+
+    # print tikz table
+    print_tikz(results_files_dict)
+
     # Make table
     frame = {'Model': names, 'Embedding': embeddings}
     if include_thresholds:
@@ -245,6 +249,16 @@ def wic_table(results_files_dict, output_file, include_thresholds=False, include
     table = pd.DataFrame(frame)
     table.to_html(output_file)
     return table
+
+def print_tikz(results_files_dict):
+    print(', '.join([name for name in results_files_dict.keys()]))
+    for emb in ('input', 'pos', 'vua', 'snli', 'average'):
+        print(f"{emb}: coordinates {{\n")
+        for name, path in results_files_dict.items():
+            results = torch.load(path)['wic']
+            if emb in results.keys():
+                print(f"                ({name}, {np.average(results[emb]['test_accuracy'])})")
+        print("}};\n")
 
 
 class WicTsne(object):
